@@ -1,0 +1,65 @@
+:host {
+  :host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #d2e6f4;
+}
+}
+
+/* SOLO centramos el contenido, no el toolbar */
+.page-wrapper {
+  flex: 1; /* ocupa todo el espacio debajo del toolbar */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  /* centra vertical */
+  align-items: center;     /* centra horizontal */
+  gap: 3rem;
+  padding: 2rem;
+}
+
+.central-panels {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap; /* para que en tablet se adapten */
+}
+
+.panel-button {
+  background-color: #add5fb;
+  padding: 2rem 2.5rem; /* más grande */
+  border-radius: 20px;
+  font-size: 1.4rem; /* más grande */
+  font-weight: 600;
+  color: #2a4d69;
+  text-align: center;
+  cursor: pointer;
+  width: 300px; /* tamaño medio-grande */
+  transition: transform 0.15s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.panel-button:hover {
+  background-color: #b7dbff;
+  transform: translateY(-3px);
+}
+
+/* Botones inferiores */
+.tutorial-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+@media (max-width: 768px) {
+  .central-panels {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel-button {
+    width: 90%;
+    max-width: 320px;
+  }
+}

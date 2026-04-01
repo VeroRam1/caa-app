@@ -1,0 +1,48 @@
+<!-- home.component.html -->
+  <div class="card">
+    <p-toolbar>
+      <ng-template #start>
+        <p-button
+        icon="pi pi-home"
+        severity="secondary"
+        [rounded]="true" />
+      </ng-template>
+      <ng-template #center>
+        <h1 class="app-title">PictoCom</h1>
+      </ng-template>
+      <ng-template #end>
+        <p-button
+        label="Ayuda"
+        icon="pi pi-question-circle"
+        severity="secondary"
+        [rounded]="true" />
+      </ng-template>
+    </p-toolbar>
+<!-- Initial content -->
+  <div class="page-wrapper">
+    <!-- Paneles centrales -->
+    <div class="central-panels">
+      <div class="panel-button" (click)="onLogin()">
+        Iniciar sesión / Registrarse
+      </div>
+
+      <div class="panel-button" (click)="onGuest()">
+        Entrar sin registrarse
+      </div>
+    </div>
+
+    <!-- Botones inferiores -->
+    <div class="tutorial-buttons">
+      <p-button label="Tutorial 1"></p-button>
+      <p-button label="Tutorial 2"></p-button>
+      <p-button label="Tutorial 3"></p-button>
+      <p-button label="Guía de uso"></p-button>
+    </div>
+
+  </div>
+
+</div>
+
+  
+
+
