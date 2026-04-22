@@ -1,0 +1,132 @@
+<!-- guest-page.component.html -->
+<div class="page-container">
+
+  <!-- Toolbar -->
+  <p-toolbar>
+    <ng-template #start>
+      <p-menu #menu [model]="menuItems" [popup]="true" />
+      <p-button
+        icon="pi pi-bars"
+        severity="secondary"
+        [rounded]="true"
+        (click)="menu.toggle($event)"
+        aria-label="Abrir menú de navegación" />
+    </ng-template>
+
+    <ng-template #center>
+      <h1 class="app-title">PictoCom</h1>
+    </ng-template>
+
+    <ng-template #end>
+      <p-button
+        label="Volver"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        (click)="onBack()"
+        aria-label="Volver a la página de inicio" />
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Contenido -->
+  <main class="main-content" role="main">
+
+    <div class="page-header">
+      <h2 class="page-title">Elige un nivel</h2>
+      <p class="page-subtitle">
+        Explora los tableros de comunicación sin necesidad de crear una cuenta.
+        Los tableros no se pueden personalizar en el modo invitado.
+      </p>
+    </div>
+
+    @if (loading) {
+      <div class="loading-state" role="status" aria-live="polite">
+        <span aria-hidden="true">⏳</span>
+        <p>Cargando tableros...</p>
+      </div>
+    } @else {
+      <div class="level-cards">
+
+        @for (card of levelCards; track card.level) {
+          <article
+            class="level-card"
+            [class.level-card--available]="card.boardId !== null"
+            [class.level-card--unavailable]="card.boardId === null"
+            [attr.aria-label]="card.title + ': ' + card.description">
+
+            <header class="card-header">
+              <h3 class="card-title">{{ card.title }}</h3>
+              <div class="card-meta">
+                <span class="card-grid" aria-label="Tamaño del tablero">
+                  📐 Tablero {{ card.grid }}
+                </span>
+                <span class="card-age" aria-label="Edad recomendada">
+                  🎂 {{ card.ageRange }}
+                </span>
+              </div>
+            </header>
+
+            <p class="card-description">{{ card.description }}</p>
+
+            <!-- Preview del tablero — solo para nivel 1 por ahora -->
+            @if (card.board) {
+              <div
+                class="board-preview"
+                aria-label="Vista previa del tablero"
+                role="img">
+                <div
+                  class="preview-grid"
+                  [style.grid-template-columns]="'repeat(' + card.board.columns + ', 1fr)'"
+                  [style.grid-template-rows]="'repeat(' + card.board.rows + ', 1fr)'">
+                  @for (row of getPreviewGrid(card.board); track $index) {
+                    @for (cell of row; track $index) {
+                      <div class="preview-cell">
+                        @if (cell) {
+                          <img
+                            [src]="cell"
+                            alt=""
+                            class="preview-img"
+                            loading="lazy"
+                            aria-hidden="true" />
+                        }
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            } @else {
+              <!-- Placeholder para niveles no implementados -->
+              <div class="board-preview board-preview--placeholder" aria-hidden="true">
+                <span class="placeholder-text">Próximamente</span>
+              </div>
+            }
+
+            <!-- Características del nivel -->
+            <ul class="card-features" aria-label="Características del nivel">
+              @for (feature of card.features; track feature) {
+                <li class="card-feature">
+                  <span aria-hidden="true">✓</span>
+                  {{ feature }}
+                </li>
+              }
+            </ul>
+
+            <!-- Botón de acción -->
+            <p-button
+              [label]="card.boardId ? 'Usar este nivel' : 'Próximamente'"
+              [disabled]="card.boardId === null"
+              [severity]="card.boardId ? 'primary' : 'secondary'"
+              styleClass="card-action-btn"
+              (click)="onLevelSelect(card)"
+              [attr.aria-label]="card.boardId
+                ? 'Entrar al tablero de ' + card.title
+                : card.title + ' no disponible todavía'" />
+
+          </article>
+        }
+
+      </div>
+    }
+
+  </main>
+
+</div>

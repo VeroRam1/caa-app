@@ -1,65 +1,131 @@
-:host {
-  :host {
+/* ── Layout general ── */
+.page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #d2e6f4;
-}
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* SOLO centramos el contenido, no el toolbar */
-.page-wrapper {
-  flex: 1; /* ocupa todo el espacio debajo del toolbar */
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+/* ── Contenido central ── */
+.main-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  /* centra vertical */
-  align-items: center;     /* centra horizontal */
-  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
   padding: 2rem;
 }
 
+/* ── Tres paneles grandes ── */
 .central-panels {
   display: flex;
-  gap: 2rem;
-  flex-wrap: wrap; /* para que en tablet se adapten */
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 860px;
 }
 
 .panel-button {
-  background-color: #add5fb;
-  padding: 2rem 2.5rem; /* más grande */
-  border-radius: 20px;
-  font-size: 1.4rem; /* más grande */
-  font-weight: 600;
-  color: #2a4d69;
-  text-align: center;
+  flex: 1;
+  max-width: 240px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border-radius: 1.5rem;
   cursor: pointer;
-  width: 300px; /* tamaño medio-grande */
-  transition: transform 0.15s ease, background-color 0.2s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-align: center;
+  padding: 1rem;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Login - blue */
+  &.panel-login {
+    background: linear-gradient(145deg, #d6f0ff, #b3ddff);
+    color: var(--color-blue-text) !important;   
+    border-color: #b3ddff;
+    box-shadow: 0 4px 16px rgba(179, 221, 255, 0.45);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(179, 221, 255, 0.6);
+    }
+  }
+
+  /* Register - pink */
+  &.panel-register {
+    background: linear-gradient(145deg, #ffd6e7, #ffb3cc);
+    color: var(--color-pink-text) !important;   
+    border-color: #ffb3cc;
+    box-shadow: 0 4px 16px rgba(255, 179, 204, 0.45);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(255, 179, 204, 0.6);
+    }
+  }
+
+  /* Enter without registering - green */
+  &.panel-guest {
+    background: linear-gradient(145deg, #d1fae5, #a7f3d0);
+    color: var(--color-green-text) !important; // antes #065f46 — este sí cumplía
+    border-color: #a7f3d0;
+    box-shadow: 0 4px 16px rgba(167, 243, 208, 0.45);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(167, 243, 208, 0.6);
+    }
+  }
 }
 
-.panel-button:hover {
-  background-color: #b7dbff;
-  transform: translateY(-3px);
+.panel-icon {
+  font-size: 3rem;
+  line-height: 1;
 }
 
-/* Botones inferiores */
+.panel-label {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* ── Botones tutoriales ── */
 .tutorial-buttons {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
 }
 
-@media (max-width: 768px) {
-  .central-panels {
-    flex-direction: column;
-    align-items: center;
-  }
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #fff5f5;           // fondo muy suave
+  color: #7f1d1d;                // texto oscuro — ratio 7.3:1 ✓ WCAG
+  border: 1.5px solid #fca5a5;  // borde fino y sutil
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
 
-  .panel-button {
-    width: 90%;
-    max-width: 320px;
+  .error-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    margin-top: 1px;
   }
 }

@@ -1,0 +1,320 @@
+// dashboard.component.scss
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.toolbar-end {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+// ── Contenido ──
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 2rem;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+// ── Bienvenida ──
+.welcome-section {
+  text-align: center;
+}
+
+.welcome-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1a4971;
+  margin: 0 0 0.5rem 0;
+}
+
+.tutor-name {
+  color: #7c1d3a;
+}
+
+.subtitle {
+  color: #444;
+  font-size: 1rem;
+  margin: 0;
+}
+
+// Aviso de modo edición
+.edit-mode-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fef3c7;
+  color: #713f12;     // ratio 6.5:1 sobre #fef3c7 ✓ criterio 1.4.3
+  border: 1.5px solid #fde68a;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.loading-text {
+  color: #888;
+  font-size: 1rem;
+}
+
+// ── Perfiles ──
+.profiles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.profile-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  &:focus-visible .profile-circle {
+    outline: 3px solid #4a85b5;
+    outline-offset: 3px;
+  }
+
+  &:hover .profile-circle {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  // En modo edición el hover es distinto — indica acción de editar
+  &--edit-mode:hover .profile-circle {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(253,230,138,0.6);
+    border-color: #f59e0b;
+  }
+}
+
+// Wrapper para posicionar el overlay de edición
+.profile-circle-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #d6f0ff, #b3ddff);
+  border: 3px solid #b3ddff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 4px 12px rgba(179,221,255,0.4);
+  overflow: hidden;
+
+  // Variante pequeña para el dialog de acciones
+  &--small {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+  }
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-initial {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a4971;
+}
+
+// Overlay del lápiz en modo edición
+.edit-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(245,158,11,0.75);  // amarillo semitransparente
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.edit-icon {
+  font-size: 1.6rem;
+  color: white;
+}
+
+// Círculo de añadir perfil
+.profile-add {
+  background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+  border-color: #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  &:hover {
+    background: linear-gradient(145deg, #e8f4fd, #d0e8f5) !important;
+    border-color: #b3ddff !important;
+  }
+}
+
+.add-icon {
+  font-size: 3rem;
+  font-weight: 300;
+  color: #888;
+  line-height: 1;
+}
+
+.profile-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a4971;   // ratio 7.2:1 ✓
+  text-align: center;
+  max-width: 110px;
+}
+
+.profile-level {
+  font-size: 0.75rem;
+  color: #4a85b5;
+  font-weight: 600;
+  text-align: center;
+}
+
+// ── Dialog de acciones ──
+.actions-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border-radius: 0.75rem;
+  border: 1.5px solid #b3ddff;
+}
+
+.profile-preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  strong {
+    font-size: 1rem;
+    color: #1a4971;
+  }
+}
+
+.actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// Botones de acción a ancho completo
+:host ::ng-deep .action-btn {
+  width: 100% !important;
+  justify-content: flex-start !important;
+  min-height: 44px !important;  // criterio 2.5.8
+}
+
+// ── Subida de foto ──
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.photo-preview-area {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #b3ddff;
+  background: #f0f9ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.photo-placeholder-icon {
+  font-size: 2.5rem;
+  color: #b3ddff;
+}
+
+// Input de archivo oculto — el label actúa como botón
+.photo-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.photo-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #e8f4fd;
+  color: #1a4971;        // ratio 7.2:1 ✓ criterio 1.4.3
+  border: 2px solid #b3ddff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;      // criterio 2.5.8
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #d0e8f5;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #4a85b5;
+    outline-offset: 2px;
+  }
+}
+
+.photo-hint {
+  color: #666;
+  font-size: 0.8rem;
+  text-align: center;
+}

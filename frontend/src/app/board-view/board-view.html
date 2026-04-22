@@ -1,0 +1,147 @@
+<!-- board-view.component.html -->
+<div class="page-container">
+
+  <p-toast />
+  <p-confirmpopup #cp>
+    <ng-template #headless let-message>
+      <div class="confirm-popup-content">
+        <span class="confirm-message">{{ message.message }}</span>
+        <div class="confirm-actions">
+          <p-button
+            (click)="cp.onAccept()"
+            label="Salir"
+            size="small"
+            severity="danger"
+            [autofocus]="true"
+            aria-label="Confirmar salida del tablero" />
+          <p-button
+            (click)="cp.onReject()"
+            label="Cancelar"
+            [text]="true"
+            size="small"
+            severity="secondary"
+            aria-label="Cancelar y continuar en el tablero" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmpopup>
+
+  <!-- Toolbar del niño — sin opciones de navegación, solo título y candado -->
+  <header class="child-toolbar" role="banner">
+
+    <!-- Botón para mostrar/ocultar el panel de categorías -->
+    <button
+      class="sidebar-toggle"
+      (click)="toggleSidebar()"
+      type="button"
+      [attr.aria-expanded]="sidebarOpen"
+      aria-controls="categories-panel"
+      aria-label="{{ sidebarOpen ? 'Ocultar categorías' : 'Mostrar categorías' }}">
+      {{ sidebarOpen ? '◀' : '▶' }}
+    </button>
+
+    <h1 class="child-toolbar__title">
+      {{ board?.name || 'PictoCom' }}
+    </h1>
+
+    <!-- Candado x3 -->
+    <button
+      class="lock-button"
+      [class.lock-button--shaking]="lockShaking"
+      (click)="onLockTap($event)"
+      type="button"
+      aria-label="Botón de salida. Pulsa 3 veces para salir del tablero">
+      🔒
+    </button>
+  </header>
+
+  <!-- Layout principal: sidebar + tablero -->
+  <div class="board-layout">
+
+    <!-- Panel lateral de categorías -->
+    <nav
+      id="categories-panel"
+      class="categories-sidebar"
+      [class.categories-sidebar--hidden]="!sidebarOpen"
+      aria-label="Categorías de pictogramas">
+
+      <h2 class="categories-title">Categorías</h2>
+
+      <ul class="categories-list" role="list">
+        @for (cat of categories; track cat.label) {
+          <li>
+            <button
+              class="category-btn"
+              [class.category-btn--active]="activeCategory === cat.label"
+              (click)="onCategorySelect(cat)"
+              type="button"
+              [attr.aria-current]="activeCategory === cat.label ? 'true' : null"
+              [attr.aria-label]="'Ver tablero de ' + cat.label">
+              <span class="category-icon" aria-hidden="true">{{ cat.icon }}</span>
+              <span class="category-label">{{ cat.label }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Área del tablero -->
+    <main class="board-area" role="main">
+
+      @if (loading) {
+        <div class="status-container" role="status" aria-live="polite">
+          <span aria-hidden="true">⏳</span>
+          <p>Cargando tablero...</p>
+        </div>
+      }
+
+      @if (error && !loading) {
+        <div class="error-container" role="alert" aria-live="assertive">
+          <span aria-hidden="true">⚠️</span>
+          <p class="error-text">{{ error }}</p>
+        </div>
+      }
+
+      @if (board && !loading && !error) {
+        <section
+          class="board-section"
+          [attr.aria-label]="'Tablero de comunicación: ' + board.name">
+
+          <div
+            class="pictogram-grid"
+            [style.grid-template-columns]="'repeat(' + board.columns + ', 1fr)'"
+            [style.grid-template-rows]="'repeat(' + board.rows + ', 1fr)'">
+
+            @for (row of grid; track trackByRow($index); let rowIndex = $index) {
+              @for (cell of row; track trackByCol($index, cell); let colIndex = $index) {
+
+                @if (cell) {
+                  <button
+                    class="pictogram-cell"
+                    (click)="speakPictogram(cell)"
+                    [attr.aria-label]="'Pictograma ' + cell.text + ': pulsa para escuchar'"
+                    type="button">
+                    <div class="pictogram-image-wrapper">
+                      <img
+                        [src]="cell.pictogramUrl"
+                        [alt]="cell.text"
+                        class="pictogram-image"
+                        [attr.loading]="rowIndex === 0 && colIndex === 0 ? 'eager' : 'lazy'" />
+                    </div>
+                    <span class="pictogram-label">{{ cell.text }}</span>
+                  </button>
+                } @else {
+                  <div class="pictogram-cell pictogram-cell--empty" aria-hidden="true"></div>
+                }
+
+              }
+            }
+
+          </div>
+        </section>
+      }
+
+    </main>
+  </div>
+
+</div>

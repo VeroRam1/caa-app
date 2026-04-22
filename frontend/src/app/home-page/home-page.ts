@@ -1,34 +1,138 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitterModule } from 'primeng/splitter';
-import { PanelModule } from 'primeng/panel';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth-service';
+import { Router } from '@angular/router';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ButtonModule,
     ToolbarModule,
     SplitterModule,
     DialogModule,
-    InputTextModule
-],
-  
+    InputTextModule,
+    MenuModule,
+  ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage {
-  onLogin() {
-    console.log("Ir a login");
+  menuItems: MenuItem[] = [
+    { label: 'Sobre nosotros', icon: 'pi pi-info-circle', command: () => {} },
+    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} },
+    { label: 'Tutoriales', icon: 'pi pi-play-circle', command: () => {} },
+    { label: 'Contacto', icon: 'pi pi-envelope', command: () => {} },
+    { separator: true },
+    { label: 'Configuración', icon: 'pi pi-cog', command: () => {} }
+  ];
+
+  //Dialolgs visibility
+  visibleLogin: boolean = false;
+  visibleRegister: boolean = false;
+
+  // Form data
+  loginEmail: string = '';
+  loginPassword: string = '';
+  loginError: string = '';
+  registerName: string = '';
+  registerEmail: string = '';
+  registerPassword: string = ''; 
+  registerError: string = '';
+
+  // Loading for desabling buttons while waiting for response
+  loading: boolean = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef     
+  ) {}
+
+  showLoginDialog() {
+    this.loginError = '';
+    this.visibleLogin = true;
+    this.cdr.markForCheck();
   }
+
+  showRegisterDialog() {
+    this.registerError = '';
+    this.visibleRegister = true;
+    this.cdr.markForCheck();
+  }
+
+  onLogin() {
+    this.loading = true;
+    this.loginError = '';
+    this.cdr.markForCheck();
+
+    this.authService.login(this.loginEmail, this.loginPassword).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.data.token);
+        this.authService.saveTutorName(response.data.name);
+        this.loading = false;
+        this.visibleLogin = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        // Shows backend message if exists
+        this.loginError = err.error?.message || 'Email o contraseña incorrectos';
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onRegister() {
+    this.loading = true;
+    this.registerError = '';
+    this.authService.register(this.registerName, this.registerEmail, this.registerPassword).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.data.token);
+        this.authService.saveTutorName(response.data.name);
+        this.loading = false;
+        this.visibleRegister = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.registerError = err.error?.message || 'Error al registrar usuario';
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
+
+  }
+
+  onCancelLogin(): void {
+  this.visibleLogin = false;
+  this.loginEmail = '';
+  this.loginPassword = '';
+  this.loginError = '';
+  this.cdr.markForCheck();
+}
+
+onCancelRegister(): void {
+  this.visibleRegister = false;
+  this.registerName = '';
+  this.registerEmail = '';
+  this.registerPassword = '';
+  this.registerError = '';
+  this.cdr.markForCheck();
+}
 
   onGuest() {
-    console.log("Entrar sin registrarse");
+    this.router.navigate(['/guest']);
   }
-
 }

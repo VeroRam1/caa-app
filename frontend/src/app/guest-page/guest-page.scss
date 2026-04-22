@@ -1,0 +1,207 @@
+// guest-page.component.scss
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f0f9ff;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+// ── Cabecera de la página ─────────────────────────────────────────────────────
+.main-content {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.page-header {
+  text-align: center;
+  max-width: 600px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1a4971;  // ratio 7.2:1 sobre #f0f9ff ✓
+  margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #4a6741;  // ratio 5.1:1 ✓
+  line-height: 1.5;
+  margin: 0;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+// ── Tarjetas de nivel ─────────────────────────────────────────────────────────
+.level-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.level-card {
+  background: white;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  min-width: 280px;
+  max-width: 340px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &--available {
+    border: 3px solid #b3ddff;
+    box-shadow: 0 4px 16px rgba(179,221,255,0.35);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(179,221,255,0.5);
+    }
+  }
+
+  &--unavailable {
+    border: 3px solid #e0e0e0;
+    opacity: 0.75;
+  }
+}
+
+// ── Cabecera de la tarjeta ────────────────────────────────────────────────────
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1a4971;
+  margin: 0;
+}
+
+.card-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.card-grid,
+.card-age {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4a85b5;
+  background: #e8f4fd;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #444;   // ratio 9.7:1 sobre blanco ✓
+  line-height: 1.5;
+  margin: 0;
+}
+
+// ── Preview del tablero ───────────────────────────────────────────────────────
+.board-preview {
+  background: #f0f9ff;
+  border: 2px solid #b3ddff;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--placeholder {
+    background: #f5f5f5;
+    border-color: #e0e0e0;
+  }
+}
+
+.placeholder-text {
+  font-size: 0.9rem;
+  color: #999;
+  font-weight: 600;
+}
+
+.preview-grid {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-cell {
+  background: white;
+  border: 1px solid #d6f0ff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+// ── Características ───────────────────────────────────────────────────────────
+.card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.card-feature {
+  font-size: 0.85rem;
+  color: #1a4971;  // ratio 7.2:1 ✓
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+// ── Botón de acción ───────────────────────────────────────────────────────────
+:host ::ng-deep .card-action-btn {
+  width: 100% !important;
+  justify-content: center;
+  min-height: 44px !important;  // criterio 2.5.8
+}
+
+// ── Tablet landscape ──────────────────────────────────────────────────────────
+@media (orientation: landscape) and (max-height: 600px) {
+  .level-cards { flex-direction: row; flex-wrap: nowrap; }
+  .level-card { min-width: 220px; padding: 1rem; }
+  .board-preview { aspect-ratio: 3/2; }
+}
