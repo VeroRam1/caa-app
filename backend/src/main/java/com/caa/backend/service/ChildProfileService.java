@@ -8,6 +8,7 @@ import com.caa.backend.mapper.ChildProfileMapper;
 import com.caa.backend.model.Board;
 import com.caa.backend.model.ChildProfile;
 import com.caa.backend.model.Tutor;
+import com.caa.backend.model.enums.Level;
 import com.caa.backend.repository.BoardRepository;
 import com.caa.backend.repository.ChildProfileRepository;
 import com.caa.backend.repository.TutorRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,6 +29,8 @@ public class ChildProfileService {
     private final TutorRepository tutorRepository;
     private final BoardRepository boardRepository;
     private final ChildProfileMapper childProfileMapper;
+    // Uploading images
+    private final FileStorageService fileStorageService;
 
     // ============= QUERIES =============
 
@@ -62,25 +66,65 @@ public class ChildProfileService {
         return childProfileMapper.toResponseWithBoards(profile);
     }
 
-    // ============= COMMANDS =============
-
     /**
-     * Create a new child profile under the authenticated tutor's account
-     * @param request creation data (name, birthDate, photoUrl, level)
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return created child profile
+     * Uploads a profile photo for a child profile.
+     * Saves the file to disk, updates photoUrl in the DB,
+     * and deletes the old photo if one existed.
+     *
+     * @param profileId  child profile ID
+     * @param file       uploaded image file
+     * @param tutorEmail authenticated tutor's email
+     * @return updated child profile response
      */
-    public ChildProfileResponseDTO createProfile(ChildProfileRequestDTO request, String tutorEmail) {
-        log.info("Creating new child profile '{}' for tutor: {}", request.getName(), tutorEmail);
+    @Transactional
+    public ChildProfileResponseDTO uploadPhoto(Long profileId, MultipartFile file, String tutorEmail) {
+        log.info("Uploading photo for child profile ID: {}", profileId);
+        Tutor tutor = loadTutorByEmail(tutorEmail);
+        ChildProfile profile = loadProfileForTutor(profileId, tutor.getId());
+
+        try {
+            // Delete old photo from disk if it exists
+            if (profile.getPhotoUrl() != null) {
+                fileStorageService.deleteProfilePhoto(profile.getPhotoUrl());
+            }
+
+            // Save new photo and update URL in profile
+            String photoUrl = fileStorageService.saveProfilePhoto(file);
+            profile.setPhotoUrl(photoUrl);
+
+            ChildProfile updated = childProfileRepository.save(profile);
+            log.info("Photo uploaded successfully for child profile ID: {}", profileId);
+            return childProfileMapper.toResponse(updated);
+
+        } catch (IllegalArgumentException e) {
+            throw e; // Re-throw validation errors (wrong file type)
+        } catch (Exception e) {
+            log.error("Error uploading photo for child profile ID: {}", profileId, e);
+            throw new RuntimeException("Error al subir la foto. Inténtalo de nuevo.");
+        }
+    }
+
+    @Transactional
+    public ChildProfileResponseDTO createProfile(ChildProfileRequestDTO dto, String tutorEmail) {
+        log.info("Creating new child profile '{}' for tutor: {}", dto.getName(), tutorEmail);
         Tutor tutor = loadTutorByEmail(tutorEmail);
 
-        ChildProfile profile = childProfileMapper.toEntity(request);
-        tutor.addChildProfile(profile); // Sets bidirectional relationship
+        ChildProfile profile = childProfileMapper.toEntity(dto);
+        tutor.addChildProfile(profile);
 
-        ChildProfile savedProfile = childProfileRepository.save(profile);
-        log.info("Child profile created successfully with ID: {}", savedProfile.getId());
+        // Auto-assign the default predefined board matching the profile's level
+        int levelNumber = dto.getLevelOrDefault() == Level.LEVEL_1 ? 1 :
+                dto.getLevelOrDefault() == Level.LEVEL_2 ? 2 : 3;
 
-        return childProfileMapper.toResponse(savedProfile);
+        boardRepository.findByIsPredefined(true).stream()
+                .filter(b -> b.getLevel() == levelNumber &&
+                        b.getName().toLowerCase().contains("general"))
+                .findFirst()
+                .ifPresent(profile::assignBoard);
+
+        ChildProfile saved = childProfileRepository.save(profile);
+        log.info("Child profile created with ID: {}", saved.getId());
+        return childProfileMapper.toResponse(saved);
     }
 
     /**

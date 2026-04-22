@@ -1,13 +1,17 @@
 package com.caa.backend.service;
 
 import com.caa.backend.dto.BoardRequestsDTOS.CreateBoardRequestDTO;
+import com.caa.backend.dto.BoardRequestsDTOS.ResizeBoardRequestDTO;
 import com.caa.backend.dto.BoardRequestsDTOS.UpdateBoardRequestDTO;
+import com.caa.backend.dto.BoardRequestsDTOS.UpdateBoardPictogramsRequestDTO;
 import com.caa.backend.dto.ResponseDTOs.BoardResponseDTO;
 import com.caa.backend.mapper.BoardMapper;
 import com.caa.backend.model.Board;
 import com.caa.backend.model.BoardPictogram;
+import com.caa.backend.model.Tutor;
 import com.caa.backend.repository.BoardRepository;
 import com.caa.backend.exception.ResourceNotFoundException;
+import com.caa.backend.repository.TutorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
+    private final TutorRepository tutorRepository;
 
     /**
      * Get all boards
@@ -50,6 +55,20 @@ public class BoardService {
     }
 
     /**
+     * Returns all boards owned by the authenticated tutor.
+     * Does NOT include predefined boards.
+     */
+    @Transactional(readOnly = true)
+    public List<BoardResponseDTO> getBoardsByOwner(String tutorEmail){
+        log.info("Fetching boards for tutor: {}", tutorEmail);
+        Tutor tutor = tutorRepository.findByEmail(tutorEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tutor not found: " + tutorEmail));
+        List<Board> boards = boardRepository.findByOwnerIdOrderByCreatedAtDesc(tutor.getId());
+        return boardMapper.toResponseList(boards);
+    }
+
+    /**
      * Create a new board
      * @param request board creation data
      * @return created board
@@ -65,6 +84,113 @@ public class BoardService {
         log.info("Board created successfully with ID: {}", savedBoard.getId());
 
         return boardMapper.toResponse(savedBoard);
+    }
+
+    /**
+     * Creates an editable copy of a board for the authenticated tutor.
+     * The copy:
+     * - Gets a new name: "[original name] (copia)"
+     * - Is marked as isPredefined=false
+     * - Has the tutor as owner
+     * - Has copies of all original pictograms
+     */
+    @Transactional
+    public BoardResponseDTO copyBoard(Long boardId, String tutorEmail) {
+        log.info("Copying board {} for tutor: {}", boardId, tutorEmail);
+
+        Board original = boardRepository.findByIdWithPictograms(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Board not found with ID: " + boardId));
+
+        Tutor tutor = tutorRepository.findByEmail(tutorEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tutor not found: " + tutorEmail));
+
+        // Create the copy
+        Board copy = new Board();
+        copy.setName(original.getName() + " (copia)");
+        copy.setDescription(original.getDescription());
+        copy.setRows(original.getRows());
+        copy.setColumns(original.getColumns());
+        copy.setLevel(original.getLevel());
+        copy.setIsPredefined(false);   // the copy is editable
+        copy.setOwner(tutor);
+
+        // Copy all pictograms with their positions
+        for (BoardPictogram originalPictogram : original.getPictograms()) {
+            BoardPictogram copiedPictogram = new BoardPictogram();
+            copiedPictogram.setPictogramId(originalPictogram.getPictogramId());
+            copiedPictogram.setPictogramUrl(originalPictogram.getPictogramUrl());
+            copiedPictogram.setText(originalPictogram.getText());
+            copiedPictogram.setPositionX(originalPictogram.getPositionX());
+            copiedPictogram.setPositionY(originalPictogram.getPositionY());
+            copiedPictogram.setBackgroundColor(originalPictogram.getBackgroundColor());
+            copiedPictogram.setBoard(copy);
+            copy.addPictogram(copiedPictogram);
+        }
+
+        Board saved = boardRepository.save(copy);
+        log.info("Board copied successfully with ID: {}", saved.getId());
+        return boardMapper.toResponseWithPictograms(saved);
+    }
+
+    /**
+     * Replaces all pictograms of a board with a new arrangement.
+     * Only the board owner can do this.
+     * Used by the drag & drop editor when saving changes.
+     */
+    @Transactional
+    public BoardResponseDTO updateBoardPictograms(
+            Long boardId,
+            UpdateBoardPictogramsRequestDTO request,
+            String tutorEmail) {
+
+        log.info("Updating pictograms for board {}", boardId);
+        Board board = loadBoardForOwner(boardId, tutorEmail);
+        // Remove all existing pictograms — orphanRemoval handles DB deletion
+        board.getPictograms().clear();
+
+        // Add the new arrangement
+        for (var dto : request.getPictograms()) {
+            BoardPictogram p = new BoardPictogram();
+            p.setPictogramId(dto.getPictogramId());
+            p.setPictogramUrl(dto.getPictogramUrl());
+            p.setText(dto.getText());
+            p.setPositionX(dto.getPositionX());
+            p.setPositionY(dto.getPositionY());
+            p.setBackgroundColor(dto.getBackgroundColor());
+            p.setBoard(board);
+            board.addPictogram(p);
+        }
+
+        Board updated = boardRepository.save(board);
+        log.info("Pictograms updated for board {}", boardId);
+        return boardMapper.toResponseWithPictograms(updated);
+    }
+
+    /**
+     * Resizes a board's grid.
+     * Validates that no existing pictograms fall outside the new dimensions.
+     * Only the board owner can do this.
+     */
+    @Transactional
+    public BoardResponseDTO resizeBoard(
+            Long boardId,
+            ResizeBoardRequestDTO request,
+            String tutorEmail) {
+
+        log.info("Resizing board {} to {}x{}", boardId, request.getRows(), request.getColumns());
+        Board board = loadBoardForOwner(boardId, tutorEmail);
+
+        // Reuse existing validation logic
+        validateBoardResize(board, request.getRows(), request.getColumns());
+
+        board.setRows(request.getRows());
+        board.setColumns(request.getColumns());
+
+        Board updated = boardRepository.save(board);
+        log.info("Board {} resized to {}x{}", boardId, request.getRows(), request.getColumns());
+        return boardMapper.toResponse(updated);
     }
 
     /**
@@ -211,7 +337,7 @@ public class BoardService {
         return boardRepository.existsById(id);
     }
 
-    // ============= HELPER METHODS =============
+    /******************** HELPER METHODS *****************************/
 
     /**
      * Validates that board can be resized without losing pictograms
@@ -231,6 +357,24 @@ public class BoardService {
                 );
             }
         }
+    }
+
+    /**
+     * Loads a board and verifies the authenticated tutor is the owner.
+     * Throws 403 if the tutor doesn't own the board.
+     * Throws 404 if the board doesn't exist.
+     */
+    private Board loadBoardForOwner(Long boardId, String tutorEmail) {
+        Board board = boardRepository.findByIdWithPictograms(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Board not found with ID: " + boardId));
+
+        if (board.getOwner() == null ||
+                !board.getOwner().getEmail().equals(tutorEmail)) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "You do not own this board");
+        }
+        return board;
     }
 
 

@@ -1,7 +1,9 @@
 package com.caa.backend.controller;
 
 import com.caa.backend.dto.BoardRequestsDTOS.CreateBoardRequestDTO;
+import com.caa.backend.dto.BoardRequestsDTOS.ResizeBoardRequestDTO;
 import com.caa.backend.dto.BoardRequestsDTOS.UpdateBoardRequestDTO;
+import com.caa.backend.dto.BoardRequestsDTOS.UpdateBoardPictogramsRequestDTO;
 import com.caa.backend.dto.ResponseDTOs.APIResponseDTO;
 import com.caa.backend.dto.ResponseDTOs.BoardResponseDTO;
 import com.caa.backend.service.BoardService;
@@ -14,6 +16,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +31,6 @@ public class BoardController {
     private final BoardService boardService;
 
     // Get all boards
-
     @GetMapping
     @Operation(summary="Get all boards", description="List of all boards without pictograms")
     public ResponseEntity<List<BoardResponseDTO>> getAllBoards(){
@@ -35,8 +38,23 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
 
-    // Get board by ID
+    // Get all boards created by the logged tutor
+    @GetMapping("/myBoards")
+    @Operation(summary = "Get tutor's boards",
+            description = "Returns all boards owned by the authenticated tutor")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Successfully retrieved list"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<List<BoardResponseDTO>> getMyBoards(
+            @AuthenticationPrincipal UserDetails userDetails){
+        log.info("GET /api/boards/myBoards - Fetching boards for tutor: {}",
+                userDetails.getUsername());
+        List<BoardResponseDTO> boards = boardService.getBoardsByOwner(userDetails.getUsername());
+        return ResponseEntity.ok(boards);
+    }
 
+    // Get board by ID
     @GetMapping("/{id}")
     @Operation(summary="Get all boards", description="List of all boards without pictograms")
     public ResponseEntity<BoardResponseDTO> getBoardById(@Parameter(description = "Board ID") @PathVariable Long id){
@@ -44,6 +62,7 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
+    // TODO - eliminar, no se usa
     // Create new board
     @PostMapping
     @Operation(summary = "Create a new board", description = "Create a new communication board")
@@ -59,6 +78,27 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Creates a copy of a predefined board so the tutor can edit it
+    @PostMapping("/{id}/copy")
+    @Operation(summary = "Copy a board",
+            description = "Creates an editable copy of a predefined board for the tutor")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Board copied successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Board not found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<APIResponseDTO<BoardResponseDTO>> copyBoard(
+            @Parameter(description = "Board ID to copy") @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("POST /api/boards/{}/copy - Copying board for tutor: {}",
+                id, userDetails.getUsername());
+        BoardResponseDTO copiedBoard = boardService.copyBoard(id, userDetails.getUsername());
+        APIResponseDTO<BoardResponseDTO> response =
+                APIResponseDTO.success("Tablero copiado correctamente", copiedBoard);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // TODO - eliminar, no se usa
     // Update an existing board
     @PutMapping("/{id}")
     @Operation(summary = "Update a board", description = "Update an existing board's information")
@@ -75,10 +115,46 @@ public class BoardController {
 
         APIResponseDTO<BoardResponseDTO> response = APIResponseDTO.success( "Board updated successfully", updatedBoard);
         return ResponseEntity.ok(response);
-
     }
 
-    // Update an existing board
+    @PutMapping("/{id}/pictograms")
+    @Operation(summary = "Update board pictograms",
+            description = "Replaces the pictogram layout of a board. Only the owner can do this.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pictograms updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Not the board owner"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Board not found")
+    })
+    public ResponseEntity<APIResponseDTO<BoardResponseDTO>> updateBoardPictograms(
+            @Parameter(description = "Board ID") @PathVariable Long id,
+            @Valid @RequestBody UpdateBoardPictogramsRequestDTO request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("PUT /api/boards/{}/pictograms - Updating pictograms for tutor: {}",
+                id, userDetails.getUsername());
+        BoardResponseDTO updatedBoard =
+                boardService.updateBoardPictograms(id, request, userDetails.getUsername());
+        APIResponseDTO<BoardResponseDTO> response =
+                APIResponseDTO.success("Pictogramas actualizados correctamente", updatedBoard);
+        return ResponseEntity.ok(response);
+    }
+
+    // Changes the rows and columns of a board and validates that no pictograms fall outside the new dimensions.
+    @PatchMapping("/{id}/resize")
+    @Operation(summary = "Resize a board",
+            description = "Changes the grid size. Fails if pictograms would fall outside new dimensions.")
+    public ResponseEntity<APIResponseDTO<BoardResponseDTO>> resizeBoard(
+            @PathVariable Long id,
+            @Valid @RequestBody ResizeBoardRequestDTO request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("PATCH /api/boards/{}/resize - Resizing to {}x{}", id, request.getRows(), request.getColumns());
+        BoardResponseDTO resizedBoard =
+                boardService.resizeBoard(id, request, userDetails.getUsername());
+        APIResponseDTO<BoardResponseDTO> response =
+                APIResponseDTO.success("Tablero redimensionado correctamente", resizedBoard);
+        return ResponseEntity.ok(response);
+    }
+
+    // Deletes an existing board
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a board", description = "Delete a board and all its pictograms")
     @ApiResponses(value = {

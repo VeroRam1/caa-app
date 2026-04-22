@@ -20,6 +20,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByRowsAndColumns(Integer rows, Integer columns);
     List<Board> findByRows(Integer rows);
     List<Board> findByColumns(Integer columns);
+    List<Board> findByOwnerIdOrderByCreatedAtDesc(Long ownerId);
+    List<Board> findByLevel(Integer level);
+    List<Board> findByIsPredefined(Boolean isPredefined);
+    List<Board> findByLevelOrderByCreatedAtDesc(Integer level);
+    Long countByRowsAndColumns(Integer rows, Integer columns);
+    boolean existsByName(String name);
+    List<Board> findAllByOrderByCreatedAtDesc();
+    List<Board> findAllByOrderByUpdatedAtDesc();
 
     /**
      * Obtiene un tablero con todos sus pictogramas cargados (evita N+1 queries)
@@ -36,11 +44,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT DISTINCT t FROM Board t LEFT JOIN FETCH t.pictograms")
     List<Board> findAllWithPictograms();
 
-    Long countByRowsAndColumns(Integer rows, Integer columns);
-    boolean existsByName(String name);
-    List<Board> findAllByOrderByCreatedAtDesc();
-    List<Board> findAllByOrderByUpdatedAtDesc();
-
     /**
      * Find boards with at least one pictogram
      * @return list of boards with pictograms
@@ -55,25 +58,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT t FROM Board t WHERE SIZE(t.pictograms) = 0")
     List<Board> findEmptyBoards();
 
-    /**
-     * Find boards by difficulty level
-     * @param level difficulty level (1-3)
-     * @return list of boards for that level
-     */
-    List<Board> findByLevel(Integer level);
-
-    /**
-     * Find predefined/template boards
-     * @return list of predefined boards
-     */
-    List<Board> findByIsPredefined(Boolean isPredefined);
-
-    /**
-     * Find boards by level ordered by creation date
-     * @param level difficulty level
-     * @return list of boards
-     */
-    List<Board> findByLevelOrderByCreatedAtDesc(Integer level);
 
     /**
      * Cuenta el número total de pictogramas en un tablero
@@ -82,4 +66,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     @Query("SELECT COUNT(p) FROM BoardPictogram p WHERE p.board.id = :boardId")
     Long countPictogramsByBoardId(@Param("boardID") Long boardId);
+
 }

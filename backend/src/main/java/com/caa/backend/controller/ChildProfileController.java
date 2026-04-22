@@ -9,6 +9,7 @@ import com.caa.backend.service.ChildProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +19,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/child-profiles")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Authentication", description = "Tutor registration and login")
+@Tag(name = "Child Profiles", description = "Manage child profiles linked to the authenticated tutor")
+@SecurityRequirement(name = "bearerAuth")
 public class ChildProfileController {
     private final ChildProfileService childProfileService;
 
@@ -163,6 +166,27 @@ public class ChildProfileController {
         log.info("DELETE /api/child-profiles/{}/boards/{} - Removing board", profileId, boardId);
         ChildProfileResponseDTO updatedProfile = childProfileService.removeBoard(profileId, boardId, userDetails.getUsername());
         APIResponseDTO<ChildProfileResponseDTO> response = APIResponseDTO.success("Board removed successfully", updatedProfile);
+        return ResponseEntity.ok(response);
+    }
+
+    // Upload photo
+    @PostMapping("/{id}/photo")
+    @Operation(summary = "Upload profile photo",
+            description = "Uploads a photo for a child profile. Replaces existing photo if present.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Photo uploaded successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid file type"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Child profile not found")
+    })
+    public ResponseEntity<APIResponseDTO<ChildProfileResponseDTO>> uploadPhoto(
+            @Parameter(description = "Child profile ID") @PathVariable Long id,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("POST /api/child-profiles/{}/photo - Uploading photo", id);
+        ChildProfileResponseDTO updatedProfile =
+                childProfileService.uploadPhoto(id, file, userDetails.getUsername());
+        APIResponseDTO<ChildProfileResponseDTO> response =
+                APIResponseDTO.success("Foto subida correctamente", updatedProfile);
         return ResponseEntity.ok(response);
     }
 

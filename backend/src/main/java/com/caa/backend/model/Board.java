@@ -79,6 +79,11 @@ public class Board {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Tutor that owns the board
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = true)
+    private Tutor owner;
+
     /**
      * Calcula el número total de celdas del tablero
      * @return filas * columnas

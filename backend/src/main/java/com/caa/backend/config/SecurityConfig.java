@@ -57,7 +57,9 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+
                         .requestMatchers("/api/arasaac/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()  // siempre el último, solo uno
                 )
 
