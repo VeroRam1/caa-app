@@ -1,0 +1,208 @@
+// my-boards.component.scss
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f0f9ff;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+// ── Contenido ──
+.main-content {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ── Secciones ──
+.boards-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1a4971;   // ratio 7.2:1 ✓
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-subtitle {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.loading-state {
+  color: #888;
+  font-size: 1rem;
+  padding: 1rem 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 1rem;
+  border: 2px dashed #b3ddff;
+  text-align: center;
+  color: #888;
+  font-size: 1rem;
+
+  span { font-size: 2.5rem; }
+  p { margin: 0; }
+}
+
+// ── Grid de tableros ──
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+// ── Cards de tablero ──
+.board-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &--predefined {
+    border: 2px solid #b3ddff;
+    box-shadow: 0 2px 8px rgba(179,221,255,0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(179,221,255,0.45);
+    }
+  }
+
+  &--mine {
+    border: 2px solid #a7f3d0;
+    box-shadow: 0 2px 8px rgba(167,243,208,0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(167,243,208,0.45);
+    }
+  }
+}
+
+// ── Cabecera de la card ──
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a4971;
+  margin: 0;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.card-level {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4a85b5;
+  background: #e8f4fd;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// ── Preview del tablero ──
+.board-preview {
+  background: #f8f9fa;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.4rem;
+  aspect-ratio: 4/3;
+}
+
+.preview-grid {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-cell {
+  background: white;
+  border: 1px solid #e8f4fd;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+// ── Meta info ──
+.card-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.card-size,
+.card-count {
+  font-size: 0.78rem;
+  color: #666;
+  font-weight: 600;
+  background: #f5f5f5;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+}
+
+// ── Acciones ──
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  // Criterio 2.5.8: min 44px de altura
+  :host ::ng-deep .p-button {
+    min-height: 36px;
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+// ── Tablet landscape — criterio 1.3.4 ──
+@media (orientation: landscape) and (max-height: 600px) {
+  .main-content { padding: 1rem; }
+  .boards-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}

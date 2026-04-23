@@ -85,7 +85,7 @@ export class Dashboard implements OnInit {
   constructor(
     private authService: AuthService,
     public childProfileService: ChildProfileService,
-    private router: Router,
+    public router: Router,
     private cdr: ChangeDetectorRef 
   ) {}
 

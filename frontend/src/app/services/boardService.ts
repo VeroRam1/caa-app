@@ -27,6 +27,17 @@ export interface Board {
     updatedAt: string;
 }
 
+export interface UpdatePictogramsRequest {
+  pictograms: {
+    pictogramId: number;
+    pictogramUrl: string;
+    text: string;
+    positionX: number;
+    positionY: number;
+    backgroundColor: string | null;
+  }[];
+}
+
 @Injectable({
     providedIn: "root",
 })
@@ -53,10 +64,33 @@ export class BoardService {
     return this.http.get<Board[]>(this.apiUrl);
     }
 
-    /**
-     * Gets boards by level — used for guest page and category sidebar.
-     */
+    // Gets boards by level — used for guest page and category sidebar.
     getPredefinedBoardsByLevel(level: number): Observable<Board[]> {
     return this.http.get<Board[]>(`${this.apiUrl}/level/${level}`);
     }
+
+    // Get the boards assigned to the logged-in user with all its pictograms
+    getMyBoards(): Observable<Board[]> {
+        return this.http.get<Board[]>(`${this.apiUrl}/myBoards`);
+    }
+
+    copyBoard(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/copy`, {});
+  }
+
+  updateBoard(id: number, data: { name: string; description: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
+
+  resizeBoard(id: number, rows: number, columns: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/resize`, { rows, columns });
+  }
+
+  updateBoardPictograms(id: number, request: UpdatePictogramsRequest): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/pictograms`, request);
+  }
+
+  deleteBoard(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

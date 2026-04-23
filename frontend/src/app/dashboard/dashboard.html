@@ -43,6 +43,13 @@
     <ng-template #end>
       <div class="toolbar-end">
         <p-button
+          label="Mis tableros"
+          icon="pi pi-th-large"
+          severity="secondary"
+          (click)="router.navigate(['/my-boards'])"
+          aria-label="Gestionar mis tableros" />
+
+        <p-button
           [label]="editMode ? 'Listo' : 'Editar perfiles'"
           [icon]="editMode ? 'pi pi-check' : 'pi pi-pencil'"
           [severity]="editMode ? 'success' : 'secondary'"
@@ -252,7 +259,7 @@
     </small>
   </div>
 
-  <!-- Nombre -->
+  <!-- Name -->
   <div class="flex items-center gap-4 mb-4">
     <label for="edit-name" class="font-semibold w-28">Nombre</label>
     <input
@@ -264,7 +271,7 @@
       aria-required="true" />
   </div>
 
-  <!-- Fecha de nacimiento -->
+  <!-- Birth date -->
   <div class="flex items-center gap-4 mb-4">
     <label for="edit-birth" class="font-semibold w-28">Nacimiento</label>
     <input
