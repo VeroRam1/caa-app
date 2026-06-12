@@ -13,7 +13,9 @@ import { AuthService } from '../services/auth-service';
 import { ChildProfileService, ChildProfile, CreateChildProfileRequest } from '../services/childProfile-service';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';   
 import { ToastModule } from 'primeng/toast';
+import { DividerModule } from 'primeng/divider';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Board, BoardService } from '../services/boardService';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,7 +32,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     SelectModule, 
     ButtonModule, 
     ConfirmPopupModule,
-    ToastModule
+    ToastModule,
+    DividerModule
 
   ],
   // ConfirmationService y MessageService needed for the confirmation pop up and the toast messages, respectively
@@ -76,6 +79,13 @@ export class Dashboard implements OnInit {
   editProfilePhoto: string = '';
   editProfileLevel: string = 'LEVEL_1';
 
+  // Manage assigned boards dialog
+  visibleManageBoards: boolean = false;
+  myBoards: any[] = [];
+  loadingBoards: boolean = false;
+  assigningBoard: boolean = false;
+  profileBoards: any[] = [];
+
   levelOptions = [
     { label: 'Nivel 1 — Básico', value: 'LEVEL_1' },
     { label: 'Nivel 2 — Intermedio', value: 'LEVEL_2' },
@@ -85,6 +95,7 @@ export class Dashboard implements OnInit {
   constructor(
     private authService: AuthService,
     public childProfileService: ChildProfileService,
+    private boardService: BoardService,
     public router: Router,
     private cdr: ChangeDetectorRef 
   ) {}
@@ -141,6 +152,91 @@ export class Dashboard implements OnInit {
     } else {
       this.onSelectProfile(profile);
     }
+  }
+
+  openManageBoardsDialog(): void {
+    if (!this.selectedProfile) return;
+    this.visibleEditActions = false;
+    this.profileBoards = this.selectedProfile.assignedBoards || [];
+    this.loadMyBoards();
+    this.visibleManageBoards = true;
+    this.cdr.markForCheck();
+  }
+
+  loadMyBoards(): void {
+    this.loadingBoards = true;
+    this.cdr.markForCheck();
+    this.boardService.getMyBoards().subscribe({
+      next: (boards) => {
+        this.myBoards = boards;
+        this.loadingBoards = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.loadingBoards = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+  
+  isAssigned(boardId: number): boolean{
+    return this.profileBoards.some(b => b.id === boardId);
+  }
+
+  onAssignBoard(board: Board): void {
+    if (!this.selectedProfile || this.isAssigned(board.id)) return;
+    this.assigningBoard = true;
+    this.cdr.markForCheck();
+    
+   this.childProfileService.assignBoard(
+    this.selectedProfile.id, board.id).subscribe({
+      next: (response) => {
+        this.profileBoards = response.data?.assignedBoards || [...this.profileBoards, board];
+          this.assigningBoard = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Tablero asignado',
+            detail: 'El tablero ha sido asignado al perfil.'
+        });
+        this.cdr.markForCheck();
+        setTimeout(() => this.loadProfiles(), 0);
+      },
+      error: () => {
+        this.assigningBoard = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo asignar el tablero. Inténtalo de nuevo.'
+      });
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onRemoveBoard(board: Board): void {
+    if (!this.selectedProfile) return;
+
+    this.childProfileService.assignBoard(
+    this.selectedProfile.id, board.id).subscribe({
+      next: () => {
+        this.profileBoards = this.profileBoards.filter(b => b.id !== board.id);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Tablero eliminado',
+          detail: `"${board.name}" ha sido eliminado del perfil ${this.selectedProfile?.name}.`
+        });
+        this.cdr.markForCheck();
+        setTimeout(() => this.loadProfiles(), 0);
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el tablero. Inténtalo de nuevo.'
+        });
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onNewFileSelected(event: Event): void {
@@ -214,14 +310,15 @@ export class Dashboard implements OnInit {
   }
 
   onSelectProfile(profile: ChildProfile): void {
-      // Goes to the first assigned board of the profile, if it has any. Otherwise, goes to the default board (id=1)
-      if (profile.assignedBoards && profile.assignedBoards.length > 0) { // TODO: Si no tine tableros asignados, debería ver el nivel e ir al tablero predeterminado de ese nivel
-        this.router.navigate(['/board', profile.assignedBoards[0].id]);
-      } else {
-        // If it has no assigned boards, navigate to the default board (id=1)
-        this.router.navigate(['/board', 1]);
-      }
+    this.authService.saveActiveProfile(profile.id, profile.level);
+    // Goes to the first assigned board of the profile, if it has any. 
+    if (profile.assignedBoards && profile.assignedBoards.length > 0) { 
+      this.router.navigate(['/board', profile.assignedBoards[0].id]);
+    } else {
+      // If it has no assigned boards, navigate to the default board 
+      this.router.navigate(['/board', 0]);
     }
+  }
 
   // Actions dialog
   openActionsDialog(profile: ChildProfile): void {

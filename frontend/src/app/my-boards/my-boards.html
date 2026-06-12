@@ -53,10 +53,10 @@
 
   <main class="main-content" role="main">
 
-    <!-- ── Tableros predeterminados ── -->
+    <!-- ── predetermined boards ── -->
     <section class="boards-section" aria-labelledby="predefined-title">
       <h2 id="predefined-title" class="section-title">
-        <span aria-hidden="true">📋</span> Tableros predeterminados
+        Tableros predeterminados
       </h2>
       <p class="section-subtitle">
         Estos tableros no se pueden editar directamente.
@@ -70,68 +70,51 @@
       } @else if (predefinedBoards.length === 0) {
         <div class="empty-state">No hay tableros predeterminados disponibles.</div>
       } @else {
-        <div class="boards-grid">
-          @for (board of predefinedBoards; track board.id) {
-            <article
-              class="board-card board-card--predefined"
-              [attr.aria-label]="board.name + ' — ' + getLevelLabel(board.level)">
+        @for (category of groupedPredefinedBoards; track category.label) {
+          <div class="category-group">
 
-              <header class="card-header">
-                <h3 class="card-name">{{ board.name }}</h3>
-                <span class="card-level">{{ getLevelLabel(board.level) }}</span>
-              </header>
+            <h3 class="category-group-title">{{ category.label }}</h3>
 
-              <!-- Mini preview -->
-              <div
-                class="board-preview"
-                role="img"
-                [attr.aria-label]="'Vista previa de ' + board.name">
-                <div
-                  class="preview-grid"
-                  [style.grid-template-columns]="'repeat(' + board.columns + ', 1fr)'"
-                  [style.grid-template-rows]="'repeat(' + board.rows + ', 1fr)'">
-                  @for (row of getPreviewGrid(board); track $index) {
-                    @for (cell of row; track $index) {
-                      <div class="preview-cell">
-                        @if (cell) {
-                          <img [src]="cell" alt="" aria-hidden="true"
-                               class="preview-img" loading="lazy" />
-                        }
-                      </div>
-                    }
-                  }
-                </div>
-              </div>
+            <div class="boards-grid">
+              @for (board of category.boards; track board.id) {
+                <article
+                  class="board-card board-card--predefined"
+                  [attr.aria-label]="board.name">
 
-              <div class="card-meta">
-                <span class="card-size" aria-label="Tamaño del tablero">
-                  {{ board.rows }} × {{ board.columns }}
-                </span>
-                <span class="card-count">
-                  {{ board.pictogramCount }} pictogramas
-                </span>
-              </div>
+                  <div class="card-info">
+                    <div class="card-header">
+                      <h4 class="card-name">{{ board.name }}</h4>
+                      <span class="card-level">{{ getLevelLabel(board.level) }}</span>
+                    </div>
 
-              <footer class="card-actions">
-                <p-button
-                  label="Ver"
-                  icon="pi pi-eye"
-                  severity="secondary"
-                  size="small"
-                  (click)="onViewBoard(board)"
-                  [attr.aria-label]="'Ver tablero ' + board.name" />
-                <p-button
-                  label="Copiar y editar"
-                  icon="pi pi-copy"
-                  size="small"
-                  [loading]="copying"
-                  (click)="onCopyAndEdit(board)"
-                  [attr.aria-label]="'Crear copia editable de ' + board.name" />
-              </footer>
+                    <div class="card-meta">
+                      <span class="card-size">{{ board.rows }} × {{ board.columns }}</span>
+                      <span class="card-count">{{ board.pictogramCount }} pictogramas</span>
+                    </div>
+                  </div>
 
-            </article>
-          }
-        </div>
+                  <footer class="card-actions">
+                    <p-button
+                      label="Ver"
+                      icon="pi pi-eye"
+                      severity="secondary"
+                      size="small"
+                      (click)="onViewBoard(board)"
+                      [attr.aria-label]="'Ver tablero ' + board.name" />
+                    <p-button
+                      label="Copiar y editar"
+                      icon="pi pi-copy"
+                      size="small"
+                      [loading]="copying"
+                      (click)="onCopyAndEdit(board)"
+                      [attr.aria-label]="'Crear copia editable de ' + board.name" />
+                  </footer>
+
+                </article>
+              }
+            </div>
+          </div>
+        }
       }
     </section>
 
@@ -161,36 +144,16 @@
               class="board-card board-card--mine"
               [attr.aria-label]="board.name + ' — ' + getLevelLabel(board.level)">
 
-              <header class="card-header">
-                <h3 class="card-name">{{ board.name }}</h3>
-                <span class="card-level">{{ getLevelLabel(board.level) }}</span>
-              </header>
-
-              <!-- Mini preview -->
-              <div
-                class="board-preview"
-                role="img"
-                [attr.aria-label]="'Vista previa de ' + board.name">
-                <div
-                  class="preview-grid"
-                  [style.grid-template-columns]="'repeat(' + board.columns + ', 1fr)'"
-                  [style.grid-template-rows]="'repeat(' + board.rows + ', 1fr)'">
-                  @for (row of getPreviewGrid(board); track $index) {
-                    @for (cell of row; track $index) {
-                      <div class="preview-cell">
-                        @if (cell) {
-                          <img [src]="cell" alt="" aria-hidden="true"
-                               class="preview-img" loading="lazy" />
-                        }
-                      </div>
-                    }
-                  }
+              <div class="card-info">
+                <div class="card-header">
+                  <h4 class="card-name">{{ board.name }}</h4>
+                  <span class="card-level">{{ getLevelLabel(board.level) }}</span>
                 </div>
-              </div>
 
-              <div class="card-meta">
-                <span class="card-size">{{ board.rows }} × {{ board.columns }}</span>
-                <span class="card-count">{{ board.pictogramCount }} pictogramas</span>
+                <div class="card-meta">
+                  <span class="card-size">{{ board.rows }} × {{ board.columns }}</span>
+                  <span class="card-count">{{ board.pictogramCount }} pictogramas</span>
+                </div>
               </div>
 
               <footer class="card-actions">

@@ -1,4 +1,3 @@
-// dashboard.component.scss
 .page-container {
   display: flex;
   flex-direction: column;
@@ -19,7 +18,6 @@
   align-items: center;
 }
 
-// ── Contenido ──
 .main-content {
   flex: 1;
   display: flex;
@@ -30,7 +28,6 @@
   overflow-y: auto;
 }
 
-// ── Bienvenida ──
 .welcome-section {
   text-align: center;
 }
@@ -52,13 +49,12 @@
   margin: 0;
 }
 
-// Aviso de modo edición
 .edit-mode-notice {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   background: #fef3c7;
-  color: #713f12;     // ratio 6.5:1 sobre #fef3c7 ✓ criterio 1.4.3
+  color: #713f12;     // ratio 6.5:1 over #fef3c7  criteria 1.4.3
   border: 1.5px solid #fde68a;
   border-radius: 999px;
   padding: 0.4rem 1rem;
@@ -72,7 +68,6 @@
   font-size: 1rem;
 }
 
-// ── Perfiles ──
 .profiles-container {
   display: flex;
   flex-wrap: wrap;
@@ -98,7 +93,6 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   }
 
-  // En modo edición el hover es distinto — indica acción de editar
   &--edit-mode:hover .profile-circle {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(253,230,138,0.6);
@@ -106,7 +100,6 @@
   }
 }
 
-// Wrapper para posicionar el overlay de edición
 .profile-circle-wrapper {
   position: relative;
   display: inline-block;
@@ -125,7 +118,6 @@
   box-shadow: 0 4px 12px rgba(179,221,255,0.4);
   overflow: hidden;
 
-  // Variante pequeña para el dialog de acciones
   &--small {
     width: 60px;
     height: 60px;
@@ -145,12 +137,11 @@
   color: #1a4971;
 }
 
-// Overlay del lápiz en modo edición
 .edit-overlay {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(245,158,11,0.75);  // amarillo semitransparente
+  background: rgba(245,158,11,0.75);  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +153,6 @@
   color: white;
 }
 
-// Círculo de añadir perfil
 .profile-add {
   background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
   border-color: #ccc;
@@ -184,7 +174,7 @@
 .profile-name {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1a4971;   // ratio 7.2:1 ✓
+  color: #1a4971;   // ratio 7.2:1 
   text-align: center;
   max-width: 110px;
 }
@@ -196,7 +186,7 @@
   text-align: center;
 }
 
-// ── Dialog de acciones ──
+
 .actions-dialog-content {
   display: flex;
   flex-direction: column;
@@ -230,14 +220,12 @@
   gap: 0.75rem;
 }
 
-// Botones de acción a ancho completo
 :host ::ng-deep .action-btn {
   width: 100% !important;
   justify-content: flex-start !important;
-  min-height: 44px !important;  // criterio 2.5.8
+  min-height: 44px !important;  // criteria 2.5.8
 }
 
-// ── Subida de foto ──
 .photo-section {
   display: flex;
   flex-direction: column;
@@ -276,7 +264,6 @@
   color: #b3ddff;
 }
 
-// Input de archivo oculto — el label actúa como botón
 .photo-input-hidden {
   position: absolute;
   width: 1px;
@@ -293,14 +280,14 @@
   align-items: center;
   gap: 0.5rem;
   background: #e8f4fd;
-  color: #1a4971;        // ratio 7.2:1 ✓ criterio 1.4.3
+  color: #1a4971;        // ratio 7.2:1 ✓ criteria 1.4.3
   border: 2px solid #b3ddff;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  min-height: 44px;      // criterio 2.5.8
+  min-height: 44px;      // criteria 2.5.8
   transition: background 0.15s ease;
 
   &:hover {
@@ -317,4 +304,111 @@
   color: #666;
   font-size: 0.8rem;
   text-align: center;
+}
+
+.manage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.manage-section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a4971;
+  margin: 0;
+}
+
+.manage-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 0.75rem;
+  border: 2px dashed #dee2e6;
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+
+  span { font-size: 2rem; }
+  p { margin: 0; }
+}
+
+.manage-loading {
+  color: #888;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+.assigned-boards-list,
+.available-boards-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.assigned-board-item,
+.available-board-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1.5px solid #b3ddff;
+  background: white;
+  min-height: 56px;   // criterio 2.5.8
+
+  &--assigned {
+    background: #f0f9ff;
+    border-color: #a7f3d0;
+    opacity: 0.8;
+  }
+}
+
+.board-item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.board-item-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.board-item-name {
+  display: block;
+  font-size: 0.9rem;
+  color: #1a4971;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.board-item-meta {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.assigned-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #065f46;
+  background: #d1fae5;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }

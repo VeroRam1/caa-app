@@ -42,5 +42,24 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this.getToken() !== null;
   }
+  saveActiveProfile(profileId: number, level: string) {
+    localStorage.setItem('activeProfileId', profileId.toString());
+    localStorage.setItem('activeProfileLevel', level);
+
+  }
+  getActiveProfileLevel(): string {
+    return localStorage.getItem('activeProfileLevel') || 'LEVEL_1';
+  }
+
+  getActiveProfileId(): number | null {
+    const id = localStorage.getItem('activeProfileId');
+    return id ? Number(id) : null;
+  }
+
+  clearActiveProfile() {
+    localStorage.removeItem('activeProfileId');
+    localStorage.removeItem('activeProfileLevel');
+  }
+  
 
 }

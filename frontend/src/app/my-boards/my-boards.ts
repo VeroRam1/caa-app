@@ -14,6 +14,11 @@ import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { BoardService, Board } from '../services/boardService';
 import { AuthService } from '../services/auth-service';
 
+interface BoardCategory {
+  label: string;
+  boards: Board[];
+}
+
 @Component({
   selector: 'app-my-boards',
   standalone: true,
@@ -42,6 +47,30 @@ export class MyBoardsComponent implements OnInit {
   loadingPredefined: boolean = true;
   loadingMine: boolean = true;
   copying: boolean = false;
+
+  get groupedPredefinedBoards(): BoardCategory[] {
+    const CategoryNames = [
+      { label: 'General', keywords: ['básico', 'general'] },
+      { label: 'Alimentos', keywords: ['alimentos'] },
+      { label: 'Emociones', keywords: ['emociones'] },
+      { label: 'Lugares', keywords: ['lugares'] },
+      { label: 'Personas', keywords: ['personas'] },
+      { label: 'Acciones', keywords: ['acciones'] }
+    ];
+
+    return CategoryNames
+    .map(category => ({
+      label: category.label,
+      boards: this.predefinedBoards.filter(board =>
+
+        category.keywords.some(keyword => 
+          board.name.toLowerCase().includes(keyword)
+        )
+      )
+    }))
+    .filter(category => category.boards.length > 0);
+    
+  }
 
   constructor(
     private boardService: BoardService,
@@ -104,7 +133,9 @@ export class MyBoardsComponent implements OnInit {
   }
 
   onViewBoard(board: Board): void {
-    this.router.navigate(['/board', board.id]);
+    this.router.navigate(['/board', board.id], { 
+      queryParams: { mode: 'tutor' } 
+    });
   }
 
   onCopyAndEdit(board: Board): void {

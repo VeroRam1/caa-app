@@ -11,13 +11,25 @@ import { MenuModule } from 'primeng/menu';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ToastModule } from 'primeng/toast';
+import { forkJoin } from 'rxjs';
 
 // Category definition — links a display name to a board name in the backend
-interface Category {
+interface SubLevel {
   label: string;
-  icon: string;
+  level: number;
   boardName: string;
 }
+
+interface Category {
+  label: string;
+  iconPictogramId: number;
+  subLevels: SubLevel[];
+}
+interface PhraseItem {
+  pictogramUrl: string;
+  text: string;
+}
+
 
 @Component({
   selector: 'app-board-view',
@@ -39,31 +51,98 @@ export class BoardView implements OnInit {
   private confirmationService = inject(ConfirmationService);
 
   board: Board | null = null;
-  allBoards: Board[] = [];        // all level-1 predefined boards
+  allBoards: Board[] = [];
   loading: boolean = true;
-  loadingCategory: boolean = false;
   error: string = '';
   grid: (BoardPictogram | null)[][] = [];
 
+  profileLevel: string = 'LEVEL_1';
+  phraseItems: PhraseItem[] = [];
+
   // Sidebar state
   sidebarOpen: boolean = true;
-  activeCategory: string = 'Básico';
+  activeCategory: string = 'General';
 
-  // Categories matching the board names created by DataInitializer
-  categories: Category[] = [
-    { label: 'Básico',    icon: '🏠', boardName: 'Tablero Básico - Nivel 1' },
-    { label: 'Alimentos',  icon: '🍎', boardName: 'Alimentos - Nivel 1' },
-    { label: 'Emociones',  icon: '😊', boardName: 'Emociones - Nivel 1' },
-    { label: 'Lugares',    icon: '🏠', boardName: 'Lugares - Nivel 1' },
-    { label: 'Personas',   icon: '👨‍👩‍👧', boardName: 'Personas - Nivel 1' },
-  ];
-
-  // Lock mechanism
+  // Lock
   lockTapCount: number = 0;
   lockTapTimer: ReturnType<typeof setTimeout> | null = null;
   lockShaking: boolean = false;
 
+  isTutorMode: boolean = false;
+  isGuestMode: boolean = false;
+
   private synth = window.speechSynthesis;
+
+  readonly allCategories: Category[] = [
+    {
+      label: 'General',
+      iconPictogramId: 2,      
+      subLevels: [
+        { label: 'Nivel 1', level: 1, boardName: 'Tablero Básico - Nivel 1' },
+        { label: 'Nivel 2', level: 2, boardName: 'Tablero General - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Tablero General - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Alimentos',
+      iconPictogramId: 7841,    
+      subLevels: [
+        { label: 'Nivel 1', level: 1, boardName: 'Alimentos - Nivel 1' },
+        { label: 'Nivel 2', level: 2, boardName: 'Alimentos - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Alimentos - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Emociones',
+      iconPictogramId: 8484,  
+      subLevels: [
+        { label: 'Nivel 1', level: 1, boardName: 'Emociones - Nivel 1' },
+        { label: 'Nivel 2', level: 2, boardName: 'Emociones - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Emociones - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Lugares',
+      iconPictogramId: 6038,   
+      subLevels: [
+        { label: 'Nivel 1', level: 1, boardName: 'Lugares - Nivel 1' }
+      ]
+    },
+    {
+      label: 'Personas',
+      iconPictogramId: 7873,   
+      subLevels: [
+        { label: 'Nivel 1', level: 1, boardName: 'Personas - Nivel 1' }
+      ]
+    },
+    {
+      label: 'Acciones',
+      iconPictogramId: 4886,   
+      subLevels: [
+        { label: 'Nivel 2', level: 2, boardName: 'Acciones - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Acciones - Nivel 3' }
+      ]
+    }
+  ];
+
+  get categories(): Category[] {
+    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3: this.profileLevel === 'LEVEL_2' ? 2 : 1;
+    return this.allCategories
+      .map(cat => ({
+          ...cat, 
+          subLevels: cat.subLevels.filter(sl => sl.level <= maxLevel)
+    }))
+    .filter(cat => cat.subLevels.length > 0);
+  }
+
+  get hasPhraseBar(): boolean {
+    if (this.isTutorMode) return false;
+    return this.profileLevel === 'LEVEL_2' || this.profileLevel === 'LEVEL_3';
+  }
+
+  getArasaacIconUrl(pictogramId: number): string {
+    return `https://static.arasaac.org/pictograms/${pictogramId}/${pictogramId}_300.png`;
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -74,7 +153,12 @@ export class BoardView implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Load all predefined boards first, then show the requested one
+    this.isTutorMode = this.route.snapshot.queryParams['mode'] === 'tutor';
+    this.isGuestMode = this.route.snapshot.queryParams['mode'] === 'guest';
+    // Level from query param or localstorage (authenticated profile)
+    const levelFromParam = this.route.snapshot.queryParams['level'];
+    this.profileLevel = levelFromParam || this.authService.getActiveProfileLevel();
+    console.log('Profile level:', this.profileLevel);
     this.loadAllBoards();
   }
 
@@ -82,14 +166,41 @@ export class BoardView implements OnInit {
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.boardService.getPredefinedBoardsByLevel(1).subscribe({
-      next: (boards) => {
-        this.allBoards = boards;
+    if (this.isTutorMode){
+      const boardId = Number(this.route.snapshot.paramMap.get('id'));
+      if (boardId > 0) {
+        this.loadBoardWithPictograms(boardId);
+      } else {
+        this.error = 'Tablero no encontrado.';
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+      return;
+    }
 
-        // Try to load the board requested via route param with full pictogram data
+    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 :
+                   this.profileLevel === 'LEVEL_2' ? 2 : 1;
+
+    const levelRequests = Array.from({ length: maxLevel }, (_, i) =>
+      this.boardService.getPredefinedBoardsByLevel(i + 1)
+    );
+
+    forkJoin(levelRequests).subscribe({
+      next: (results) => {
+        this.allBoards = results.flat();
+
         const boardId = Number(this.route.snapshot.paramMap.get('id'));
-        const requested = boards.find(b => b.id === boardId);
-        const target = requested || boards.find(b => b.name.includes('Básico')) || boards[0];
+        const requested = boardId > 0
+          ? this.allBoards.find(b => b.id === boardId)
+          : null;
+
+        const generalName = maxLevel === 1 ? 'Tablero Básico - Nivel 1' :
+                            maxLevel === 2 ? 'Tablero General - Nivel 2' :
+                                            'Tablero General - Nivel 3';
+
+        const target = requested ||
+          this.allBoards.find(b => b.name === generalName) ||
+          this.allBoards[0];
 
         if (target) {
           this.loadBoardWithPictograms(target.id);
@@ -107,12 +218,19 @@ export class BoardView implements OnInit {
     });
   }
 
+  onBackToMyBoards(): void {
+    this.router.navigate(['/my-boards']);
+  }
+
+  onBackToGuest(): void {
+    this.router.navigate(['/guest-page']);
+  }
+
   
   // Loads a specific board with all its pictograms via GET /api/boards/{id}
   loadBoardWithPictograms(id: number): void {
     this.loading = true;
     this.cdr.markForCheck();
-
     this.boardService.getBoardById(id).subscribe({
       next: (board) => {
         this.showBoard(board);
@@ -127,25 +245,60 @@ export class BoardView implements OnInit {
     });
   }
 
-  onCategorySelect(category: Category): void {
-    const target = this.allBoards.find(b => b.name === category.boardName);
-    console.log('target:', target?.id, target?.name);
-    console.log('board actual:', this.board?.id, this.board?.name);
-    console.log('activeCategory:', this.activeCategory);
-    
-    if (!target) return;
-    if (this.board?.id === target.id) return;
-
-    this.activeCategory = category.label;
-    this.loadBoardWithPictograms(target.id);
-    this.router.navigate(['/board', target.id], { replaceUrl: true });
-  }
   showBoard(board: Board): void {
     this.board = board;
     this.buildGrid(board);
-    // Set active category based on board name
-    const cat = this.categories.find(c => c.boardName === board.name);
-    if (cat) this.activeCategory = cat.label;
+    // Find which category this board belongs to
+    for (const cat of this.allCategories) {
+      if (cat.subLevels.some(sl => sl.boardName === board.name)) {
+        this.activeCategory = cat.label;
+        break;
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
+  buildGrid(board: Board): void {
+    this.grid = Array.from({ length: board.rows }, () =>
+      Array(board.columns).fill(null)
+    );
+    for (const p of board.pictograms) {
+      if (p.positionY < board.rows && p.positionX < board.columns) {
+        this.grid[p.positionY][p.positionX] = p;
+      }
+    }
+  }
+
+  /** Category selection */
+  // Called when a category button is clicked. If the category has only one sub-level, load it directly and if it has multiple, show the popup to choose.
+  onCategoryClick(event: Event, category: Category, overlayPanel: any): void {
+    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 :
+                      this.profileLevel === 'LEVEL_2' ? 2 : 1;
+
+    const subLevel = [...category.subLevels]
+      .reverse()
+      .find(sl => sl.level <= maxLevel);  
+    if (!subLevel) return;
+
+    const target = this.allBoards.find(b => b.name === subLevel.boardName);
+    if (!target || this.board?.id === target.id) return;
+   
+    this.activeCategory = category.label;
+    this.loadBoardWithPictograms(target.id);
+    this.router.navigate(['/board', target.id], {replaceUrl: true});
+    this.cdr.markForCheck();
+    
+  }
+
+  onSubLevelSelect(subLevel: SubLevel, overlayPanel: any): void {
+    const target = this.allBoards.find(b => b.name === subLevel.boardName);
+    if (!target || this.board?.id === target.id) {
+      overlayPanel?.hide();
+      return;
+    }
+    this.loadBoardWithPictograms(target.id);
+    this.router.navigate(['/board', target.id], {replaceUrl: true});
+    overlayPanel?.hide();
     this.cdr.markForCheck();
   }
 
@@ -154,17 +307,45 @@ export class BoardView implements OnInit {
     this.cdr.markForCheck();
   }
 
-  buildGrid(board: Board): void {
-    this.grid = Array.from({ length: board.rows }, () =>
-      Array(board.columns).fill(null)
-    );
-    for (const pictogram of board.pictograms) {
-      const row = pictogram.positionY;
-      const col = pictogram.positionX;
-      if (row < board.rows && col < board.columns) {
-        this.grid[row][col] = pictogram;
-      }
+  /** Pictogram interaction */
+  onPictogramClick(pictogram: BoardPictogram): void {
+    this.speakText(pictogram.text);
+    if (this.hasPhraseBar) {
+      this.phraseItems.push({
+        pictogramUrl: pictogram.pictogramUrl,
+        text: pictogram.text
+      });
+      this.cdr.markForCheck();
     }
+  }
+
+  speakText(text: string): void {
+    if (!this.synth) return;
+    this.synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.85;
+    utterance.pitch = 1.1;
+    utterance.volume = 1;
+    this.synth.speak(utterance);
+  }
+
+  /** Phrase bar */
+
+  speakPhrase(): void {
+    if (this.phraseItems.length === 0) return;
+    const phrase = this.phraseItems.map(p => p.text).join(' ');
+    this.speakText(phrase);
+  }
+
+  removePhraseItem(index: number): void {
+    this.phraseItems.splice(index, 1);
+    this.cdr.markForCheck();
+  }
+
+  clearPhrase(): void {
+    this.phraseItems = [];
+    this.cdr.markForCheck();
   }
 
   speakPictogram(pictogram: BoardPictogram): void {
@@ -177,6 +358,8 @@ export class BoardView implements OnInit {
     utterance.volume = 1;
     this.synth.speak(utterance);
   }
+
+  /** Lock handling */
 
   onLockTap(event: Event): void {
     this.lockTapCount++;
@@ -217,4 +400,5 @@ export class BoardView implements OnInit {
   trackByCol(index: number, cell: BoardPictogram | null): number {
     return cell ? cell.id : index;
   }
+  trackByPhrase(index: number): number { return index; }
 }

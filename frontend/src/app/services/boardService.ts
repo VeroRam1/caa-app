@@ -42,39 +42,39 @@ export interface UpdatePictogramsRequest {
     providedIn: "root",
 })
 export class BoardService {
-    private apiUrl = "http://localhost:8080/api/boards";
+  private apiUrl = "http://localhost:8080/api/boards";
 
-    constructor(private http: HttpClient) {}
-    // Get boards by Id with all its pictograms
-    getBoardById(id: number): Observable<Board> {
-        return this.http.get<Board>(`${this.apiUrl}/${id}`);
-    }
+  constructor(private http: HttpClient) { }
+  // Get boards by Id with all its pictograms
+  getBoardById(id: number): Observable<Board> {
+    return this.http.get<Board>(`${this.apiUrl}/${id}`);
+  }
 
-    // Get all predefined boards with all its pictograms
-    getPredefinedBoards(): Observable<Board[]> {
-        return this.http.get<Board[]>(`${this.apiUrl}/predefined`);
-    }
+  // Get all predefined boards with all its pictograms
+  getPredefinedBoards(): Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.apiUrl}/predefined`);
+  }
 
-    // Get all boards assigned to a user with all its pictograms
-    getBoardsByLevel(level: number): Observable<Board[]> {
-        return this.http.get<Board[]>(`${this.apiUrl}/level/${level}`);
-    }
-    
-    getAllBoards(): Observable<Board[]> {
-    return this.http.get<Board[]>(this.apiUrl);
-    }
-
-    // Gets boards by level — used for guest page and category sidebar.
-    getPredefinedBoardsByLevel(level: number): Observable<Board[]> {
+  // Get all boards assigned to a user with all its pictograms
+  getBoardsByLevel(level: number): Observable<Board[]> {
     return this.http.get<Board[]>(`${this.apiUrl}/level/${level}`);
-    }
+  }
 
-    // Get the boards assigned to the logged-in user with all its pictograms
-    getMyBoards(): Observable<Board[]> {
-        return this.http.get<Board[]>(`${this.apiUrl}/myBoards`);
-    }
+  getAllBoards(): Observable<Board[]> {
+    return this.http.get<Board[]>(this.apiUrl);
+  }
 
-    copyBoard(id: number): Observable<any> {
+  // Gets predefined boards by level — used for guest page and category sidebar.
+  getPredefinedBoardsByLevel(level: number): Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.apiUrl}/level/${level}`);
+  }
+
+  // Get the boards assigned to the logged-in user with all its pictograms
+  getMyBoards(): Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.apiUrl}/myBoards`);
+  }
+
+  copyBoard(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${id}/copy`, {});
   }
 

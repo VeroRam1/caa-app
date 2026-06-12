@@ -9,10 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO for Board responses
- * Used in all Board API responses
- */
+// DTO for Board responses
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,9 +28,7 @@ public class BoardResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /**
-     * Constructor without pictograms (for list views)
-     */
+    // Constructor without pictograms (for list views)
     public BoardResponseDTO(Long id, String name, String description, Integer rows,
                          Integer columns, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
@@ -48,34 +43,23 @@ public class BoardResponseDTO {
         this.updatedAt = updatedAt;
     }
 
-    /**
-     * Sets pictograms and updates the count
-     */
     public void setPictograms(List<PictogramResponseDTO> pictograms) {
         this.pictograms = pictograms;
         this.pictogramCount = pictograms != null ? pictograms.size() : 0;
     }
 
-    /**
-     * Calculates if the board is full
-     * @return true if all cells are occupied
-     */
+    // Calculates if the board is full
     public boolean isFull() {
         return pictogramCount != null && pictogramCount.equals(totalCells);
     }
 
-    /**
-     * Calculates if the board is empty
-     * @return true if no pictograms are present
-     */
+    // Calculates if the board is empty
+
     public boolean isEmpty() {
         return pictogramCount == null || pictogramCount == 0;
     }
 
-    /**
-     * Gets the percentage of occupied cells
-     * @return percentage (0-100)
-     */
+    // Gets the percentage of occupied cells
     public double getOccupancyPercentage() {
         if (totalCells == null || totalCells == 0) return 0.0;
         return (pictogramCount * 100.0) / totalCells;

@@ -27,7 +27,7 @@
     </ng-template>
   </p-toolbar>
 
-  <!-- Contenido -->
+  <!-- Content -->
   <main class="main-content" role="main">
 
     <div class="page-header">
@@ -67,7 +67,7 @@
 
             <p class="card-description">{{ card.description }}</p>
 
-            <!-- Preview del tablero — solo para nivel 1 por ahora -->
+            <!-- Board preview -->
             @if (card.board) {
               <div
                 class="board-preview"
@@ -93,14 +93,9 @@
                   }
                 </div>
               </div>
-            } @else {
-              <!-- Placeholder para niveles no implementados -->
-              <div class="board-preview board-preview--placeholder" aria-hidden="true">
-                <span class="placeholder-text">Próximamente</span>
-              </div>
-            }
+            } 
 
-            <!-- Características del nivel -->
+            <!-- Level features -->
             <ul class="card-features" aria-label="Características del nivel">
               @for (feature of card.features; track feature) {
                 <li class="card-feature">
@@ -110,16 +105,14 @@
               }
             </ul>
 
-            <!-- Botón de acción -->
+            <!-- Action button -->
             <p-button
-              [label]="card.boardId ? 'Usar este nivel' : 'Próximamente'"
+              label="Usar este nivel"
               [disabled]="card.boardId === null"
-              [severity]="card.boardId ? 'primary' : 'secondary'"
+              severity="primary"
               styleClass="card-action-btn"
               (click)="onLevelSelect(card)"
-              [attr.aria-label]="card.boardId
-                ? 'Entrar al tablero de ' + card.title
-                : card.title + ' no disponible todavía'" />
+              [attr.aria-label]="'Entrar al tablero de ' + card.title" />
 
           </article>
         }

@@ -150,6 +150,8 @@ public class BoardService {
         // Remove all existing pictograms — orphanRemoval handles DB deletion
         board.getPictograms().clear();
 
+        boardRepository.saveAndFlush(board);
+
         // Add the new arrangement
         for (var dto : request.getPictograms()) {
             BoardPictogram p = new BoardPictogram();

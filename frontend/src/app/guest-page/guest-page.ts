@@ -60,7 +60,7 @@ export class GuestPage implements OnInit {
       grid: '4 × 5',
       ageRange: '4 - 7 años',
       features: [
-        'Más pictogramas',
+        '20 pictogramas por tablero',
         'Construcción de frases',
         'Categorías ampliadas',
         'Síntesis de voz'
@@ -76,7 +76,7 @@ export class GuestPage implements OnInit {
       grid: '5 × 6',
       ageRange: '7+ años',
       features: [
-        'Vocabulario amplio',
+        '30 picogramas por tablero',
         'Frases complejas',
         'Todas las categorías',
         'Síntesis de voz'
@@ -106,55 +106,19 @@ export class GuestPage implements OnInit {
     ];
   }
 
-  loadPreviewBoards(): void {
-  this.loading = true;
-  this.cdr.markForCheck();
-
-  this.boardService.getPredefinedBoardsByLevel(1).subscribe({
-    next: (boards) => {
-      // Busca por nombre flexible — "General" o "Básico"
-      const general = boards.find(b =>
-        b.name.toLowerCase().includes('general') ||
-        b.name.toLowerCase().includes('básico') ||
-        b.name.toLowerCase().includes('basico')
-      );
-      if (general) {
-        // Carga con pictogramas para el preview
-        this.boardService.getBoardById(general.id).subscribe({
-          next: (fullBoard) => {
-            this.levelCards[0].board = fullBoard;
-            this.levelCards[0].boardId = fullBoard.id;
-            this.loading = false;
-            this.cdr.markForCheck();
-          }
-        });
-      } else {
-        this.loading = false;
-        this.cdr.markForCheck();
-      }
-    },
-    error: () => {
-      this.loading = false;
-      this.cdr.markForCheck();
-    }
-  });
-}
-
   onLevelSelect(card: LevelCard): void {
-    if (card.boardId) {
-      this.router.navigate(['/board', card.boardId]);
-    }
-    // Levels 2 and 3 do nothing — not implemented yet
+    if (!card.boardId) return;
+    this.router.navigate(['/board', card.boardId], { 
+      queryParams: { 
+        mode: 'guest',
+        level: 'LEVEL_' +card.level } });
   }
 
   onBack(): void {
     this.router.navigate(['/']);
   }
 
-  /**
-   * Builds a mini preview grid from the board pictograms.
-   * Returns a 2D array of pictogram URLs for the preview thumbnail.
-   */
+  // Builds a mini preview grid from the board pictograms.
   getPreviewGrid(board: Board): (string | null)[][] {
     const grid: (string | null)[][] = Array.from(
       { length: board.rows }, () => Array(board.columns).fill(null)
@@ -165,6 +129,47 @@ export class GuestPage implements OnInit {
       }
     }
     return grid;
+  }
+
+  loadPreviewBoards(): void {
+    this.loading = true;
+    this.cdr.markForCheck();
+
+    this.boardService.getPredefinedBoards().subscribe({
+      next: (boards) => {
+        console.log('Tableros predeterminados:', boards.map(b => ({
+        id: b.id,
+        name: b.name,
+        level: b.level,        // ← ver si llega
+        isPredefined: b.isPredefined
+      })));
+        this.levelCards.forEach((card, index )=> {
+          const level = card.level;
+          const board = boards.find(b => 
+            b.level === level &&
+            (b.name.toLowerCase().includes('general') || 
+            b.name.toLowerCase().includes('básico') || 
+            b.name.toLowerCase().includes('basico'))
+          );
+          console.log(`Nivel ${level} → encontrado:`, board?.name, 'level:', board?.level);
+          if (board) {
+            this.boardService.getBoardById(board.id).subscribe({
+              next: (fullBoard) => {
+                this.levelCards[index].board = fullBoard;
+                this.levelCards[index].boardId = fullBoard.id;
+                this.cdr.markForCheck();
+              }
+            });
+          } 
+        });
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
 }

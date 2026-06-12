@@ -67,7 +67,7 @@
     </ng-template>
   </p-toolbar>
 
-  <!-- Contenido principal -->
+  <!-- Main Content -->
   <main class="main-content">
 
     <div class="welcome-section">
@@ -153,7 +153,7 @@
   </main>
 </div>
 
-<!-- ── Dialog: elegir acción sobre un perfil ── -->
+<!-- ── Dialog: choose action for a profile ── -->
 <p-dialog
   [header]="'Perfil de ' + (selectedProfile?.name || '')"
   [(visible)]="visibleEditActions"
@@ -196,6 +196,14 @@
         aria-label="Editar nombre, fecha de nacimiento y nivel del perfil" />
 
       <p-button
+        label="Gestionar tableros"
+        icon="pi pi-th-large"
+        severity="secondary"
+        styleClass="action-btn"
+        (click)="openManageBoardsDialog()"
+        aria-label="Ver y gestionar tableros asignados a este perfil" />
+
+      <p-button
         label="Eliminar perfil"
         icon="pi pi-trash"
         severity="danger"
@@ -207,7 +215,7 @@
   </div>
 </p-dialog>
 
-<!-- ── Dialog: editar datos del perfil ── -->
+<!-- ── Dialog: edit profile details ── -->
 <p-dialog
   header="Editar perfil"
   [(visible)]="visibleEditProfile"
@@ -218,7 +226,7 @@
   [draggable]="false"
   [resizable]="false">
 
-  <!-- Foto de perfil -->
+  <!-- Profile photo -->
   <div class="photo-section mb-4">
     <label class="font-semibold block mb-2">Foto de perfil</label>
 
@@ -282,7 +290,7 @@
       [(ngModel)]="editProfileBirthDate" />
   </div>
 
-  <!-- Nivel -->
+  <!-- Level -->
   <div class="flex items-center gap-4 mb-4">
     <label class="font-semibold w-28" id="edit-level-label">Nivel</label>
     <p-select
@@ -309,7 +317,7 @@
 
 </p-dialog>
 
-<!-- ── Dialog: añadir perfil ── -->
+<!-- ── Dialog: add profile ── -->
 <p-dialog
   header="Nuevo perfil"
   [(visible)]="visibleAddProfile"
@@ -320,7 +328,7 @@
   [draggable]="false"
   [resizable]="false">
 
-  <!-- Nombre -->
+  <!-- Name -->
   <div class="flex items-center gap-4 mb-4">
     <label for="profile-name" class="font-semibold w-28">Nombre</label>
     <input
@@ -332,7 +340,7 @@
       aria-required="true" />
   </div>
 
-  <!-- Fecha de nacimiento -->
+  <!-- Birth date -->
   <div class="flex items-center gap-4 mb-4">
     <label for="profile-birth" class="font-semibold w-28">Nacimiento</label>
     <input
@@ -343,7 +351,7 @@
       [(ngModel)]="newProfileBirthDate" />
   </div>
 
-  <!-- Nivel -->
+  <!-- Level -->
   <div class="flex items-center gap-4 mb-4">
     <label class="font-semibold w-28" id="level-label">Nivel</label>
     <p-select
@@ -355,7 +363,7 @@
       class="flex-auto" />
   </div>
 
-  <!-- Foto de perfil — movida al final para que sea visible -->
+  <!-- Profile photo -->
   <div class="photo-section mb-4">
     <label class="font-semibold block mb-2">Foto de perfil (opcional)</label>
 
@@ -409,3 +417,111 @@
   </div>
 
 </p-dialog>
+
+<p-dialog
+  [header]="'Tableros de ' + (selectedProfile?.name || '')"
+  [(visible)]="visibleManageBoards"
+  [modal]="true"
+  [closable]="true"
+  [style] = "{ width: '30rem' }"
+  [contentStyle]="{ overflow: 'auto', maxHeight: '70vh' }"
+  [draggable]="false"
+  [resizable]="false">
+  <!-- Current assigned boards -->
+  <section class="manage-section" aria-labelledby="assigned-title">
+    <h3 id="assigned-title" class="manage-section-title">
+      Tableros asignados
+    </h3>
+
+    @if (profileBoards.length === 0){
+      <div class="manage-empty" role="status">
+        <span aria-hidden="true">🗅</span>
+        <p>Este perfil no tiene tableros asignados todavía.</p>
+      </div>
+    } @else {
+      <ul class="assigned-boards-list" role="list">
+      @for (board of profileBoards; track board.id) {
+        <li class="assigned-board-item" role="listitem">
+          <div class="board-item-info">
+              <span class="board-item-icon" aria-hidden="true">📋</span>
+              <div>
+                <strong class="board-item-name">{{ board.name }}</strong>
+                <span class="board-item-meta">
+                  {{ board.rows }} × {{ board.columns }} —
+                  {{ board.pictogramCount }} pictogramas
+                </span>
+              </div>
+            </div>
+            <p-button
+              icon="pi pi-times"
+              severity="danger"
+              [text]="true"
+              size="small"
+              (click)="onRemoveBoard(board)"
+              [attr.aria-label]="'Quitar tablero ' + board.name + ' de este perfil'" />
+        </li>
+      }
+      </ul>
+    }
+    
+  </section>
+
+  <p-divider />
+  <!-- Available boards to assign -->
+  <section class="manage-section" aria-labelledby="available-title">
+    <h3 id="available-title" class="manage-section-title">
+      Mis tableros disponibles
+    </h3>
+
+    @if (loadingBoards) {
+      <div class="manage-loading" role="status" aria-live="polite">
+        Cargando tableros...
+      </div>
+    } @else if (myBoards.length === 0) {
+      <div class="manage-empty">
+        <span aria-hidden="true">📝</span>
+        <p>
+          No tienes tableros personalizados.
+          Ve a <strong>Mis tableros</strong> para crear uno.
+        </p>
+      </div>
+    } @else {
+      <ul class="available-boards-list" role="list">
+        @for (board of myBoards; track board.id) {
+          <li
+            class="available-board-item"
+            [class.available-board-item--assigned]="isAssigned(board)"
+            role="listitem">
+            <div class="board-item-info">
+              <span class="board-item-icon" aria-hidden="true">
+                {{ isAssigned(board) ? '✅' : '📋' }}
+              </span>
+              <div>
+                <strong class="board-item-name">{{ board.name }}</strong>
+                <span class="board-item-meta">
+                  {{ board.rows }} × {{ board.columns }} —
+                  {{ board.pictogramCount }} pictogramas
+                </span>
+              </div>
+            </div>
+
+            @if (isAssigned(board)) {
+              <span class="assigned-badge" role="status">Ya asignado</span>
+            } @else {
+              <p-button
+                label="Asignar"
+                icon="pi pi-plus"
+                size="small"
+                [loading]="assigningBoard"
+                (click)="onAssignBoard(board)"
+                [attr.aria-label]="'Asignar tablero ' + board.name + ' a este perfil'" />
+            }
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+</p-dialog>
+  
+

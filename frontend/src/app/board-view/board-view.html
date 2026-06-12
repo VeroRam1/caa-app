@@ -26,10 +26,8 @@
     </ng-template>
   </p-confirmpopup>
 
-  <!-- Toolbar del niño — sin opciones de navegación, solo título y candado -->
   <header class="child-toolbar" role="banner">
 
-    <!-- Botón para mostrar/ocultar el panel de categorías -->
     <button
       class="sidebar-toggle"
       (click)="toggleSidebar()"
@@ -44,21 +42,78 @@
       {{ board?.name || 'PictoCom' }}
     </h1>
 
-    <!-- Candado x3 -->
-    <button
-      class="lock-button"
-      [class.lock-button--shaking]="lockShaking"
-      (click)="onLockTap($event)"
-      type="button"
-      aria-label="Botón de salida. Pulsa 3 veces para salir del tablero">
-      🔒
-    </button>
+    <!--Tutor -> return button -->
+    @if (isTutorMode) {
+      <button
+        icon="pi pi-arrow-left"
+        class="back-button"
+        type="button"
+        (click)="onBackToMyBoards()"
+        aria-label="Volver a mis tableros">
+      </button>
+    }@else if (isGuestMode) {
+      <button
+        icon="pi pi-arrow-left"
+        class="back-button"
+        type="button"
+        (click)="onBackToGuest()"
+        aria-label="Volver a la selección de nivel">
+      </button>
+    } @else {
+      <!-- Kid -> lock -->
+      <button
+        class="lock-button"
+        [class.lock-button--shaking]="lockShaking"
+        (click)="onLockTap($event)"
+        type="button"
+        aria-label="Botón de salida. Pulsa 3 veces para salir del tablero">
+        🔒
+      </button>
+    }
   </header>
 
-  <!-- Layout principal: sidebar + tablero -->
+  <!-- Phrase bar -->
+  @if (hasPhraseBar) {
+    <div class="phrase-bar" role="region" aria-label="Barra de construcción de frases">
+
+      <div class="phrase-items" aria-live="polite" aria-label="Frase actual">
+        @if (phraseItems.length === 0) {
+          <span class="phrase-placeholder">
+            Pulsa pictogramas para construir una frase...
+          </span>
+        }
+        @for (item of phraseItems; track trackByPhrase($index); let i = $index) {
+          <button
+            class="phrase-item"
+            type="button"
+            (click)="removePhraseItem(i)"
+            [attr.aria-label]="'Quitar ' + item.text + ' de la frase'">
+            <img [src]="item.pictogramUrl" [alt]="item.text" class="phrase-item-img" loading="lazy" />
+            <span class="phrase-item-text">{{ item.text }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="phrase-controls">
+        <button class="phrase-btn phrase-btn--speak" type="button"
+                (click)="speakPhrase()" [disabled]="phraseItems.length === 0"
+                aria-label="Leer la frase en voz alta">▶</button>
+        <button class="phrase-btn phrase-btn--delete" type="button"
+                (click)="removePhraseItem(phraseItems.length - 1)"
+                [disabled]="phraseItems.length === 0"
+                aria-label="Borrar último pictograma">⌫</button>
+        <button class="phrase-btn phrase-btn--clear" type="button"
+                (click)="clearPhrase()" [disabled]="phraseItems.length === 0"
+                aria-label="Borrar toda la frase">✕</button>
+      </div>
+
+    </div>
+  }
+
+  <!-- Main layout: sidebar + board -->
   <div class="board-layout">
 
-    <!-- Panel lateral de categorías -->
+    <!-- Lateral panel for categories -->
     <nav
       id="categories-panel"
       class="categories-sidebar"
@@ -73,19 +128,26 @@
             <button
               class="category-btn"
               [class.category-btn--active]="activeCategory === cat.label"
-              (click)="onCategorySelect(cat)"
+              (click)="onCategoryClick($event, cat, null)"
               type="button"
               [attr.aria-current]="activeCategory === cat.label ? 'true' : null"
-              [attr.aria-label]="'Ver tablero de ' + cat.label">
-              <span class="category-icon" aria-hidden="true">{{ cat.icon }}</span>
+              [attr.aria-label]="cat.label">
+
+              <img
+                [src]="getArasaacIconUrl(cat.iconPictogramId)"
+                [alt]="cat.label"
+                class="category-img"
+                loading="lazy" />
+
               <span class="category-label">{{ cat.label }}</span>
+
             </button>
           </li>
         }
       </ul>
     </nav>
 
-    <!-- Área del tablero -->
+    <!-- Board area -->
     <main class="board-area" role="main">
 
       @if (loading) {
@@ -118,8 +180,9 @@
                 @if (cell) {
                   <button
                     class="pictogram-cell"
-                    (click)="speakPictogram(cell)"
-                    [attr.aria-label]="'Pictograma ' + cell.text + ': pulsa para escuchar'"
+                    (click)="onPictogramClick(cell)"
+                    [attr.aria-label]="'Pictograma ' + cell.text +
+                      (hasPhraseBar ? '. Pulsa para añadir a la frase y escuchar' : '. Pulsa para escuchar')"
                     type="button">
                     <div class="pictogram-image-wrapper">
                       <img

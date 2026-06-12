@@ -7,7 +7,7 @@
   background: #f0f9ff;
 }
 
-// ── Toolbar del niño ──────────────────────────────────────────────────────────
+// ── Toolbar ───────────────────────────────────────────────────────────────────
 .child-toolbar {
   display: flex;
   align-items: center;
@@ -24,13 +24,12 @@
     margin: 0;
     text-align: center;
     flex: 1;
-    // Criterio 1.4.3: blanco sobre #6eb3f3 → ratio 4.6:1 ✓
   }
 }
 
 .sidebar-toggle {
   width: 44px;
-  height: 44px;   // criterio 2.5.8
+  height: 44px;
   border: none;
   background: rgba(255,255,255,0.2);
   border-radius: 0.5rem;
@@ -42,17 +41,13 @@
   justify-content: center;
   transition: background 0.15s ease;
   flex-shrink: 0;
-
   &:hover { background: rgba(255,255,255,0.35); }
-  &:focus-visible {
-    outline: 3px solid white;
-    outline-offset: 2px;
-  }
+  &:focus-visible { outline: 3px solid white; outline-offset: 2px; }
 }
 
 .lock-button {
   width: 56px;
-  height: 56px;   // criterio 2.5.8
+  height: 56px;
   border: none;
   background: rgba(255,255,255,0.2);
   border-radius: 50%;
@@ -63,17 +58,10 @@
   justify-content: center;
   transition: background 0.15s ease;
   flex-shrink: 0;
-
-  &:focus-visible {
-    outline: 3px solid white;
-    outline-offset: 2px;
-  }
+  &:focus-visible { outline: 3px solid white; outline-offset: 2px; }
   &:hover { background: rgba(255,255,255,0.35); }
   &:active { background: rgba(255,255,255,0.5); }
-
-  &--shaking {
-    animation: shake 0.4s ease;
-  }
+  &--shaking { animation: shake 0.4s ease; }
 }
 
 @keyframes shake {
@@ -85,39 +73,119 @@
   100% { transform: translateX(0); }
 }
 
-// ── Layout ────────────────────────────────────────────────────────────────────
-.board-layout {
-  flex: 1;
+// ── Barra de frases ───────────────────────────────────────────────────────────
+.phrase-bar {
   display: flex;
-  overflow: hidden;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border-bottom: 2px solid #b3ddff;
+  min-height: 80px;
+  flex-shrink: 0;
 }
 
-// ── Sidebar de categorías ─────────────────────────────────────────────────────
+.phrase-items {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+  min-height: 64px;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #b3ddff; border-radius: 2px; }
+}
+
+.phrase-placeholder {
+  font-size: 0.85rem;
+  color: #aaa;
+  font-style: italic;
+  white-space: nowrap;
+  padding: 0 0.5rem;
+}
+
+.phrase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 56px;
+  max-width: 72px;
+  min-height: 64px;
+  padding: 0.3rem 0.4rem;
+  background: #e8f4fd;
+  border: 2px solid #b3ddff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s ease, transform 0.12s ease;
+
+  &:hover { background: #fee2e2; border-color: #fca5a5; transform: scale(1.05); }
+  &:focus-visible { outline: 3px solid #4a85b5; outline-offset: 2px; }
+}
+
+.phrase-item-img { width: 40px; height: 40px; object-fit: contain; }
+
+.phrase-item-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #1a4971;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+  max-width: 64px;
+}
+
+.phrase-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.phrase-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, transform 0.12s ease;
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+  &:not(:disabled):hover { transform: scale(1.08); }
+  &:focus-visible { outline: 3px solid #4a85b5; outline-offset: 2px; }
+  &--speak { background: #d1fae5; color: #065f46; &:not(:disabled):hover { background: #a7f3d0; } }
+  &--delete { background: #fef3c7; color: #713f12; &:not(:disabled):hover { background: #fde68a; } }
+  &--clear  { background: #fee2e2; color: #991b1b; &:not(:disabled):hover { background: #fca5a5; } }
+}
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+.board-layout { flex: 1; display: flex; overflow: hidden; }
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
 .categories-sidebar {
-  width: 160px;
+  width: 130px;
   flex-shrink: 0;
   background: #d6f0ff;
   border-right: 2px solid #b3ddff;
-  padding: 1rem 0.75rem;
+  padding: 0.75rem 0.5rem;
   overflow-y: auto;
   transition: width 0.25s ease, opacity 0.25s ease, padding 0.25s ease;
 
-  &--hidden {
-    width: 0;
-    opacity: 0;
-    padding: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
+  &--hidden { width: 0; opacity: 0; padding: 0; overflow: hidden; pointer-events: none; }
 }
 
 .categories-title {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  color: #1a4971;   // ratio 7.2:1 sobre #d6f0ff ✓ criterio 1.4.3
+  color: #1a4971;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.6rem 0;
   white-space: nowrap;
 }
 
@@ -127,55 +195,97 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .category-btn {
   width: 100%;
-  min-height: 56px;   // criterio 2.5.8 — bien por encima de 44px
+  min-height: 80px;   // taller to fit image + label
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
   background: white;
   border: 2px solid #b3ddff;
   border-radius: 0.75rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.4rem 0.3rem;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
-  white-space: nowrap;
+  position: relative;
 
-  &:hover {
-    background: #e8f4fd;
-    transform: translateX(2px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid #4a85b5;
-    outline-offset: 2px;
-  }
+  &:hover { background: #e8f4fd; transform: translateX(2px); }
+  &:focus-visible { outline: 3px solid #4a85b5; outline-offset: 2px; }
 
   &--active {
     background: #4a85b5;
     border-color: #1a4971;
-
-    .category-label {
-      color: white;   // ratio 4.6:1 sobre #4a85b5 ✓
-    }
+    .category-label { color: white; }
   }
 }
 
-.category-icon {
-  font-size: 1.4rem;
-  line-height: 1;
+// ARASAAC image as category icon
+.category-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
 }
 
 .category-label {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #1a4971;
   line-height: 1.2;
+  text-align: center;
+  word-break: break-word;
+}
+
+.sublevel-indicator {
+  font-size: 0.65rem;
+  color: #7c9fd4;
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+}
+
+// ── Sublevel popup ────────────────────────────────────────────────────────────
+:host ::ng-deep .sublevel-overlay {
+  .p-popover-content { padding: 0.5rem; }
+}
+
+.sublevel-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 120px;
+}
+
+.sublevel-popup-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1a4971;
+  margin: 0 0 0.3rem 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #e8f4fd;
+}
+
+.sublevel-btn {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid #b3ddff;
+  border-radius: 0.5rem;
+  background: white;
+  color: #1a4971;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+
+  &:hover { background: #e8f4fd; }
+  &:focus-visible { outline: 2px solid #4a85b5; }
+  &--active { background: #4a85b5; color: white; border-color: #1a4971; }
 }
 
 // ── Área del tablero ──────────────────────────────────────────────────────────
@@ -184,12 +294,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.75rem;
   overflow: hidden;
 }
 
-.status-container,
-.error-container {
+.status-container, .error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,10 +307,7 @@
   color: #888;
 }
 
-.error-text {
-  color: #7f1d1d;
-  font-weight: 600;
-}
+.error-text { color: #7f1d1d; font-weight: 600; }
 
 .board-section {
   width: 100%;
@@ -213,48 +319,31 @@
 
 .pictogram-grid {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.5rem;
   width: 100%;
   height: 100%;
-  max-width: 860px;
+  max-width: 960px;
   max-height: calc(100vh - 80px);
 }
 
-// ── Pictogramas ───────────────────────────────────────────────────────────────
 .pictogram-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: white;
   border: 3px solid #b3ddff;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  padding: 0.75rem 0.5rem;
+  padding: 0.5rem 0.4rem;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
-  min-height: 100px;   // criterio 2.5.8
-  width: 100%;
+  min-height: 80px;
 
-  &:focus-visible {
-    outline: 3px solid #4a85b5;
-    outline-offset: 3px;
-  }
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(179,221,255,0.5);
-    border-color: #7c9fd4;
-  }
-  &:active {
-    transform: translateY(0);
-    background: #e8f4fd;
-  }
-  &--empty {
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
-    cursor: default;
-    &:hover { transform: none; box-shadow: none; }
-  }
+  &:focus-visible { outline: 3px solid #4a85b5; outline-offset: 3px; }
+  &:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(179,221,255,0.5); border-color: #7c9fd4; }
+  &:active { transform: translateY(0); background: #e8f4fd; }
+  &--empty { background: #f8f9fa; border: 2px dashed #dee2e6; cursor: default; &:hover { transform: none; box-shadow: none; } }
 }
 
 .pictogram-image-wrapper {
@@ -269,23 +358,47 @@
 .pictogram-image {
   width: 100%;
   height: auto;
-  max-height: 100px;
+  max-height: 80px;
   object-fit: contain;
 }
 
 .pictogram-label {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  color: #1a4971;   // ratio 7.2:1 ✓
+  color: #1a4971;
   text-align: center;
   line-height: 1.2;
 }
 
-// ── Landscape — criterio 1.3.4 ────────────────────────────────────────────────
+// ── Landscape ─────────────────────────────────────────────────────────────────
 @media (orientation: landscape) and (max-height: 600px) {
-  .categories-sidebar { width: 120px; }
-  .pictogram-grid { gap: 0.4rem; max-height: calc(100vh - 64px); }
-  .pictogram-cell { min-height: 70px; padding: 0.3rem; }
-  .pictogram-image { max-height: 55px; }
-  .pictogram-label { font-size: 0.75rem; }
+  .phrase-bar { min-height: 60px; padding: 0.3rem 0.5rem; }
+  .phrase-item { min-height: 52px; min-width: 44px; }
+  .phrase-item-img { width: 30px; height: 30px; }
+  .categories-sidebar { width: 100px; }
+  .category-img { width: 40px; height: 40px; }
+  .category-btn { min-height: 65px; }
+  .pictogram-grid { gap: 0.3rem; }
+  .pictogram-cell { min-height: 60px; padding: 0.3rem; }
+  .pictogram-image { max-height: 45px; }
+  .pictogram-label { font-size: 0.68rem; }
+}
+
+.back-button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+
+  &:hover { background: rgba(255,255,255,0.35); }
+  &:focus-visible { outline: 3px solid white; outline-offset: 2px; }
 }

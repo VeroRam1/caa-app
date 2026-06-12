@@ -76,4 +76,12 @@ export class ChildProfileService {
         return this.backendUrl + photoUrl;
     }
 
+    assignBoard(BoardId: number, profileId: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${profileId}/boards/${BoardId}`, {});
+    }
+
+    removeBoard(BoardId: number, profileId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${profileId}/boards/${BoardId}`);
+    }
+
 }

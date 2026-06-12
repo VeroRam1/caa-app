@@ -5,6 +5,7 @@ import com.caa.backend.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -57,9 +58,12 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-
                         .requestMatchers("/api/arasaac/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        // ← añadir estas dos líneas
+                        .requestMatchers("/api/boards/predefined").permitAll()
+                        .requestMatchers("/api/boards/level/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()
                         .anyRequest().authenticated()  // siempre el último, solo uno
                 )
 
