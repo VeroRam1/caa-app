@@ -8,6 +8,7 @@ import com.caa.backend.mapper.TutorMapper;
 import com.caa.backend.model.Tutor;
 import com.caa.backend.repository.TutorRepository;
 import com.caa.backend.security.JwtUtil;
+import com.caa.backend.security.SanitizationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,7 @@ public class TutorService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    /**
-     * Register a new tutor account
-     * @param request registration data (name, email, plain password)
-     * @return AuthResponseDTO with JWT token and tutor info
-     * @throws IllegalArgumentException if email is already registered
-     */
+    // Register a new tutor account
     public AuthResponseDTO register(TutorRegisterRequestDTO request) {
         log.info("Registering new tutor with email: {}", request.getEmail());
 
@@ -43,13 +39,11 @@ public class TutorService {
             throw new IllegalArgumentException("El email ya está registrado: " + request.getEmail());
         }
 
-        // Sin @Builder — usar constructor o setters directamente
         Tutor tutor = new Tutor();
-        tutor.setName(request.getName());
-        tutor.setEmail(request.getEmail());
+        tutor.setName(SanitizationUtils.sanitize(request.getName()));
+        tutor.setEmail(SanitizationUtils.sanitize(request.getEmail()));
         tutor.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // Guardar primero el tutor para que tenga ID antes de usarlo
         Tutor savedTutor = tutorRepository.save(tutor);
         log.info("Tutor registered successfully with ID: {}", savedTutor.getId());
 
@@ -61,12 +55,7 @@ public class TutorService {
         return response;
     }
 
-    /**
-     * Authenticate a tutor and return a JWT token
-     * @param request login data (email, plain password)
-     * @return AuthResponseDTO with JWT token and tutor info
-     * @throws org.springframework.security.authentication.BadCredentialsException if credentials are invalid
-     */
+    // Authenticate a tutor and return a JWT token
     public AuthResponseDTO login(TutorLoginRequestDTO request) {
         log.info("Login attempt for email: {}", request.getEmail());
 

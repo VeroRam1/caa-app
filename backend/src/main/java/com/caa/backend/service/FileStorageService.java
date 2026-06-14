@@ -18,14 +18,7 @@ public class FileStorageService {
     @Value("${app.upload-dir:uploads}")
     private String uploadDir;
 
-    /**
-     * Saves a profile photo to disk.
-     * Generates a unique filename to avoid collisions.
-     *
-     * @param file the uploaded image file
-     * @return the relative URL path to access the file (e.g. /uploads/profiles/abc123.jpg)
-     * @throws IOException if the file cannot be saved
-     */
+    // Saves a profile photo to disk. Generates a unique filename to avoid collisions.
     public String saveProfilePhoto(MultipartFile file) throws IOException {
         // Validate file type — only images allowed
         String contentType = file.getContentType();
@@ -59,12 +52,7 @@ public class FileStorageService {
         return "/uploads/profiles/" + filename;
     }
 
-    /**
-     * Deletes a previously saved profile photo from disk.
-     * Called when a profile photo is replaced or the profile is deleted.
-     *
-     * @param photoUrl the URL path of the photo to delete (e.g. /uploads/profiles/abc123.jpg)
-     */
+    // Deletes a previously saved profile photo from disk. Called when a profile photo is replaced or the profile is deleted.
     public void deleteProfilePhoto(String photoUrl) {
         if (photoUrl == null || !photoUrl.startsWith("/uploads/")) return;
 

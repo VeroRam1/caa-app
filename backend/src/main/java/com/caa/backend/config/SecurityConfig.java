@@ -3,6 +3,7 @@ package com.caa.backend.config;
 import com.caa.backend.security.JwtAuthenticationFilter;
 import com.caa.backend.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,10 +30,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *                     /v3/api-docs/**, /swagger-ui/** (Swagger — your existing config)
  *                     /api/arasaac/** (your existing ARASAAC endpoint — adjust if needed)
  * - All other endpoints require a valid JWT
- *
- * NOTE: The CORS configuration applied here works alongside your existing
- *       CorsConfig bean. No need to duplicate it here.
  */
+@EnableCaching
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -70,7 +69,40 @@ public class SecurityConfig {
                 )
 
                 .headers(headers -> headers
-                        .frameOptions(frame -> frame.sameOrigin())  // necesario para H2 Console
+                        // X-Frame-Options: prevents the app from being loaded in an <iframe> from another origin (clickjacking)
+                        .frameOptions(frame -> frame.sameOrigin())
+
+                        // X-Content-Type-Options: prevents the browser from guessing the MIME type (MIME sniffing)
+                        .contentTypeOptions(contentType -> {})
+
+                        // X-XSS-Protection: enables the browser's built-in XSS filter (legacy, but still recommended)
+                        .xssProtection(xss -> {})
+
+                        // Referrer-Policy: does not send the origin URL in cross-origin requests
+                        .referrerPolicy(referrer ->
+                                referrer.policy(org.springframework.security.web.header.writers
+                                        .ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                        )
+
+                        // Content-Security-Policy: defines which resources the app is allowed to load
+                        // Configured for Angular + PrimeNG + ARASAAC + Google Fonts
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                        "script-src 'self' 'unsafe-inline'; " +  // unsafe-inline required for Angular in dev
+                                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                                        "font-src 'self' https://fonts.gstatic.com; " +
+                                        "img-src 'self' data: https://static.arasaac.org https://api.arasaac.org; " +
+                                        "connect-src 'self' http://localhost:8080 https://api.arasaac.org; " +
+                                        "frame-ancestors 'none';"  // reinforces X-Frame-Options
+                        ))
+
+                        // Permissions-Policy: disables browser APIs that the app does not use
+                        .addHeaderWriter(new org.springframework.security.web.header.writers
+                                        .StaticHeadersWriter(
+                                        "Permissions-Policy",
+                                        "camera=(), microphone=(), geolocation=(), payment=()"
+                                )
+                        )
                 )
 
                 .authenticationProvider(authenticationProvider())
@@ -94,10 +126,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * BCrypt password encoder.
-     * Used both here and injected into TutorService for hashing passwords on register.
-     */
+    // BCrypt password encoder. Used both here and injected into TutorService for hashing passwords on register.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

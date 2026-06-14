@@ -18,10 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Global exception handler for all REST controllers
- * Provides consistent error responses across the API
- */
+// Global exception handler for all REST controllers. Provides consistent error responses across the API
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -54,10 +51,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Fusión de handleValidationErrors y handleValidationException.
-     * Devuelve tanto el mensaje general como los errores por campo.
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -84,10 +77,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Fusión de handleIllegalArgumentException y handleIllegalArgument.
-     * Devuelve APIResponseDTO para ser consistente con el resto de errores de negocio.
-     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<APIResponseDTO<Void>> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {

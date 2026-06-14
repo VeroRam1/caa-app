@@ -12,6 +12,7 @@ import com.caa.backend.model.Tutor;
 import com.caa.backend.repository.BoardRepository;
 import com.caa.backend.exception.ResourceNotFoundException;
 import com.caa.backend.repository.TutorRepository;
+import com.caa.backend.security.SanitizationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,23 +29,13 @@ public class BoardService {
     private final BoardMapper boardMapper;
     private final TutorRepository tutorRepository;
 
-    /**
-     * Get all boards
-     * @return list of all boards without pictograms (for performance)
-     */
     @Transactional(readOnly = true)
-    public List<BoardResponseDTO> getAllBoards(){
+    public List<BoardResponseDTO> getAllBoards() {
         log.info("Fetching all boards");
         List<Board> boards = boardRepository.findAll();
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get a specific board by ID with all its pictograms
-     * @param id board ID
-     * @return board with pictograms
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
     @Transactional(readOnly = true)
     public BoardResponseDTO getBoardById(Long id) {
         log.info("Fetching board with ID: {}", id);
@@ -54,12 +45,8 @@ public class BoardService {
         return boardMapper.toResponseWithPictograms(board);
     }
 
-    /**
-     * Returns all boards owned by the authenticated tutor.
-     * Does NOT include predefined boards.
-     */
     @Transactional(readOnly = true)
-    public List<BoardResponseDTO> getBoardsByOwner(String tutorEmail){
+    public List<BoardResponseDTO> getBoardsByOwner(String tutorEmail) {
         log.info("Fetching boards for tutor: {}", tutorEmail);
         Tutor tutor = tutorRepository.findByEmail(tutorEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -68,11 +55,6 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Create a new board
-     * @param request board creation data
-     * @return created board
-     */
     public BoardResponseDTO createBoard(CreateBoardRequestDTO request, String tutorEmail) {
         log.info("Creating new board: {}", request.getName());
 
@@ -80,6 +62,9 @@ public class BoardService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tutor not found: " + tutorEmail));
 
         Board board = boardMapper.toEntity(request);
+        board.setName(SanitizationUtils.sanitize(request.getName()));
+        board.setDescription(SanitizationUtils.sanitize(request.getDescription()));
+        board.setCategory(SanitizationUtils.sanitize(request.getCategory()));
         board.setOwner(tutor);
         board.setIsPredefined(false);
 
@@ -89,14 +74,7 @@ public class BoardService {
         return boardMapper.toResponseWithPictograms(savedBoard);
     }
 
-    /**
-     * Creates an editable copy of a board for the authenticated tutor.
-     * The copy:
-     * - Gets a new name: "[original name] (copia)"
-     * - Is marked as isPredefined=false
-     * - Has the tutor as owner
-     * - Has copies of all original pictograms
-     */
+    // Creates an editable copy of a board for the authenticated tutor.
     @Transactional
     public BoardResponseDTO copyBoard(Long boardId, String tutorEmail) {
         log.info("Copying board {} for tutor: {}", boardId, tutorEmail);
@@ -137,11 +115,7 @@ public class BoardService {
         return boardMapper.toResponseWithPictograms(saved);
     }
 
-    /**
-     * Replaces all pictograms of a board with a new arrangement.
-     * Only the board owner can do this.
-     * Used by the drag & drop editor when saving changes.
-     */
+    // Replaces all pictograms of a board with a new arrangement.
     @Transactional
     public BoardResponseDTO updateBoardPictograms(
             Long boardId,
@@ -173,11 +147,7 @@ public class BoardService {
         return boardMapper.toResponseWithPictograms(updated);
     }
 
-    /**
-     * Resizes a board's grid.
-     * Validates that no existing pictograms fall outside the new dimensions.
-     * Only the board owner can do this.
-     */
+    // Resizes a board's grid.
     @Transactional
     public BoardResponseDTO resizeBoard(
             Long boardId,
@@ -198,14 +168,6 @@ public class BoardService {
         return boardMapper.toResponse(updated);
     }
 
-    /**
-     * Update an existing board
-     * Only updates non-null fields from the request
-     * @param id board ID
-     * @param request update data
-     * @return updated board
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
     public BoardResponseDTO updateBoard(Long id, UpdateBoardRequestDTO request) {
         log.info("Updating board with ID: {}", id);
 
@@ -220,6 +182,11 @@ public class BoardService {
             validateBoardResize(board, newRows, newColumns);
         }
 
+        if (request.getName() != null)
+            request.setName(SanitizationUtils.sanitize(request.getName()));
+        if (request.getDescription() != null)
+            request.setDescription(SanitizationUtils.sanitize(request.getDescription()));
+
         // Update entity using mapper (only non-null fields)
         boardMapper.updateEntityFromRequest(request, board);
 
@@ -230,12 +197,6 @@ public class BoardService {
         return boardMapper.toResponse(updatedBoard);
     }
 
-    /**
-     * Delete a board by ID
-     * All pictograms will be deleted automatically (cascade)
-     * @param id board ID
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
     public void deleteBoard(Long id) {
         log.info("Deleting board with ID: {}", id);
 
@@ -243,17 +204,11 @@ public class BoardService {
         if (!boardRepository.existsById(id)) {
             throw new ResourceNotFoundException("Board not found with ID: " + id);
         }
-
         // Delete board
         boardRepository.deleteById(id);
         log.info("Board deleted successfully with ID: {}", id);
     }
 
-    /**
-     * Search boards by name (case-insensitive partial match)
-     * @param name search term
-     * @return list of matching boards
-     */
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> searchBoardsByName(String name) {
         log.info("Searching boards with name containing: {}", name);
@@ -261,10 +216,6 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get boards ordered by most recently created
-     * @return list of boards
-     */
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getBoardsOrderedByNewest() {
         log.info("Fetching boards ordered by creation date");
@@ -272,10 +223,7 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get boards ordered by most recently updated
-     * @return list of boards
-     */
+    // Get boards ordered by most recently updated
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getBoardsOrderedByRecentlyUpdated() {
         log.info("Fetching boards ordered by update date");
@@ -283,10 +231,7 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get boards that have at least one pictogram
-     * @return list of non-empty boards
-     */
+    // Get boards that have at least one pictogram
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getBoardsWithPictograms() {
         log.info("Fetching boards with pictograms");
@@ -294,21 +239,15 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get empty boards (no pictograms)
-     * @return list of empty boards
-     */
+    // Get empty boards (no pictograms)
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getEmptyBoards() {
         log.info("Fetching empty boards");
         List<Board> boards = boardRepository.findEmptyBoards();
         return boardMapper.toResponseList(boards);
     }
-    /**
-     * Get boards by difficulty level
-     * @param level difficulty level (1-3)
-     * @return list of boards
-     */
+
+    // Get boards by difficulty level
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getBoardsByLevel(Integer level) {
         log.info("Fetching boards for level: {}", level);
@@ -321,10 +260,7 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Get predefined/template boards
-     * @return list of predefined boards
-     */
+    // Get predefined/template boards
     @Transactional(readOnly = true)
     public List<BoardResponseDTO> getPredefinedBoards() {
         log.info("Fetching predefined boards");
@@ -332,22 +268,14 @@ public class BoardService {
         return boardMapper.toResponseList(boards);
     }
 
-    /**
-     * Check if a board exists
-     * @param id board ID
-     * @return true if exists
-     */
+    // Check if a board exists
     @Transactional(readOnly = true)
     public boolean boardExists(Long id) {
         return boardRepository.existsById(id);
     }
 
     /******************** HELPER METHODS *****************************/
-
-    /**
-     * Validates that board can be resized without losing pictograms
-     * Throws exception if any pictogram would be outside the new dimensions
-     */
+    // Validates that board can be resized without losing pictograms. Throws exception if any pictogram would be outside the new dimensions
     private void validateBoardResize(Board board, Integer newRows, Integer newColumns) {
         for (BoardPictogram pictogram : board.getPictograms()) {
             if (pictogram.getPositionX() >= newColumns || pictogram.getPositionY() >= newRows) {
@@ -381,9 +309,5 @@ public class BoardService {
         }
         return board;
     }
-
-
-
-
 
 }

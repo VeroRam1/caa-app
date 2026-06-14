@@ -12,6 +12,7 @@ import com.caa.backend.model.enums.Level;
 import com.caa.backend.repository.BoardRepository;
 import com.caa.backend.repository.ChildProfileRepository;
 import com.caa.backend.repository.TutorRepository;
+import com.caa.backend.security.SanitizationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,11 +35,7 @@ public class ChildProfileService {
 
     // ============= QUERIES =============
 
-    /**
-     * Get all child profiles belonging to the authenticated tutor
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return list of child profiles without board detail (for performance)
-     */
+    // Get all child profiles belonging to the authenticated tutor
     @Transactional(readOnly = true)
     public List<ChildProfileResponseDTO> getAllProfiles(String tutorEmail) {
         log.info("Fetching all child profiles for tutor: {}", tutorEmail);
@@ -47,13 +44,7 @@ public class ChildProfileService {
         return childProfileMapper.toResponseList(profiles);
     }
 
-    /**
-     * Get a specific child profile by ID with all its assigned boards
-     * @param id child profile ID
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return child profile with boards
-     * @throws ResourceNotFoundException if profile doesn't exist or doesn't belong to this tutor
-     */
+    // Get a specific child profile by ID with all its assigned boards
     @Transactional(readOnly = true)
     public ChildProfileResponseDTO getProfileById(Long id, String tutorEmail) {
         log.info("Fetching child profile with ID: {}", id);
@@ -66,16 +57,7 @@ public class ChildProfileService {
         return childProfileMapper.toResponseWithBoards(profile);
     }
 
-    /**
-     * Uploads a profile photo for a child profile.
-     * Saves the file to disk, updates photoUrl in the DB,
-     * and deletes the old photo if one existed.
-     *
-     * @param profileId  child profile ID
-     * @param file       uploaded image file
-     * @param tutorEmail authenticated tutor's email
-     * @return updated child profile response
-     */
+    // Uploads a profile photo for a child profile.
     @Transactional
     public ChildProfileResponseDTO uploadPhoto(Long profileId, MultipartFile file, String tutorEmail) {
         log.info("Uploading photo for child profile ID: {}", profileId);
@@ -109,6 +91,8 @@ public class ChildProfileService {
         log.info("Creating new child profile '{}' for tutor: {}", dto.getName(), tutorEmail);
         Tutor tutor = loadTutorByEmail(tutorEmail);
 
+        dto.setName(SanitizationUtils.sanitize(dto.getName()));
+
         ChildProfile profile = childProfileMapper.toEntity(dto);
         tutor.addChildProfile(profile);
 
@@ -127,20 +111,13 @@ public class ChildProfileService {
         return childProfileMapper.toResponse(saved);
     }
 
-    /**
-     * Update an existing child profile
-     * Only updates non-null fields from the request (name, birthDate, photoUrl, level)
-     * Does NOT update tutor or assignedBoards — managed separately
-     * @param id child profile ID
-     * @param request update data
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return updated child profile
-     * @throws ResourceNotFoundException if profile doesn't exist or doesn't belong to this tutor
-     */
+    // Update an existing child profile. Only updates non-null fields from the request (name, birthDate, photoUrl, level)
     public ChildProfileResponseDTO updateProfile(Long id, ChildProfileRequestDTO request, String tutorEmail) {
         log.info("Updating child profile with ID: {}", id);
         Tutor tutor = loadTutorByEmail(tutorEmail);
         ChildProfile profile = loadProfileForTutor(id, tutor.getId());
+
+        request.setName(SanitizationUtils.sanitize(request.getName()));
 
         childProfileMapper.updateEntityFromRequest(request, profile);
 
@@ -150,13 +127,7 @@ public class ChildProfileService {
         return childProfileMapper.toResponse(updatedProfile);
     }
 
-    /**
-     * Delete a child profile
-     * Only the tutor who owns the profile can delete it
-     * @param id child profile ID
-     * @param tutorEmail email extracted from JWT in the controller
-     * @throws ResourceNotFoundException if profile doesn't exist or doesn't belong to this tutor
-     */
+    // Delete a child profile
     public void deleteProfile(Long id, String tutorEmail) {
         log.info("Deleting child profile with ID: {}", id);
         Tutor tutor = loadTutorByEmail(tutorEmail);
@@ -167,15 +138,8 @@ public class ChildProfileService {
         log.info("Child profile deleted successfully with ID: {}", id);
     }
 
-    /**
-     * Change the communication level of a child profile independently
-     * Separated from updateProfile so the tutor can update level without resending full data
-     * @param id child profile ID
-     * @param request new level
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return updated child profile
-     * @throws ResourceNotFoundException if profile doesn't exist or doesn't belong to this tutor
-     */
+    // Change the communication level of a child profile independently
+    // Separated from updateProfile so the tutor can update level without resending full data
     public ChildProfileResponseDTO changeLevel(Long id, ChangeLevelRequestDTO request, String tutorEmail) {
         log.info("Changing level of child profile ID: {} to {}", id, request.getLevel());
         Tutor tutor = loadTutorByEmail(tutorEmail);
@@ -191,15 +155,8 @@ public class ChildProfileService {
 
     // ============= BOARD ASSIGNMENT =============
 
-    /**
-     * Assign an existing board to a child profile
-     * Avoids duplicates — assigning the same board twice has no effect
-     * @param profileId child profile ID
-     * @param boardId ID of the board to assign
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return updated child profile with boards
-     * @throws ResourceNotFoundException if profile or board don't exist
-     */
+     // Assign an existing board to a child profile
+     // Avoids duplicates — assigning the same board twice has no effect
     public ChildProfileResponseDTO assignBoard(Long profileId, Long boardId, String tutorEmail) {
         log.info("Assigning board ID: {} to child profile ID: {}", boardId, profileId);
         Tutor tutor = loadTutorByEmail(tutorEmail);
@@ -216,15 +173,7 @@ public class ChildProfileService {
         return childProfileMapper.toResponseWithBoards(updatedProfile);
     }
 
-    /**
-     * Remove a board from a child profile
-     * Does not delete the board itself — only removes the assignment
-     * @param profileId child profile ID
-     * @param boardId ID of the board to remove
-     * @param tutorEmail email extracted from JWT in the controller
-     * @return updated child profile with boards
-     * @throws ResourceNotFoundException if profile or board don't exist
-     */
+    // Remove a board from a child profile. Does not delete the board itself — only removes the assignment
     public ChildProfileResponseDTO removeBoard(Long profileId, Long boardId, String tutorEmail) {
         log.info("Removing board ID: {} from child profile ID: {}", boardId, profileId);
         Tutor tutor = loadTutorByEmail(tutorEmail);
@@ -243,25 +192,13 @@ public class ChildProfileService {
 
     // ============= HELPER METHODS =============
 
-    /**
-     * Loads a tutor by email extracted from the JWT
-     * @param email tutor's email
-     * @return Tutor entity
-     * @throws ResourceNotFoundException if no tutor exists with that email
-     */
+    // Loads a tutor by email extracted from the JWT
     private Tutor loadTutorByEmail(String email) {
         return tutorRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Tutor not found with email: " + email));
     }
 
-    /**
-     * Loads a child profile and verifies it belongs to the given tutor
-     * Prevents tutors from accessing other tutors' children
-     * @param profileId child profile ID
-     * @param tutorId   authenticated tutor's ID
-     * @return ChildProfile entity
-     * @throws ResourceNotFoundException if not found or not owned by this tutor
-     */
+    // Loads a child profile and verifies it belongs to the given tutor. Prevents tutors from accessing other tutors' children
     private ChildProfile loadProfileForTutor(Long profileId, Long tutorId) {
         return childProfileRepository.findByIdAndTutorId(profileId, tutorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Child profile not found with ID: " + profileId));

@@ -28,9 +28,7 @@ public class ChildProfileResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /**
-     * Constructor without boards (for list views)
-     */
+    // Constructor without boards (for list views)
     public ChildProfileResponseDTO(Long id, String name, LocalDate birthDate,
                                    String photoUrl, Level level, Long tutorId,
                                    LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -46,27 +44,18 @@ public class ChildProfileResponseDTO {
         this.updatedAt = updatedAt;
     }
 
-    /**
-     * Sets assigned boards and updates the count
-     */
+    // Sets assigned boards and updates the count
     public void setAssignedBoards(List<BoardResponseDTO> assignedBoards) {
         this.assignedBoards = assignedBoards;
         this.boardCount = assignedBoards != null ? assignedBoards.size() : 0;
     }
 
-    /**
-     * Checks whether this child has access to phrase construction.
-     * Available from LEVEL_2 onwards.
-     * @return true if phrase construction is enabled for this child
-     */
+    // Checks whether this child has access to phrase construction. Available from LEVEL_2 onwards.
     public boolean hasPhraseConstruction() {
         return this.level == Level.LEVEL_2 || this.level == Level.LEVEL_3;
     }
 
-    /**
-     * Checks whether the child has any boards assigned
-     * @return true if at least one board is assigned
-     */
+    // Checks whether the child has any boards assigned
     public boolean hasBoards() {
         return boardCount != null && boardCount > 0;
     }
