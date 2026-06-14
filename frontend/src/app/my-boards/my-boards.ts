@@ -13,6 +13,8 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { BoardService, Board } from '../services/boardService';
 import { AuthService } from '../services/auth-service';
+import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 
 interface BoardCategory {
   label: string;
@@ -31,7 +33,9 @@ interface BoardCategory {
     MenuModule,
     DialogModule,
     ConfirmPopupModule,
-    ToastModule
+    ToastModule,
+    SelectModule,
+    FormsModule
   ],
   templateUrl: './my-boards.html',
   styleUrl: './my-boards.scss'
@@ -47,6 +51,30 @@ export class MyBoardsComponent implements OnInit {
   loadingPredefined: boolean = true;
   loadingMine: boolean = true;
   copying: boolean = false;
+
+  visibleCreateBoard: boolean = false;
+  creatingBoard: boolean = false;
+  newBoardName: string = '';
+  newBoardLevel: number = 1;
+  newBoardCategory: string = 'General';
+
+  newCustomCategory: string = '';
+
+  categoryOptions = [
+    { label: 'General', value: 'General' },
+    { label: 'Alimentos', value: 'Alimentos' },
+    { label: 'Emociones', value: 'Emociones' },
+    { label: 'Lugares', value: 'Lugares' },
+    { label: 'Personas', value: 'Personas' },
+    { label: 'Acciones', value: 'Acciones' },
+    { label: '+ Nueva categoría...', value: '__custom__' }
+  ];
+
+  levelOptionsForCreate = [
+    { label: 'Nivel 1', value: 1 },
+    { label: 'Nivel 2', value: 2 },
+    { label: 'Nivel 3', value: 3 }
+  ];
 
   get groupedPredefinedBoards(): BoardCategory[] {
     const CategoryNames = [
@@ -164,6 +192,78 @@ export class MyBoardsComponent implements OnInit {
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo copiar el tablero. Inténtalo de nuevo.'
+        });
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  get isCustomCategorySelected(): boolean {
+    return this.newBoardCategory === '__custom__';
+  }
+
+  showCreateBoardDialog(): void {
+    this.newBoardName = '';
+    this.newBoardLevel = 1;
+    this.newBoardCategory = 'General';
+    this.newCustomCategory = '';
+    this.visibleCreateBoard = true;
+    this.cdr.markForCheck();
+  }
+
+  private getDefaultDimensions(level: number): { rows: number; columns: number } {
+    switch (level) {
+      case 2: return { rows: 4, columns: 5 };
+      case 3: return { rows: 5, columns: 6 };
+      default: return { rows: 3, columns: 4 };
+    }
+  }
+
+  onCreateBoard(): void {
+    const categoryName = this.isCustomCategorySelected
+      ? this.newCustomCategory.trim()
+      : this.newBoardCategory;
+
+    if (!categoryName) return; 
+
+    const name = this.newBoardName.trim() || `${categoryName} - Personalizado`;
+    const { rows, columns } = this.getDefaultDimensions(this.newBoardLevel);
+
+    this.creatingBoard = true;
+    this.cdr.markForCheck();
+
+    this.boardService.createBoard({
+      name,
+      description: '',
+      rows,
+      columns,
+      level: this.newBoardLevel,
+      isPredefined: false,
+      category: categoryName
+    }).subscribe({
+      next: (response) => {
+        const newBoardId = response?.data?.id ?? response?.id;
+        this.creatingBoard = false;
+        this.visibleCreateBoard = false;
+        this.cdr.markForCheck();
+
+        if (newBoardId) {
+          this.router.navigate(['/board-editor', newBoardId]);
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'El tablero se creó pero no se pudo abrir el editor.'
+          });
+          this.loadMyBoards();
+        }
+      },
+      error: () => {
+        this.creatingBoard = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear el tablero.'
         });
         this.cdr.markForCheck();
       }

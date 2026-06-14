@@ -63,7 +63,7 @@ public interface ChildProfileMapper {
      */
     @Mapping(target = "tutorId", source = "tutor.id")
     @Mapping(target = "boardCount", expression = "java(childProfile.getAssignedBoards().size())")
-    @Mapping(target = "assignedBoards", ignore = true)  // Don't include boards in list view
+    @Mapping(target = "assignedBoards", qualifiedByName = "toResponseList")
     @Named("toResponse")
     ChildProfileResponseDTO toResponse(ChildProfile childProfile);
 

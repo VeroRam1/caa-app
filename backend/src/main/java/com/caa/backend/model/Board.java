@@ -61,6 +61,9 @@ public class Board {
     @Column(nullable = false)
     private Boolean isPredefined = false;
 
+    @Column(length = 50)
+    private String category;
+
     /**
      * Relation one to many with BoardPictogram
      * One board can have multiple pictograms

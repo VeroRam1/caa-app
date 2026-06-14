@@ -12,14 +12,14 @@ html {
   ));
 }
 
-// Tailwind v3 
+// Tailwind v3
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @import "primeicons/primeicons.css";
 
-// Estilos globales 
+// Estilos globales
 html, body {
   height: 100%;
   margin: 0;
@@ -29,73 +29,54 @@ html, body {
   color: var(--mat-sys-on-surface);
 }
 
-// CSS variables personalized  
+// CSS variables personalizadas
 :root {
-  --caa-primary: #4A90E2;
-  --caa-secondary: #50C878;
-
-  // Text colors over blue background so it meets 4.5:1 contrast ratio
+  // Text colors over colored backgrounds — cumplen ratio 4.5:1 (WCAG 1.4.3)
   --color-blue-bg: #d6f0ff;
-  --color-blue-text: #1a4971;      
+  --color-blue-text: #1a4971;
   --color-pink-bg: #ffd6e7;
-  --color-pink-text: #7c1d3a;      
+  --color-pink-text: #7c1d3a;
   --color-green-bg: #d1fae5;
-  --color-green-text: #064e3b;     
+  --color-green-text: #064e3b;
   --color-yellow-bg: #fef3c7;
-  --color-yellow-text: #713f12;    
+  --color-yellow-text: #713f12;
   --color-purple-bg: #ede9fe;
-  --color-purple-text: #3b0764;    
+  --color-purple-text: #3b0764;
   --color-red-bg: #fee2e2;
-  --color-red-text: #7f1d1d;       
+  --color-red-text: #7f1d1d;
 
-  --toolbar-text: #0c2340;         
+  --toolbar-text: #0c2340;
 }
 
-// Overrides globales PrimeNG 
+// ── Overrides globales PrimeNG ──────────────────────────────────────────────────
 .p-toolbar {
   background-color: #6eb3f3 !important;
   border: none !important;
-  border-radius: 0 !important;  // sin radius: el toolbar ocupa todo el ancho
+  border-radius: 0 !important;
   padding: 0.5rem 1.5rem !important;
   min-height: 3rem;
 }
 
-// Minimum button size 
+// Tamaño mínimo de botones — criterio 2.5.8
 .p-button {
   min-height: 44px !important;
   min-width: 44px !important;
 }
 
-// Menu items big enough to be easily clickable
+// Elementos de menú con tamaño accesible
 .p-menu .p-menuitem-link {
   min-height: 44px !important;
   display: flex;
   align-items: center;
 }
 
-@media (max-height: 500px) and (orientation: landscape) {
-  .main-content {
-    padding: 1rem;
-    gap: 1rem;
-  }
-
-  .central-panels {
-    gap: 1rem;
-  }
-
-  .panel-button {
-    height: 140px;  // más bajo en landscape para que quepan
-  }
-}
-
-// Global styles for confirmation popups
+// ── Confirm popups ────────────────────────────────────────────────────────────
 .p-confirmpopup {
-  background: #e8f4fd !important;        // fondo azul muy suave
+  background: #e8f4fd !important;
   border: 2px solid #b3ddff !important;
   border-radius: 0.75rem !important;
   box-shadow: 0 4px 20px rgba(74, 133, 181, 0.25) !important;
 
-  // La flecha del popup
   .p-confirmpopup-arrow {
     background: #e8f4fd !important;
     border-color: #b3ddff !important;
@@ -113,7 +94,7 @@ html, body {
 .confirm-message {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1a4971;       // azul oscuro — ratio 7.2:1 sobre #e8f4fd ✓ WCAG
+  color: #1a4971;
   line-height: 1.4;
 }
 
@@ -121,4 +102,78 @@ html, body {
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+// ── Toast — fondos sólidos para cumplir WCAG 1.4.3 (contraste 4.5:1) ────────────
+.p-toast {
+  .p-toast-message {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    border-width: 2px !important;
+
+    .p-toast-summary,
+    .p-toast-detail {
+      font-weight: 600;
+    }
+
+    .p-toast-close-button {
+      min-width: 32px !important;
+      min-height: 32px !important;
+    }
+  }
+
+  .p-toast-message-success {
+    background: var(--color-green-bg) !important;
+    border-color: #6ee7b7 !important;
+    color: var(--color-green-text) !important;
+
+    .p-toast-summary, .p-toast-detail, .p-toast-icon, .p-toast-close-icon {
+      color: var(--color-green-text) !important;
+    }
+  }
+
+  .p-toast-message-error {
+    background: var(--color-red-bg) !important;
+    border-color: #fca5a5 !important;
+    color: var(--color-red-text) !important;
+
+    .p-toast-summary, .p-toast-detail, .p-toast-icon, .p-toast-close-icon {
+      color: var(--color-red-text) !important;
+    }
+  }
+
+  .p-toast-message-warn {
+    background: var(--color-yellow-bg) !important;
+    border-color: #fde68a !important;
+    color: var(--color-yellow-text) !important;
+
+    .p-toast-summary, .p-toast-detail, .p-toast-icon, .p-toast-close-icon {
+      color: var(--color-yellow-text) !important;
+    }
+  }
+
+  .p-toast-message-info {
+    background: var(--color-blue-bg) !important;
+    border-color: #b3ddff !important;
+    color: var(--color-blue-text) !important;
+
+    .p-toast-summary, .p-toast-detail, .p-toast-icon, .p-toast-close-icon {
+      color: var(--color-blue-text) !important;
+    }
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .main-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .central-panels {
+    gap: 1rem;
+  }
+
+  .panel-button {
+    height: 140px;
+  }
 }

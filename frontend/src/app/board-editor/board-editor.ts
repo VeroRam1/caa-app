@@ -143,7 +143,7 @@ export class BoardEditor implements OnInit {
   /*********************** Grid helpers *****************************/
   // Creates a CSS grid template string based on the number of rows and columns of the board
   get gridStyle() {
-    return `repeat(${this.boardRows}, 1fr)`;
+    return `repeat(${this.boardColumns}, 1fr)`;
   }
 
   getCellsForRow(row: number): GridCell[] {
@@ -297,37 +297,37 @@ export class BoardEditor implements OnInit {
   }
 
   onSave(): void {
-    if (!this.board || !this.boardName.trim()) return;
+  if (!this.board || !this.boardName.trim()) return;
     this.saving = true;
     this.cdr.markForCheck();
 
     const boardId = this.board.id;
 
-    // Update name and description if changed
-    const updateData = {
-      name: this.boardName,
-      description: this.board.description || '',
-      rows: this.boardRows,
-      columns: this.boardColumns,
-      level: this.board.level,
-      isPredefined: false
-    };
+    const pictograms = this.cells
+      .filter(c => c.pictogram !== null)
+      .map(c => ({
+        pictogramId: c.pictogram!.pictogramId,
+        pictogramUrl: c.pictogram!.pictogramUrl,
+        text: c.pictogram!.text,
+        positionX: c.col,
+        positionY: c.row,
+        backgroundColor: c.pictogram!.backgroundColor
+      }));
 
-    this.boardService.updateBoard(boardId, updateData).subscribe({
+    // 1º: actualizar pictogramas (ya dentro de los nuevos límites)
+    this.boardService.updateBoardPictograms(boardId, { pictograms }).subscribe({
       next: () => {
-        // Update pictogram layout
-        const pictograms = this.cells
-          .filter(c => c.pictogram !== null)
-          .map(c => ({
-            pictogramId: c.pictogram!.pictogramId,
-            pictogramUrl: c.pictogram!.pictogramUrl,
-            text: c.pictogram!.text,
-            positionX: c.col,
-            positionY: c.row,
-            backgroundColor: c.pictogram!.backgroundColor
-          }));
+        // 2º: ahora sí, redimensionar/actualizar nombre y dimensiones
+        const updateData = {
+          name: this.boardName,
+          description: this.board!.description || '',
+          rows: this.boardRows,
+          columns: this.boardColumns,
+          level: this.board!.level,
+          isPredefined: false
+        };
 
-        this.boardService.updateBoardPictograms(boardId, { pictograms }).subscribe({
+        this.boardService.updateBoard(boardId, updateData).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
@@ -342,7 +342,7 @@ export class BoardEditor implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'No se pudieron guardar los pictogramas.'
+              detail: 'No se pudo actualizar el tablero.'
             });
             this.saving = false;
             this.cdr.markForCheck();
@@ -353,7 +353,7 @@ export class BoardEditor implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo actualizar el tablero.'
+          detail: 'No se pudieron guardar los pictogramas.'
         });
         this.saving = false;
         this.cdr.markForCheck();

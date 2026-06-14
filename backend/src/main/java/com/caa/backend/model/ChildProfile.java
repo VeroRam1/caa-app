@@ -62,11 +62,7 @@ public class ChildProfile {
     @JoinColumn(name = "tutor_id", nullable = false)
     private Tutor tutor;
 
-    /**
-     * Boards assigned to this child profile.
-     * A child can have multiple boards; a board can be assigned to multiple children.
-     * Uses a join table "child_profile_boards".
-     */
+    // Boards assigned to this child profile. A child can have multiple boards;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "child_profile_boards",

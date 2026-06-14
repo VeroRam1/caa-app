@@ -73,17 +73,20 @@ public class BoardService {
      * @param request board creation data
      * @return created board
      */
-    public BoardResponseDTO createBoard(CreateBoardRequestDTO request) {
+    public BoardResponseDTO createBoard(CreateBoardRequestDTO request, String tutorEmail) {
         log.info("Creating new board: {}", request.getName());
 
-        // Convert DTO to entity using mapper
-        Board board = boardMapper.toEntity(request);
+        Tutor tutor = tutorRepository.findByEmail(tutorEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Tutor not found: " + tutorEmail));
 
-        // Save to database
+        Board board = boardMapper.toEntity(request);
+        board.setOwner(tutor);
+        board.setIsPredefined(false);
+
         Board savedBoard = boardRepository.save(board);
         log.info("Board created successfully with ID: {}", savedBoard.getId());
 
-        return boardMapper.toResponse(savedBoard);
+        return boardMapper.toResponseWithPictograms(savedBoard);
     }
 
     /**

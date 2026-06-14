@@ -123,6 +123,12 @@
       <h2 id="my-boards-title" class="section-title">
         <span aria-hidden="true">✏️</span> Mis tableros
       </h2>
+      <p-button
+        label="Crear tablero nuevo"
+        icon="pi pi-plus"
+        size="small"
+        (click)="showCreateBoardDialog()"
+        aria-label="Crear un tablero nuevo desde cero" />
       <p class="section-subtitle">
         Tableros que has creado o copiado. Puedes editarlos y asignarlos a perfiles de niños.
       </p>
@@ -177,6 +183,66 @@
         </div>
       }
     </section>
+
+    <p-dialog
+      header="Crear tablero nuevo"
+      [(visible)]="visibleCreateBoard"
+      [modal]="true"
+      [style]="{ width: '90vw', maxWidth: '420px', minHeight: '420px' }"
+      [draggable]="false">
+
+      <div class="create-board-form">
+
+        <div class="form-field">
+          <label for="new-board-name">Nombre del tablero</label>
+          <input
+            id="new-board-name"
+            type="text"
+            pInputText
+            [(ngModel)]="newBoardName"
+            placeholder="Ej: Animales - Nivel 1"
+            class="w-full p-inputtext p-component" />
+        </div>
+
+        <div class="form-field">
+          <label for="new-board-level">Nivel</label>
+          <p-select
+            id="new-board-level"
+            [(ngModel)]="newBoardLevel"
+            [options]="levelOptionsForCreate"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full" />
+        </div>
+
+        @if (isCustomCategorySelected) {
+          <div class="form-field">
+            <label for="new-custom-category">Nombre de la nueva categoría</label>
+            <input
+              id="new-custom-category"
+              type="text"
+              pInputText
+              [(ngModel)]="newCustomCategory"
+              placeholder="Ej: Juguetes"
+              class="w-full" />
+            <p class="field-hint">
+              Aparecerá como una categoría más en el sidebar del niño, con un icono
+              circular con la inicial de su nombre.
+            </p>
+          </div>
+        }
+
+      </div>
+
+      <ng-template #footer>
+        <p-button label="Cancelar" severity="secondary" [text]="true"
+                  (click)="visibleCreateBoard = false" />
+        <p-button label="Crear y editar" icon="pi pi-pencil"
+                  [loading]="creatingBoard"
+                  (click)="onCreateBoard()" />
+      </ng-template>
+
+    </p-dialog>
 
   </main>
 

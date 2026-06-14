@@ -54,7 +54,7 @@
         aria-label="Guardar cambios del tablero" />
 
       <p-button
-        label="Cancelar"
+        label="Salir"
         icon="pi pi-times"
         severity="secondary"
         (click)="onCancel($event)"
@@ -157,26 +157,17 @@
           <div class="grid-control">
             <label for="rows-input" class="control-label">Filas</label>
             <div class="control-spinner">
-              <button
-                type="button"
-                class="spinner-btn"
-                (click)="boardRows = Math.max(1, boardRows - 1); onResizeGrid()"
-                [disabled]="boardRows <= 1"
-                aria-label="Reducir filas">−</button>
-              <input
-                id="rows-input"
-                type="number"
-                [(ngModel)]="boardRows"
-                (change)="onResizeGrid()"
-                min="1" max="8"
-                class="spinner-input"
-                aria-label="Número de filas" />
-              <button
-                type="button"
-                class="spinner-btn"
-                (click)="boardRows = Math.min(8, boardRows + 1); onResizeGrid()"
-                [disabled]="boardRows >= 8"
-                aria-label="Aumentar filas">+</button>
+              <button type="button" class="spinner-btn"
+                      (click)="boardRows = Math.max(1, boardRows - 1); onResizeGrid()"
+                      [disabled]="boardRows <= 1"
+                      aria-label="Reducir filas">−</button>
+              <input id="rows-input" type="number" [(ngModel)]="boardRows"
+                    (change)="onResizeGrid()" min="1" max="8"
+                    class="spinner-input" aria-label="Número de filas" />
+              <button type="button" class="spinner-btn"
+                      (click)="boardRows = Math.min(8, boardRows + 1); onResizeGrid()"
+                      [disabled]="boardRows >= 8"
+                      aria-label="Aumentar filas">+</button>
             </div>
           </div>
 
@@ -185,26 +176,17 @@
           <div class="grid-control">
             <label for="cols-input" class="control-label">Columnas</label>
             <div class="control-spinner">
-              <button
-                type="button"
-                class="spinner-btn"
-                (click)="boardColumns = Math.max(1, boardColumns - 1); onResizeGrid()"
-                [disabled]="boardColumns <= 1"
-                aria-label="Reducir columnas">−</button>
-              <input
-                id="cols-input"
-                type="number"
-                [(ngModel)]="boardColumns"
-                (change)="onResizeGrid()"
-                min="1" max="8"
-                class="spinner-input"
-                aria-label="Número de columnas" />
-              <button
-                type="button"
-                class="spinner-btn"
-                (click)="boardColumns = Math.min(8, boardColumns + 1); onResizeGrid()"
-                [disabled]="boardColumns >= 8"
-                aria-label="Aumentar columnas">+</button>
+              <button type="button" class="spinner-btn"
+                      (click)="boardColumns = Math.max(1, boardColumns - 1); onResizeGrid()"
+                      [disabled]="boardColumns <= 1"
+                      aria-label="Reducir columnas">−</button>
+              <input id="cols-input" type="number" [(ngModel)]="boardColumns"
+                    (change)="onResizeGrid()" min="1" max="8"
+                    class="spinner-input" aria-label="Número de columnas" />
+              <button type="button" class="spinner-btn"
+                      (click)="boardColumns = Math.min(8, boardColumns + 1); onResizeGrid()"
+                      [disabled]="boardColumns >= 8"
+                      aria-label="Aumentar columnas">+</button>
             </div>
           </div>
 

@@ -50,7 +50,6 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/h2-console/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
@@ -60,7 +59,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/arasaac/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        // ← añadir estas dos líneas
                         .requestMatchers("/api/boards/predefined").permitAll()
                         .requestMatchers("/api/boards/level/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()

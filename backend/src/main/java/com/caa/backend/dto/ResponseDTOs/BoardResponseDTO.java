@@ -22,6 +22,7 @@ public class BoardResponseDTO {
     private Integer columns;
     private Integer level;
     private Boolean isPredefined;
+    private String category;
     private Integer totalCells;
     private Integer pictogramCount;
     private List<PictogramResponseDTO> pictograms;

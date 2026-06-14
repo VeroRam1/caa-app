@@ -20,6 +20,7 @@ export interface Board {
     columns: number;
     level: number;
     isPredefined: boolean;
+    category?: string;
     totalCells: number;
     pictogramCount: number;
     pictograms: BoardPictogram[];
@@ -38,6 +39,16 @@ export interface UpdatePictogramsRequest {
   }[];
 }
 
+export interface CreateBoardRequest {
+  name: string;
+  description: string;
+  rows: number;
+  columns: number;
+  level: number;
+  isPredefined: boolean;
+  category?: string;
+}
+
 @Injectable({
     providedIn: "root",
 })
@@ -45,6 +56,7 @@ export class BoardService {
   private apiUrl = "http://localhost:8080/api/boards";
 
   constructor(private http: HttpClient) { }
+  
   // Get boards by Id with all its pictograms
   getBoardById(id: number): Observable<Board> {
     return this.http.get<Board>(`${this.apiUrl}/${id}`);
@@ -76,6 +88,10 @@ export class BoardService {
 
   copyBoard(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${id}/copy`, {});
+  }
+
+  createBoard(request: CreateBoardRequest): Observable<any> {
+    return this.http.post(this.apiUrl, request);
   }
 
   updateBoard(id: number, data: { name: string; description: string }): Observable<any> {

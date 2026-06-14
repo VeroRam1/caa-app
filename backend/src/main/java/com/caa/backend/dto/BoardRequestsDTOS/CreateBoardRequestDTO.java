@@ -36,4 +36,6 @@ public class CreateBoardRequestDTO {
     private Integer level;
 
     private Boolean isPredefined = false;
+
+    private String category;
 }

@@ -11,10 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO for child profile responses
- * Used in all ChildProfile API responses
- */
+// DTO for child profile responses
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

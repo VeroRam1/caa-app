@@ -27,17 +27,17 @@
   </p-confirmpopup>
 
   <header class="child-toolbar" role="banner">
-
-    <button
-      class="sidebar-toggle"
-      (click)="toggleSidebar()"
-      type="button"
-      [attr.aria-expanded]="sidebarOpen"
-      aria-controls="categories-panel"
-      aria-label="{{ sidebarOpen ? 'Ocultar categorías' : 'Mostrar categorías' }}">
-      {{ sidebarOpen ? '◀' : '▶' }}
-    </button>
-
+    @if (!isTutorMode){
+      <button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        type="button"
+        [attr.aria-expanded]="sidebarOpen"
+        aria-controls="categories-panel"
+        aria-label="{{ sidebarOpen ? 'Ocultar categorías' : 'Mostrar categorías' }}">
+        {{ sidebarOpen ? '◀' : '▶' }}
+      </button>
+    }
     <h1 class="child-toolbar__title">
       {{ board?.name || 'PictoCom' }}
     </h1>
@@ -114,38 +114,46 @@
   <div class="board-layout">
 
     <!-- Lateral panel for categories -->
-    <nav
-      id="categories-panel"
-      class="categories-sidebar"
-      [class.categories-sidebar--hidden]="!sidebarOpen"
-      aria-label="Categorías de pictogramas">
+    @if(!isTutorMode){
+      <nav
+        id="categories-panel"
+        class="categories-sidebar"
+        [class.categories-sidebar--hidden]="!sidebarOpen"
+        aria-label="Categorías de pictogramas">
 
-      <h2 class="categories-title">Categorías</h2>
+        <h2 class="categories-title">Categorías</h2>
 
-      <ul class="categories-list" role="list">
-        @for (cat of categories; track cat.label) {
-          <li>
-            <button
-              class="category-btn"
-              [class.category-btn--active]="activeCategory === cat.label"
-              (click)="onCategoryClick($event, cat, null)"
-              type="button"
-              [attr.aria-current]="activeCategory === cat.label ? 'true' : null"
-              [attr.aria-label]="cat.label">
+        <ul class="categories-list" role="list">
+          @for (cat of categories; track cat.label) {
+            <li>
+              <button
+                class="category-btn"
+                [class.category-btn--active]="activeCategory === cat.label"
+                (click)="onCategoryClick($event, cat, null)"
+                type="button"
+                [attr.aria-current]="activeCategory === cat.label ? 'true' : null"
+                [attr.aria-label]="cat.label">
 
-              <img
-                [src]="getArasaacIconUrl(cat.iconPictogramId)"
-                [alt]="cat.label"
-                class="category-img"
-                loading="lazy" />
+                @if (cat.isCustom) {
+                  <div class="category-img category-img--custom" aria-hidden="true">
+                    {{ cat.label.charAt(0).toUpperCase() }}
+                  </div>
+                } @else {
+                  <img
+                    [src]="getArasaacIconUrl(cat.iconPictogramId!)"
+                    [alt]="cat.label"
+                    class="category-img"
+                    loading="lazy" />
+                }
 
-              <span class="category-label">{{ cat.label }}</span>
+                <span class="category-label">{{ cat.label }}</span>
 
-            </button>
-          </li>
-        }
-      </ul>
-    </nav>
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+    }
 
     <!-- Board area -->
     <main class="board-area" role="main">

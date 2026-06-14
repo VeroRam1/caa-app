@@ -42,6 +42,10 @@ export class ChildProfileService {
     getAllChildProfiles(): Observable<ChildProfile[]> {
         return this.http.get<ChildProfile[]>(this.apiUrl);
     }
+    
+    getChildProfileById(profileId: number): Observable<any> {
+        return this.http.get(`${this.apiUrl}/${profileId}`);
+    }
 
     // Create a new child profile
     createProfile(request: CreateChildProfileRequest): Observable<ApiResponse<ChildProfile>> {
@@ -77,11 +81,11 @@ export class ChildProfileService {
     }
 
     assignBoard(BoardId: number, profileId: number): Observable<any> {
-        return this.http.post(`${this.apiUrl}/${profileId}/boards/${BoardId}`, {});
+        return this.http.post(`${this.apiUrl}/${BoardId}/boards/${profileId}`, {});
     }
 
     removeBoard(BoardId: number, profileId: number): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${profileId}/boards/${BoardId}`);
+        return this.http.delete(`${this.apiUrl}/${BoardId}/boards/${profileId}`);
     }
 
 }

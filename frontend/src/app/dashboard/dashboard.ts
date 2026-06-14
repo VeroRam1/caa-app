@@ -166,9 +166,11 @@ export class Dashboard implements OnInit {
   loadMyBoards(): void {
     this.loadingBoards = true;
     this.cdr.markForCheck();
+
     this.boardService.getMyBoards().subscribe({
       next: (boards) => {
-        this.myBoards = boards;
+        const profileLevelNum = this.getLevelNumber(this.selectedProfile?.level);
+        this.myBoards = boards.filter(b => b.level === profileLevelNum);
         this.loadingBoards = false;
         this.cdr.markForCheck();
       },
@@ -177,6 +179,12 @@ export class Dashboard implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  private getLevelNumber(level?: string): number {
+    if (level === 'LEVEL_2') return 2;
+    if (level === 'LEVEL_3') return 3;
+    return 1;
   }
   
   isAssigned(boardId: number): boolean{

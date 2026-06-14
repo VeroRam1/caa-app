@@ -47,9 +47,8 @@ public class BoardController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<List<BoardResponseDTO>> getMyBoards(
-            @AuthenticationPrincipal UserDetails userDetails){
-        log.info("GET /api/boards/myBoards - Fetching boards for tutor: {}",
-                userDetails.getUsername());
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("GET /api/boards/myBoards - Fetching boards for tutor: {}", userDetails.getUsername());
         List<BoardResponseDTO> boards = boardService.getBoardsByOwner(userDetails.getUsername());
         return ResponseEntity.ok(boards);
     }
@@ -62,19 +61,14 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
-    // TODO - eliminar, no se usa
     // Create new board
     @PostMapping
-    @Operation(summary = "Create a new board", description = "Create a new communication board")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Board created successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input")
-    })
     public ResponseEntity<APIResponseDTO<BoardResponseDTO>> createBoard(
-            @Valid @RequestBody CreateBoardRequestDTO request){
+            @Valid @RequestBody CreateBoardRequestDTO request,
+            @AuthenticationPrincipal UserDetails userDetails) {
         log.info("POST /api/boards - Creating new board: {}", request.getName());
-        BoardResponseDTO createdBoard = boardService.createBoard(request);
-        APIResponseDTO<BoardResponseDTO> response = APIResponseDTO.success("BoardCreatedSuccessfully", createdBoard);
+        BoardResponseDTO createdBoard = boardService.createBoard(request, userDetails.getUsername());
+        APIResponseDTO<BoardResponseDTO> response = APIResponseDTO.success("Board created successfully", createdBoard);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

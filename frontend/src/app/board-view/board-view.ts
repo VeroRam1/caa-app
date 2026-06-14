@@ -11,7 +11,8 @@ import { MenuModule } from 'primeng/menu';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ToastModule } from 'primeng/toast';
-import { forkJoin } from 'rxjs';
+import { ChildProfileService } from '../services/childProfile-service';
+import { forkJoin, of, Observable } from 'rxjs'; 
 
 // Category definition — links a display name to a board name in the backend
 interface SubLevel {
@@ -22,14 +23,22 @@ interface SubLevel {
 
 interface Category {
   label: string;
-  iconPictogramId: number;
+  iconPictogramId?: number;
+  isCustom?: boolean;        
   subLevels: SubLevel[];
 }
+
 interface PhraseItem {
   pictogramUrl: string;
   text: string;
 }
 
+interface AssignedBoardRef {
+  id: number;
+  name: string;
+  category?: string;
+  isPredefined?: boolean;
+}
 
 @Component({
   selector: 'app-board-view',
@@ -63,6 +72,8 @@ export class BoardView implements OnInit {
   sidebarOpen: boolean = true;
   activeCategory: string = 'General';
 
+  assignedBoards: AssignedBoardRef[] = [];
+
   // Lock
   lockTapCount: number = 0;
   lockTapTimer: ReturnType<typeof setTimeout> | null = null;
@@ -76,7 +87,7 @@ export class BoardView implements OnInit {
   readonly allCategories: Category[] = [
     {
       label: 'General',
-      iconPictogramId: 2,      
+      iconPictogramId: 6964,      
       subLevels: [
         { label: 'Nivel 1', level: 1, boardName: 'Tablero Básico - Nivel 1' },
         { label: 'Nivel 2', level: 2, boardName: 'Tablero General - Nivel 2' },
@@ -85,7 +96,7 @@ export class BoardView implements OnInit {
     },
     {
       label: 'Alimentos',
-      iconPictogramId: 7841,    
+      iconPictogramId: 4610,    
       subLevels: [
         { label: 'Nivel 1', level: 1, boardName: 'Alimentos - Nivel 1' },
         { label: 'Nivel 2', level: 2, boardName: 'Alimentos - Nivel 2' },
@@ -94,7 +105,7 @@ export class BoardView implements OnInit {
     },
     {
       label: 'Emociones',
-      iconPictogramId: 8484,  
+      iconPictogramId: 35547,  
       subLevels: [
         { label: 'Nivel 1', level: 1, boardName: 'Emociones - Nivel 1' },
         { label: 'Nivel 2', level: 2, boardName: 'Emociones - Nivel 2' },
@@ -103,21 +114,21 @@ export class BoardView implements OnInit {
     },
     {
       label: 'Lugares',
-      iconPictogramId: 6038,   
+      iconPictogramId: 32598,   
       subLevels: [
         { label: 'Nivel 1', level: 1, boardName: 'Lugares - Nivel 1' }
       ]
     },
     {
       label: 'Personas',
-      iconPictogramId: 7873,   
+      iconPictogramId: 7116,   
       subLevels: [
         { label: 'Nivel 1', level: 1, boardName: 'Personas - Nivel 1' }
       ]
     },
     {
       label: 'Acciones',
-      iconPictogramId: 4886,   
+      iconPictogramId: 32067,   
       subLevels: [
         { label: 'Nivel 2', level: 2, boardName: 'Acciones - Nivel 2' },
         { label: 'Nivel 3', level: 3, boardName: 'Acciones - Nivel 3' }
@@ -126,13 +137,58 @@ export class BoardView implements OnInit {
   ];
 
   get categories(): Category[] {
-    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3: this.profileLevel === 'LEVEL_2' ? 2 : 1;
-    return this.allCategories
+    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 : this.profileLevel === 'LEVEL_2' ? 2 : 1;
+
+    // Assigned boards, not predefined
+    const customAssigned = this.assignedBoards.filter(b => !b.isPredefined);
+
+    // Edited predefined categories
+    const overriddenLabels = new Set<string>();
+    for (const board of customAssigned) {
+      const label = board.category;
+      if (label) {
+        const match = this.allCategories.find(c =>
+          c.label.toLowerCase() === label.toLowerCase()
+        );
+        if (match) overriddenLabels.add(match.label);
+      } else {
+        // Fallback por nombre
+        const match = this.allCategories.find(c =>
+          board.name.toLowerCase().includes(c.label.toLowerCase())
+        );
+        if (match) overriddenLabels.add(match.label);
+      }
+    }
+
+    const predefined = this.allCategories
+      .filter(cat => !overriddenLabels.has(cat.label))
       .map(cat => ({
-          ...cat, 
-          subLevels: cat.subLevels.filter(sl => sl.level <= maxLevel)
-    }))
-    .filter(cat => cat.subLevels.length > 0);
+        ...cat,
+        subLevels: cat.subLevels.filter(sl => sl.level <= maxLevel)
+      }))
+      .filter(cat => cat.subLevels.length > 0);
+
+    // New categories for not predefined boards (custom)
+    const predefinedLabels = this.allCategories.map(c => c.label.toLowerCase());
+    const customLabels = new Set<string>();
+
+    for (const board of customAssigned) {
+      const label = board.category || board.name;
+      const matchesPredefined = predefinedLabels.some(pl =>
+        label.toLowerCase().includes(pl)
+      );
+      if (!matchesPredefined) {
+        customLabels.add(label);
+      }
+    }
+
+    const custom: Category[] = Array.from(customLabels).map(label => ({
+      label,
+      isCustom: true,
+      subLevels: []
+    }));
+
+    return [...predefined, ...custom];
   }
 
   get hasPhraseBar(): boolean {
@@ -148,6 +204,7 @@ export class BoardView implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private boardService: BoardService,
+    private childProfileService: ChildProfileService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -185,21 +242,23 @@ export class BoardView implements OnInit {
       this.boardService.getPredefinedBoardsByLevel(i + 1)
     );
 
-    forkJoin(levelRequests).subscribe({
+    forkJoin([...levelRequests, this.loadAssignedBoards()]).subscribe({
       next: (results) => {
-        this.allBoards = results.flat();
+        const assignedResult = results[results.length - 1] as AssignedBoardRef[];
+        const boardResults = results.slice(0, -1) as Board[][];
+
+        this.allBoards = boardResults.flat();
+        this.assignedBoards = assignedResult;
 
         const boardId = Number(this.route.snapshot.paramMap.get('id'));
         const requested = boardId > 0
           ? this.allBoards.find(b => b.id === boardId)
           : null;
 
-        const generalName = maxLevel === 1 ? 'Tablero Básico - Nivel 1' :
-                            maxLevel === 2 ? 'Tablero General - Nivel 2' :
-                                            'Tablero General - Nivel 3';
+        const generalTarget = this.findCategoryBoard(this.allCategories[0]);
 
         const target = requested ||
-          this.allBoards.find(b => b.name === generalName) ||
+          (generalTarget ? { id: generalTarget.id } as Board : null) ||
           this.allBoards[0];
 
         if (target) {
@@ -226,6 +285,32 @@ export class BoardView implements OnInit {
     this.router.navigate(['/guest-page']);
   }
 
+  private loadAssignedBoards(): Observable<AssignedBoardRef[]> {
+    if (this.isTutorMode || this.isGuestMode) return of([]);
+
+    const profileId = this.authService.getActiveProfileId();
+    if (!profileId) return of([]);
+
+    return new Observable<AssignedBoardRef[]>(observer => {
+      this.childProfileService.getChildProfileById(profileId).subscribe({
+        next: (response: any) => {
+          const boards = response?.assignedBoards || [];
+          observer.next(boards.map((b: any) => ({
+            id: b.id,
+            name: b.name,
+            category: b.category,
+            isPredefined: b.isPredefined
+          })));
+          observer.complete();
+        },
+        error: () => {
+          observer.next([]);
+          observer.complete();
+        }
+      });
+    });
+  }
+
   
   // Loads a specific board with all its pictograms via GET /api/boards/{id}
   loadBoardWithPictograms(id: number): void {
@@ -248,14 +333,44 @@ export class BoardView implements OnInit {
   showBoard(board: Board): void {
     this.board = board;
     this.buildGrid(board);
-    // Find which category this board belongs to
-    for (const cat of this.allCategories) {
-      if (cat.subLevels.some(sl => sl.boardName === board.name)) {
-        this.activeCategory = cat.label;
-        break;
+
+    if (!this.isTutorMode) {
+      for (const cat of this.allCategories) {
+        const target = this.findCategoryBoard(cat);
+        if (target && target.id === board.id) {
+          this.activeCategory = cat.label;
+          break;
+        }
       }
     }
     this.cdr.markForCheck();
+  }
+
+  findCategoryBoard(category: Category): AssignedBoardRef | null {
+    const byCategory = this.assignedBoards.find(b => b.category === category.label);
+    if (byCategory) return byCategory;
+
+    if (category.isCustom) {
+      return this.assignedBoards.find(b =>
+        (b.category == null && b.name === category.label) ||
+        b.name.toLowerCase().includes(category.label.toLowerCase())
+      ) || null;
+    }
+
+    const byName = this.assignedBoards.find(b =>
+      b.name.toLowerCase().includes(category.label.toLowerCase())
+    );
+    if (byName) return byName;
+
+    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 :
+                      this.profileLevel === 'LEVEL_2' ? 2 : 1;
+    const subLevel = [...category.subLevels]
+      .reverse()
+      .find(sl => sl.level <= maxLevel);
+    if (!subLevel) return null;
+
+    const predefined = this.allBoards.find(b => b.name === subLevel.boardName);
+    return predefined ? { id: predefined.id, name: predefined.name } : null;
   }
 
   buildGrid(board: Board): void {
@@ -272,34 +387,14 @@ export class BoardView implements OnInit {
   /** Category selection */
   // Called when a category button is clicked. If the category has only one sub-level, load it directly and if it has multiple, show the popup to choose.
   onCategoryClick(event: Event, category: Category, overlayPanel: any): void {
-    const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 :
-                      this.profileLevel === 'LEVEL_2' ? 2 : 1;
-
-    const subLevel = [...category.subLevels]
-      .reverse()
-      .find(sl => sl.level <= maxLevel);  
-    if (!subLevel) return;
-
-    const target = this.allBoards.find(b => b.name === subLevel.boardName);
+    const target = this.findCategoryBoard(category);
     if (!target || this.board?.id === target.id) return;
-   
+
     this.activeCategory = category.label;
     this.loadBoardWithPictograms(target.id);
-    this.router.navigate(['/board', target.id], {replaceUrl: true});
+    this.router.navigate(['/board', target.id], { replaceUrl: true });
     this.cdr.markForCheck();
     
-  }
-
-  onSubLevelSelect(subLevel: SubLevel, overlayPanel: any): void {
-    const target = this.allBoards.find(b => b.name === subLevel.boardName);
-    if (!target || this.board?.id === target.id) {
-      overlayPanel?.hide();
-      return;
-    }
-    this.loadBoardWithPictograms(target.id);
-    this.router.navigate(['/board', target.id], {replaceUrl: true});
-    overlayPanel?.hide();
-    this.cdr.markForCheck();
   }
 
   toggleSidebar(): void {
@@ -360,7 +455,6 @@ export class BoardView implements OnInit {
   }
 
   /** Lock handling */
-
   onLockTap(event: Event): void {
     this.lockTapCount++;
     this.lockShaking = true;

@@ -194,3 +194,11 @@
     font-size: 0.82rem !important;
   }
 }
+
+.create-board-form {
+  input[pInputText],
+  p-select ::ng-deep .p-select {
+    height: 44px;
+    font-size: 1rem;
+  }
+}
