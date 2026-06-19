@@ -27,13 +27,13 @@
   <!-- Toolbar -->
   <p-toolbar>
     <ng-template #start>
-      <p-menu #menu [model]="menuItems" [popup]="true" />
-      <p-button
-        icon="pi pi-bars"
-        severity="secondary"
-        [rounded]="true"
-        (click)="menu.toggle($event)"
-        aria-label="Abrir menú de navegación" />
+        <p-menu #menu [model]="menuItems" [popup]="true" />
+        <p-button
+          icon="pi pi-bars"
+          severity="secondary"
+          [rounded]="true"
+          (click)="menu.toggle($event)"
+          aria-label="Abrir menú de navegación" />
     </ng-template>
 
     <ng-template #center>
@@ -72,7 +72,7 @@
 
     <div class="welcome-section">
       <h2 class="welcome-text">
-        Bienvenido, <span class="tutor-name">{{ tutorName }}</span> 👋
+        Bienvenido, <span class="tutor-name">{{ tutorName }}</span>
       </h2>
 
       @if (editMode) {
@@ -226,94 +226,129 @@
   [draggable]="false"
   [resizable]="false">
 
-  <!-- Profile photo -->
-  <div class="photo-section mb-4">
-    <label class="font-semibold block mb-2">Foto de perfil</label>
+  @if (visibleEditProfile) {
+    <form #editProfileForm="ngForm" novalidate>
 
-    <div class="photo-preview-area">
-      @if (photoPreviewUrl) {
-        <img
-          [src]="photoPreviewUrl"
-          alt="Vista previa de la foto de perfil"
-          class="photo-preview" />
-      } @else {
-        <div class="photo-placeholder" aria-hidden="true">
-          <i class="pi pi-user photo-placeholder-icon"></i>
+      <!-- Profile photo -->
+      <div class="photo-section mb-4">
+        <label class="font-semibold block mb-2">Foto de perfil</label>
+
+        <div class="photo-preview-area">
+          @if (photoPreviewUrl) {
+            <img
+              [src]="photoPreviewUrl"
+              alt="Vista previa de la foto de perfil"
+              class="photo-preview" />
+          } @else {
+            <div class="photo-placeholder" aria-hidden="true">
+              <i class="pi pi-user photo-placeholder-icon"></i>
+            </div>
+          }
         </div>
-      }
-    </div>
 
-    <input
-      type="file"
-      id="photo-upload"
-      accept="image/*"
-      class="photo-input-hidden"
-      (change)="onFileSelected($event)"
-      aria-label="Seleccionar foto de perfil" />
+        <input
+          type="file"
+          id="photo-upload"
+          accept="image/*"
+          class="photo-input-hidden"
+          (change)="onFileSelected($event)"
+          aria-label="Seleccionar foto de perfil" />
 
-    <label
-      for="photo-upload"
-      class="photo-upload-btn"
-      role="button"
-      tabindex="0"
-      (keydown.enter)="$any($event.target).click()"
-      aria-describedby="photo-hint">
-      <i class="pi pi-upload" aria-hidden="true"></i>
-      {{ photoPreviewUrl ? 'Cambiar foto' : 'Subir foto' }}
-    </label>
+        <label
+          for="photo-upload"
+          class="photo-upload-btn"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="$any($event.target).click()"
+          aria-describedby="photo-hint">
+          <i class="pi pi-upload" aria-hidden="true"></i>
+          {{ photoPreviewUrl ? 'Cambiar foto' : 'Subir foto' }}
+        </label>
 
-    <small id="photo-hint" class="photo-hint">
-      JPG, PNG, GIF o WebP — máximo 5 MB
-    </small>
-  </div>
+        <small id="photo-hint" class="photo-hint">
+          JPG, PNG, GIF o WebP — máximo 5 MB
+        </small>
+      </div>
 
-  <!-- Name -->
-  <div class="flex items-center gap-4 mb-4">
-    <label for="edit-name" class="font-semibold w-28">Nombre</label>
-    <input
-      pInputText
-      id="edit-name"
-      class="flex-auto"
-      [(ngModel)]="editProfileName"
-      placeholder="Nombre del niño"
-      aria-required="true" />
-  </div>
+      <!-- Name -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="edit-name" class="font-semibold w-28 flex-shrink-0">Nombre</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="edit-name"
+              name="editName"
+              class="w-full"
+              [(ngModel)]="editProfileName"
+              required
+              minlength="2"
+              maxlength="100"
+              #editNameRef="ngModel"
+              placeholder="Nombre del niño"
+              aria-required="true" />
+            @if (editNameRef.invalid && editNameRef.touched) {
+              <small class="field-error" role="alert">
+                @if (editNameRef.errors?.['required']) { El nombre es obligatorio. }
+                @else if (editNameRef.errors?.['minlength']) { Mínimo 2 caracteres. }
+                @else if (editNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
 
-  <!-- Birth date -->
-  <div class="flex items-center gap-4 mb-4">
-    <label for="edit-birth" class="font-semibold w-28">Nacimiento</label>
-    <input
-      pInputText
-      id="edit-birth"
-      type="date"
-      class="flex-auto"
-      [(ngModel)]="editProfileBirthDate" />
-  </div>
+      <!-- Birth date -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="edit-birth" class="font-semibold w-28 flex-shrink-0">Nacimiento</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="edit-birth"
+              name="editBirth"
+              type="date"
+              class="w-full"
+              [(ngModel)]="editProfileBirthDate"
+              [attr.max]="todayString"
+              #editBirthRef="ngModel" />
+            @if (editBirthRef.touched && isFutureDateInvalid(editProfileBirthDate)) {
+              <small class="field-error" role="alert">La fecha no puede ser futura.</small>
+            }
+          </div>
+        </div>
+      </div>
 
-  <!-- Level -->
-  <div class="flex items-center gap-4 mb-4">
-    <label class="font-semibold w-28" id="edit-level-label">Nivel</label>
-    <p-select
-      [options]="levelOptions"
-      [(ngModel)]="editProfileLevel"
-      optionLabel="label"
-      optionValue="value"
-      aria-labelledby="edit-level-label"
-      class="flex-auto" />
-  </div>
+      <!-- Level -->
+      <div class="flex items-center gap-4 mb-4">
+        <label class="font-semibold w-28 flex-shrink-0" id="edit-level-label">Nivel</label>
+        <p-select
+          name="editLevel"
+          [options]="levelOptions"
+          [(ngModel)]="editProfileLevel"
+          optionLabel="label"
+          optionValue="value"
+          required
+          aria-labelledby="edit-level-label"
+          class="flex-auto" />
+      </div>
 
-  <div class="flex justify-end gap-2 mt-4">
-    <p-button
-      label="Cancelar"
-      severity="secondary"
-      (click)="visibleEditProfile = false"
-      [disabled]="loading" />
-    <p-button
-      label="Guardar cambios"
-      icon="pi pi-check"
-      (click)="onUpdateProfile()"
-      [loading]="loading" />
-  </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          (click)="visibleEditProfile = false"
+          [disabled]="loading" />
+        <p-button
+          label="Guardar cambios"
+          icon="pi pi-check"
+          (click)="onUpdateProfile()"
+          [loading]="loading"
+          [disabled]="editProfileForm.invalid || isFutureDateInvalid(editProfileBirthDate) || loading" />
+      </div>
+
+    </form>
+  }
 
 </p-dialog>
 
@@ -328,93 +363,128 @@
   [draggable]="false"
   [resizable]="false">
 
-  <!-- Name -->
-  <div class="flex items-center gap-4 mb-4">
-    <label for="profile-name" class="font-semibold w-28">Nombre</label>
-    <input
-      pInputText
-      id="profile-name"
-      class="flex-auto"
-      [(ngModel)]="newProfileName"
-      placeholder="Nombre del niño"
-      aria-required="true" />
-  </div>
+  @if (visibleAddProfile) {
+    <form #addProfileForm="ngForm" novalidate>
 
-  <!-- Birth date -->
-  <div class="flex items-center gap-4 mb-4">
-    <label for="profile-birth" class="font-semibold w-28">Nacimiento</label>
-    <input
-      pInputText
-      id="profile-birth"
-      type="date"
-      class="flex-auto"
-      [(ngModel)]="newProfileBirthDate" />
-  </div>
-
-  <!-- Level -->
-  <div class="flex items-center gap-4 mb-4">
-    <label class="font-semibold w-28" id="level-label">Nivel</label>
-    <p-select
-      [options]="levelOptions"
-      [(ngModel)]="newProfileLevel"
-      optionLabel="label"
-      optionValue="value"
-      aria-labelledby="level-label"
-      class="flex-auto" />
-  </div>
-
-  <!-- Profile photo -->
-  <div class="photo-section mb-4">
-    <label class="font-semibold block mb-2">Foto de perfil (opcional)</label>
-
-    <div class="photo-preview-area">
-      @if (newPhotoPreviewUrl) {
-        <img
-          [src]="newPhotoPreviewUrl"
-          alt="Vista previa de la foto de perfil"
-          class="photo-preview" />
-      } @else {
-        <div class="photo-placeholder" aria-hidden="true">
-          <i class="pi pi-user photo-placeholder-icon"></i>
+      <!-- Name -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="profile-name" class="font-semibold w-28 flex-shrink-0">Nombre</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="profile-name"
+              name="profileName"
+              class="w-full"
+              [(ngModel)]="newProfileName"
+              required
+              minlength="2"
+              maxlength="100"
+              #profileNameRef="ngModel"
+              placeholder="Nombre del niño"
+              aria-required="true" />
+            @if (profileNameRef.invalid && profileNameRef.touched) {
+              <small class="field-error" role="alert">
+                @if (profileNameRef.errors?.['required']) { El nombre es obligatorio. }
+                @else if (profileNameRef.errors?.['minlength']) { Mínimo 2 caracteres. }
+                @else if (profileNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+              </small>
+            }
+          </div>
         </div>
-      }
-    </div>
+      </div>
 
-    <input
-      type="file"
-      id="photo-upload-new"
-      accept="image/*"
-      class="photo-input-hidden"
-      (change)="onNewFileSelected($event)"
-      aria-label="Seleccionar foto de perfil" />
+      <!-- Birth date -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="profile-birth" class="font-semibold w-28 flex-shrink-0">Nacimiento</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="profile-birth"
+              name="profileBirth"
+              type="date"
+              class="w-full"
+              [(ngModel)]="newProfileBirthDate"
+              [attr.max]="todayString"
+              #profileBirthRef="ngModel" />
+            @if (profileBirthRef.touched && isFutureDateInvalid(newProfileBirthDate)) {
+              <small class="field-error" role="alert">La fecha no puede ser futura.</small>
+            }
+          </div>
+        </div>
+      </div>
 
-    <label
-      for="photo-upload-new"
-      class="photo-upload-btn"
-      role="button"
-      tabindex="0"
-      (keydown.enter)="$any($event.target).click()"
-      aria-describedby="photo-hint-new">
-      <i class="pi pi-upload" aria-hidden="true"></i>
-      {{ newPhotoPreviewUrl ? 'Cambiar foto' : 'Subir foto' }}
-    </label>
+      <!-- Level -->
+      <div class="flex items-center gap-4 mb-4">
+        <label class="font-semibold w-28 flex-shrink-0" id="level-label">Nivel</label>
+        <p-select
+          name="profileLevel"
+          [options]="levelOptions"
+          [(ngModel)]="newProfileLevel"
+          optionLabel="label"
+          optionValue="value"
+          required
+          aria-labelledby="level-label"
+          class="flex-auto" />
+      </div>
 
-    <small id="photo-hint-new" class="photo-hint">
-      JPG, PNG, GIF o WebP — máximo 5 MB
-    </small>
-  </div>
+      <!-- Profile photo -->
+      <div class="photo-section mb-4">
+        <label class="font-semibold block mb-2">Foto de perfil (opcional)</label>
 
-  <div class="flex justify-end gap-2 mt-4">
-    <p-button
-      label="Cancelar"
-      severity="secondary"
-      (click)="visibleAddProfile = false"
-      [disabled]="loading" />
-    <p-button
-      label="Añadir"
-      (click)="onAddProfile()"
-      [loading]="loading" />
-  </div>
+        <div class="photo-preview-area">
+          @if (newPhotoPreviewUrl) {
+            <img
+              [src]="newPhotoPreviewUrl"
+              alt="Vista previa de la foto de perfil"
+              class="photo-preview" />
+          } @else {
+            <div class="photo-placeholder" aria-hidden="true">
+              <i class="pi pi-user photo-placeholder-icon"></i>
+            </div>
+          }
+        </div>
+
+        <input
+          type="file"
+          id="photo-upload-new"
+          accept="image/*"
+          class="photo-input-hidden"
+          (change)="onNewFileSelected($event)"
+          aria-label="Seleccionar foto de perfil" />
+
+        <label
+          for="photo-upload-new"
+          class="photo-upload-btn"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="$any($event.target).click()"
+          aria-describedby="photo-hint-new">
+          <i class="pi pi-upload" aria-hidden="true"></i>
+          {{ newPhotoPreviewUrl ? 'Cambiar foto' : 'Subir foto' }}
+        </label>
+
+        <small id="photo-hint-new" class="photo-hint">
+          JPG, PNG, GIF o WebP — máximo 5 MB
+        </small>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          (click)="visibleAddProfile = false"
+          [disabled]="loading" />
+        <p-button
+          label="Añadir"
+          (click)="onAddProfile()"
+          [loading]="loading"
+          [disabled]="addProfileForm.invalid || isFutureDateInvalid(newProfileBirthDate) || loading" />
+      </div>
+
+    </form>
+  }
 
 </p-dialog>
 

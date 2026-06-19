@@ -92,6 +92,14 @@ export class Dashboard implements OnInit {
     { label: 'Nivel 3 — Avanzado', value: 'LEVEL_3' }
   ];
 
+  // Today's date in YYYY-MM-DD format — used as max value for date inputs
+  readonly todayString: string = new Date().toISOString().split('T')[0];
+
+  isFutureDateInvalid(dateStr: string): boolean {
+    if (!dateStr) return false;
+    return dateStr >= this.todayString;
+  }
+
   constructor(
     private authService: AuthService,
     public childProfileService: ChildProfileService,
@@ -170,7 +178,9 @@ export class Dashboard implements OnInit {
     this.boardService.getMyBoards().subscribe({
       next: (boards) => {
         const profileLevelNum = this.getLevelNumber(this.selectedProfile?.level);
-        this.myBoards = boards.filter(b => b.level === profileLevelNum);
+        this.myBoards = boards.filter(b => b.level === profileLevelNum &&
+          !this.profileBoards.some(pb => pb.id === b.id)
+        );
         this.loadingBoards = false;
         this.cdr.markForCheck();
       },
@@ -224,7 +234,7 @@ export class Dashboard implements OnInit {
   onRemoveBoard(board: Board): void {
     if (!this.selectedProfile) return;
 
-    this.childProfileService.assignBoard(
+    this.childProfileService.removeBoard(
     this.selectedProfile.id, board.id).subscribe({
       next: () => {
         this.profileBoards = this.profileBoards.filter(b => b.id !== board.id);
@@ -234,6 +244,7 @@ export class Dashboard implements OnInit {
           detail: `"${board.name}" ha sido eliminado del perfil ${this.selectedProfile?.name}.`
         });
         this.cdr.markForCheck();
+        this.loadMyBoards();
         setTimeout(() => this.loadProfiles(), 0);
       },
       error: () => {

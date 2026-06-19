@@ -15,6 +15,7 @@ import { BoardService, Board } from '../services/boardService';
 import { AuthService } from '../services/auth-service';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
 
 interface BoardCategory {
   label: string;
@@ -35,7 +36,8 @@ interface BoardCategory {
     ConfirmPopupModule,
     ToastModule,
     SelectModule,
-    FormsModule
+    FormsModule,
+    InputTextModule
   ],
   templateUrl: './my-boards.html',
   styleUrl: './my-boards.scss'

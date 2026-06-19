@@ -45,19 +45,19 @@
     <!--Tutor -> return button -->
     @if (isTutorMode) {
       <button
-        icon="pi pi-arrow-left"
         class="back-button"
         type="button"
         (click)="onBackToMyBoards()"
         aria-label="Volver a mis tableros">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
       </button>
     }@else if (isGuestMode) {
       <button
-        icon="pi pi-arrow-left"
         class="back-button"
         type="button"
         (click)="onBackToGuest()"
         aria-label="Volver a la selección de nivel">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
       </button>
     } @else {
       <!-- Kid -> lock -->

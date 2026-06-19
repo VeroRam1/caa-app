@@ -10,10 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * Swagger/OpenAPI Configuration
- * Provides interactive API documentation at /swagger-ui.html
- */
+ // Swagger/OpenAPI Configuration. Provides interactive API documentation at /swagger-ui.html
 @Configuration
 public class SwaggerConfig {
 

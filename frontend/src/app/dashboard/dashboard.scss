@@ -5,11 +5,22 @@
   overflow: hidden;
 }
 
+:host ::ng-deep .p-toolbar {
+  position: relative;
+}
+
 .app-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); 
+  
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
   color: white;
+  white-space: nowrap;
+  pointer-events: none; 
 }
 
 .toolbar-end {
@@ -181,7 +192,7 @@
 
 .profile-level {
   font-size: 0.75rem;
-  color: #4a85b5;
+  color: #1a4971;
   font-weight: 600;
   text-align: center;
 }

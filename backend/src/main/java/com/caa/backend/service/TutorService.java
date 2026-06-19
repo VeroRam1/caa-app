@@ -41,7 +41,7 @@ public class TutorService {
 
         Tutor tutor = new Tutor();
         tutor.setName(SanitizationUtils.sanitize(request.getName()));
-        tutor.setEmail(SanitizationUtils.sanitize(request.getEmail()));
+        tutor.setEmail(request.getEmail().trim().toLowerCase());
         tutor.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Tutor savedTutor = tutorRepository.save(tutor);

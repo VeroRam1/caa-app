@@ -57,10 +57,26 @@ html, body {
   min-height: 3rem;
 }
 
-// Tamaño mínimo de botones — criterio 2.5.8
+// Minimum button size — criteria 2.5.8
+// Also ensures primary buttons use the blue palette in case the PrimeNG
+// preset CSS variables are not yet resolved (e.g. during SSR hydration).
 .p-button {
   min-height: 44px !important;
   min-width: 44px !important;
+
+  &:not(.p-button-outlined):not(.p-button-text):not(.p-button-link) {
+    &.p-button-primary,
+    &:not([class*="p-button-"]) {
+      background-color: var(--p-primary-500, #4a85b5);
+      border-color: var(--p-primary-500, #4a85b5);
+      color: #ffffff;
+
+      &:hover:not(:disabled)  {
+        background-color: var(--p-primary-600, #1a4971);
+        border-color: var(--p-primary-600, #1a4971);
+      }
+    }
+  }
 }
 
 // Elementos de menú con tamaño accesible
@@ -116,9 +132,10 @@ html, body {
       font-weight: 600;
     }
 
+    // Criteria 2.5.8: minimum touch target 44×44px
     .p-toast-close-button {
-      min-width: 32px !important;
-      min-height: 32px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
     }
   }
 
@@ -161,6 +178,15 @@ html, body {
       color: var(--color-blue-text) !important;
     }
   }
+}
+
+// ── Form field error messages ─────────────────────────────────────────────────
+.field-error {
+  color: var(--color-red-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: block;
 }
 
 @media (max-height: 500px) and (orientation: landscape) {

@@ -47,8 +47,10 @@ export class HomePage {
   loginError: string = '';
   registerName: string = '';
   registerEmail: string = '';
-  registerPassword: string = ''; 
+  registerPassword: string = '';
+  registerConfirmPassword: string = '';
   registerError: string = '';
+  passwordMismatch: boolean = false;
 
   // Loading for desabling buttons while waiting for response
   loading: boolean = false;
@@ -95,6 +97,12 @@ export class HomePage {
   }
 
   onRegister() {
+    if (this.registerPassword !== this.registerConfirmPassword) {
+      this.passwordMismatch = true;
+      this.cdr.markForCheck();
+      return;
+    }
+    this.passwordMismatch = false;
     this.loading = true;
     this.registerError = '';
     this.authService.register(this.registerName, this.registerEmail, this.registerPassword).subscribe({
@@ -128,7 +136,9 @@ onCancelRegister(): void {
   this.registerName = '';
   this.registerEmail = '';
   this.registerPassword = '';
+  this.registerConfirmPassword = '';
   this.registerError = '';
+  this.passwordMismatch = false;
   this.cdr.markForCheck();
 }
 

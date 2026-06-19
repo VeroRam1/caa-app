@@ -45,32 +45,18 @@ public class Board {
     @Column(nullable = false)
     private Integer columns = 4;
 
-    /**
-     * Difficulty level: 1 (Basic), 2 (Intermediate), 3 (Advanced)
-     * Determines which users can access this board
-     */
     @Min(value = 1, message = "Level must be at least 1")
     @Max(value = 3, message = "Level cannot exceed 3")
     @Column(nullable = false)
     private Integer level = 1;  // Default to basic level
 
-    /**
-     * Indicates if this is a predefined/template board
-     * Predefined boards cannot be deleted by users
-     */
     @Column(nullable = false)
     private Boolean isPredefined = false;
 
     @Column(length = 50)
     private String category;
 
-    /**
-     * Relation one to many with BoardPictogram
-     * One board can have multiple pictograms
-     * cascade = CascadeType.ALL: cuando se elimina el tablero, se eliminan sus pictogramas ???
-     * orphanRemoval = true: si se elimina un pictograma de la lista, se elimina de la BD ???
-     */
-
+    // One board can have multiple pictograms
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardPictogram> pictograms = new ArrayList<>();
 
@@ -87,41 +73,22 @@ public class Board {
     @JoinColumn(name = "owner_id", nullable = true)
     private Tutor owner;
 
-    /**
-     * Calcula el número total de celdas del tablero
-     * @return filas * columnas
-     */
     public Integer getTotalCells(){
         return this.rows * this.columns;
     }
 
-    /**
-     * Verifica si una posición es válida dentro del tablero
-     * @param x posición en columna (0-based)
-     * @param y posición en fila (0-based)
-     * @return true si la posición está dentro del rango
-     */
     public boolean isValidPosition(int x, int y){
         return x >= 0 && x < this.columns && y >= 0 && y < this.rows;
     }
 
-    /**
-     * Añade un pictograma al tablero
-     * @param pictogram el pictograma a añadir
-     */
     public void addPictogram(BoardPictogram pictogram){
         pictograms.add(pictogram);
         //pictogram.setBoard(this);
     }
 
-    /**
-     * Elimina un pictograma del tablero
-     * @param pictogram el pictograma a eliminar
-     */
     public void removePictogram(BoardPictogram pictogram){
         pictograms.remove(pictogram);
         pictogram.setBoard(null);
     }
-
 
 }

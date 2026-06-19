@@ -32,10 +32,22 @@
       <input
         pInputText
         [(ngModel)]="boardName"
+        name="boardName"
         class="board-name-input"
         placeholder="Nombre del tablero"
         aria-label="Nombre del tablero"
-        (input)="hasUnsavedChanges = true" />
+        (input)="hasUnsavedChanges = true"
+        required
+        minlength="3"
+        maxlength="100"
+        #boardNameRef="ngModel" />
+      @if (boardNameRef.invalid && boardNameRef.touched) {
+        <small class="field-error" role="alert">
+          @if (boardNameRef.errors?.['required']) { El nombre del tablero es obligatorio. }
+          @else if (boardNameRef.errors?.['minlength']) { Mínimo 3 caracteres. }
+          @else if (boardNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+        </small>
+      }
     </div>
 
     <div class="toolbar-actions">

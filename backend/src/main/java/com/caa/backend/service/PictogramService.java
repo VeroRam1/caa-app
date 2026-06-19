@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Service for Pictogram business logic
- * Handles pictograms on boards
- */
+// Service for Pictogram business logic. Handles pictograms on boards
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,12 +26,7 @@ public class PictogramService {
     private final BoardRepository boardRepository;
     private final PictogramMapper pictogramMapper;
 
-    /**
-     * Get all pictograms from a specific board
-     * @param boardId board ID
-     * @return list of pictograms ordered by position
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
+    // Get all pictograms from a specific board
     @Transactional(readOnly = true)
     public List<PictogramResponseDTO> getPictogramsByBoardId(Long boardId) {
         log.info("Fetching pictograms for board ID: {}", boardId);
@@ -49,12 +41,7 @@ public class PictogramService {
         return pictogramMapper.toResponseList(pictograms);
     }
 
-    /**
-     * Get a specific pictogram by ID
-     * @param pictogramId pictogram ID
-     * @return pictogram data
-     * @throws ResourceNotFoundException if pictogram doesn't exist
-     */
+    // Get a specific pictogram by ID
     @Transactional(readOnly = true)
     public PictogramResponseDTO getPictogramById(Long pictogramId) {
         log.info("Fetching pictogram with ID: {}", pictogramId);
@@ -65,14 +52,7 @@ public class PictogramService {
         return pictogramMapper.toResponse(pictogram);
     }
 
-    /**
-     * Add a new pictogram to a board
-     * @param boardId board ID
-     * @param request pictogram data
-     * @return created pictogram
-     * @throws ResourceNotFoundException if board doesn't exist
-     * @throws IllegalArgumentException if position is invalid or occupied
-     */
+    // Add a new pictogram to a board
     public PictogramResponseDTO addPictogramToBoard(Long boardId, AddPictogramRequest request) {
         log.info("Adding pictogram '{}' to board ID: {}", request.getText(), boardId);
 
@@ -107,14 +87,7 @@ public class PictogramService {
         return pictogramMapper.toResponse(savedPictogram);
     }
 
-    /**
-     * Update a pictogram (move position or change color)
-     * @param pictogramId pictogram ID
-     * @param request update data
-     * @return updated pictogram
-     * @throws ResourceNotFoundException if pictogram doesn't exist
-     * @throws IllegalArgumentException if new position is invalid or occupied
-     */
+    // Update a pictogram (move position)
     public PictogramResponseDTO updatePictogram(Long pictogramId, UpdatePictogramRequestDTO request) {
         log.info("Updating pictogram with ID: {}", pictogramId);
 
@@ -159,11 +132,7 @@ public class PictogramService {
         return pictogramMapper.toResponse(updatedPictogram);
     }
 
-    /**
-     * Delete a pictogram from a board
-     * @param pictogramId pictogram ID
-     * @throws ResourceNotFoundException if pictogram doesn't exist
-     */
+    // Delete a pictogram from a board
     public void deletePictogram(Long pictogramId) {
         log.info("Deleting pictogram with ID: {}", pictogramId);
 
@@ -177,11 +146,7 @@ public class PictogramService {
         log.info("Pictogram deleted successfully with ID: {}", pictogramId);
     }
 
-    /**
-     * Delete all pictograms from a board
-     * @param boardId board ID
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
+    // Delete all pictograms from a board
     public void deleteAllPictogramsFromBoard(Long boardId) {
         log.info("Deleting all pictograms from board ID: {}", boardId);
 
@@ -193,25 +158,13 @@ public class PictogramService {
         log.info("All pictograms deleted from board ID: {}", boardId);
     }
 
-    /**
-     * Check if a position is occupied on a board
-     * @param boardId board ID
-     * @param x column position
-     * @param y row position
-     * @return true if occupied
-     */
+    // Check if a position is occupied on a board
     @Transactional(readOnly = true)
     public boolean isPositionOccupied(Long boardId, Integer x, Integer y) {
         return pictogramRepository.existsByBoardIdAndPositionXAndPositionY(boardId, x, y);
     }
 
-    /**
-     * Get pictogram at a specific position
-     * @param boardId board ID
-     * @param x column position
-     * @param y row position
-     * @return pictogram if exists, null otherwise
-     */
+    // Get pictogram at a specific position
     @Transactional(readOnly = true)
     public PictogramResponseDTO getPictogramAtPosition(Long boardId, Integer x, Integer y) {
         log.info("Fetching pictogram at position ({}, {}) on board ID: {}", x, y, boardId);
@@ -221,21 +174,13 @@ public class PictogramService {
                 .orElse(null);
     }
 
-    /**
-     * Count pictograms on a board
-     * @param boardId board ID
-     * @return number of pictograms
-     */
+    // Count pictograms on a board
     @Transactional(readOnly = true)
     public Long countPictogramsByBoardId(Long boardId) {
         return pictogramRepository.countByBoardId(boardId);
     }
 
-    /**
-     * Search pictograms by text across all boards
-     * @param text search term
-     * @return list of matching pictograms
-     */
+    // Search pictograms by text across all boards
     @Transactional(readOnly = true)
     public List<PictogramResponseDTO> searchPictogramsByText(String text) {
         log.info("Searching pictograms with text containing: {}", text);
@@ -245,12 +190,7 @@ public class PictogramService {
         return pictogramMapper.toResponseList(pictograms);
     }
 
-    // ============= HELPER METHODS =============
-
-    /**
-     * Verify that a board exists
-     * @throws ResourceNotFoundException if board doesn't exist
-     */
+    // Verify that a board exists
     private void verifyBoardExists(Long boardId) {
         if (!boardRepository.existsById(boardId)) {
             throw new ResourceNotFoundException("Board not found with ID: " + boardId);

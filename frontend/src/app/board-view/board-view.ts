@@ -133,6 +133,22 @@ export class BoardView implements OnInit {
         { label: 'Nivel 2', level: 2, boardName: 'Acciones - Nivel 2' },
         { label: 'Nivel 3', level: 3, boardName: 'Acciones - Nivel 3' }
       ]
+    },
+    {
+      label: 'Números',
+      iconPictogramId: 2626,  
+      subLevels: [
+        { label: 'Nivel 2', level: 2, boardName: 'Números - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Números - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Abecedario',
+      iconPictogramId: 3021,  
+      subLevels: [
+        { label: 'Nivel 2', level: 2, boardName: 'Abecedario - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Abecedario - Nivel 3' }
+      ]
     }
   ];
 

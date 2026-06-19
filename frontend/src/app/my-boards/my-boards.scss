@@ -81,7 +81,9 @@
 .category-group-title {
   font-size: 1rem;
   font-weight: 800;
-  color: #4a85b5;
+  // #4a85b5 on #f0f9ff = 3.69:1 — 16px/800-weight is not WCAG "large text" (needs 18.67px bold).
+  // #1a4971 on #f0f9ff = 7.2:1 ✓ WCAG 1.4.3
+  color: #1a4971;
   margin: 0;
   padding-bottom: 0.4rem;
   border-bottom: 2px solid #b3ddff;
@@ -94,7 +96,7 @@
     display: inline-block;
     width: 8px;
     height: 8px;
-    background: #4a85b5;
+    background: #1a4971;
     border-radius: 50%;
     flex-shrink: 0;
   }
@@ -155,7 +157,8 @@
 .card-level {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #4a85b5;
+  // #4a85b5 on #e8f4fd = 3.52:1 (fails WCAG 1.4.3 at 11.5px). #1a4971 = 7.1:1 ✓
+  color: #1a4971;
   background: #e8f4fd;
   border-radius: 999px;
   padding: 0.15rem 0.5rem;
@@ -186,9 +189,9 @@
   display: flex;
   gap: 0.4rem;
 
-  // Criterio 2.5.8
+  // Criteria 2.5.8: minimum touch target 44×44px
   :host ::ng-deep .p-button {
-    min-height: 36px;
+    min-height: 44px;
     flex: 1;
     justify-content: center;
     font-size: 0.82rem !important;

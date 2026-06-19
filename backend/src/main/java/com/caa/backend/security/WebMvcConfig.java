@@ -5,11 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * MVC configuration — registers interceptors.
- * Rate limiting is applied to all API endpoints.
- * Static resources and Swagger are excluded.
- */
+
+ // MVC configuration — registers interceptors. Rate limiting is applied to all API endpoints. Static resources and Swagger are excluded.
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {

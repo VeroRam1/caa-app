@@ -45,10 +45,18 @@
   gap: 1rem;
   border-radius: 1.5rem;
   cursor: pointer;
+  /* Tailwind Preflight resets <button> borders/bg — restore them here */
   border: 3px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-align: center;
   padding: 1rem;
+  font-family: inherit;
+  font-size: inherit;
+
+  &:focus-visible {
+    outline: 3px solid #1a4971;
+    outline-offset: 3px;
+  }
 
   &:hover {
     transform: translateY(-4px);

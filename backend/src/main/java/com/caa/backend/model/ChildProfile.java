@@ -30,15 +30,9 @@ public class ChildProfile {
     @Column(nullable = false, length = 100)
     private String name;
 
-    /**
-     * Optional date of birth. Used to display age or track development over time.
-     */
     @Column
     private LocalDate birthDate;
 
-    /**
-     * Optional URL pointing to the child's profile picture.
-     */
     @Column(length = 500)
     private String photoUrl;
 
@@ -54,10 +48,7 @@ public class ChildProfile {
     @Column(nullable = false)
     private Level level = Level.LEVEL_1;
 
-    /**
-     * The tutor who owns and manages this profile.
-     * Cannot be null — every child profile must belong to a tutor.
-     */
+    //The tutor who owns and manages this profile. Cannot be null — every child profile must belong to a tutor.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id", nullable = false)
     private Tutor tutor;
@@ -79,31 +70,17 @@ public class ChildProfile {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    /**
-     * Assigns a board to this child profile.
-     * Avoids duplicates.
-     * @param board the board to assign
-     */
     public void assignBoard(Board board) {
         if (!assignedBoards.contains(board)) {
             assignedBoards.add(board);
         }
     }
 
-    /**
-     * Removes a board from this child profile.
-     * Does not delete the board itself.
-     * @param board the board to remove
-     */
     public void removeBoard(Board board) {
         assignedBoards.remove(board);
     }
 
-    /**
-     * Checks whether this child has access to phrase construction.
-     * Available from LEVEL_2 onwards.
-     * @return true if phrase construction is enabled
-     */
+    // Phrase construction only available in levels 2 and 3
     public boolean hasPhraseConstruction() {
         return this.level == Level.LEVEL_2 || this.level == Level.LEVEL_3;
     }

@@ -191,56 +191,113 @@
       [style]="{ width: '90vw', maxWidth: '420px', minHeight: '420px' }"
       [draggable]="false">
 
-      <div class="create-board-form">
+      @if (visibleCreateBoard) {
+        <form #createBoardForm="ngForm" novalidate>
 
-        <div class="form-field">
-          <label for="new-board-name">Nombre del tablero</label>
-          <input
-            id="new-board-name"
-            type="text"
-            pInputText
-            [(ngModel)]="newBoardName"
-            placeholder="Ej: Animales - Nivel 1"
-            class="w-full p-inputtext p-component" />
-        </div>
+          <div class="create-board-form">
 
-        <div class="form-field">
-          <label for="new-board-level">Nivel</label>
-          <p-select
-            id="new-board-level"
-            [(ngModel)]="newBoardLevel"
-            [options]="levelOptionsForCreate"
-            optionLabel="label"
-            optionValue="value"
-            styleClass="w-full" />
-        </div>
+            <!-- Nombre -->
+            <div class="form-field">
+              <label for="new-board-name">Nombre del tablero</label>
+              <input
+                id="new-board-name"
+                name="newBoardName"
+                type="text"
+                pInputText
+                [(ngModel)]="newBoardName"
+                required
+                minlength="3"
+                maxlength="100"
+                #newBoardNameRef="ngModel"
+                placeholder="Ej: Animales - Nivel 1"
+                class="w-full" />
+              @if (newBoardNameRef.invalid && newBoardNameRef.touched) {
+                <small class="field-error" role="alert">
+                  @if (newBoardNameRef.errors?.['required']) { El nombre es obligatorio. }
+                  @else if (newBoardNameRef.errors?.['minlength']) { Mínimo 3 caracteres. }
+                  @else if (newBoardNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+                </small>
+              }
+            </div>
 
-        @if (isCustomCategorySelected) {
-          <div class="form-field">
-            <label for="new-custom-category">Nombre de la nueva categoría</label>
-            <input
-              id="new-custom-category"
-              type="text"
-              pInputText
-              [(ngModel)]="newCustomCategory"
-              placeholder="Ej: Juguetes"
-              class="w-full" />
-            <p class="field-hint">
-              Aparecerá como una categoría más en el sidebar del niño, con un icono
-              circular con la inicial de su nombre.
-            </p>
+            <!-- Nivel -->
+            <div class="form-field">
+              <label for="new-board-level">Nivel</label>
+              <p-select
+                id="new-board-level"
+                name="newBoardLevel"
+                [(ngModel)]="newBoardLevel"
+                [options]="levelOptionsForCreate"
+                optionLabel="label"
+                optionValue="value"
+                required
+                #newBoardLevelRef="ngModel"
+                class="w-full" />
+            </div>
+
+            <!-- Categoría -->
+            <div class="form-field">
+              <label for="new-board-category">Categoría</label>
+              <p-select
+                id="new-board-category"
+                name="newBoardCategory"
+                [(ngModel)]="newBoardCategory"
+                [options]="categoryOptions"
+                optionLabel="label"
+                optionValue="value"
+                required
+                #newBoardCategoryRef="ngModel"
+                class="w-full" />
+            </div>
+
+            <!-- Nueva categoría (solo cuando se elige "+ Nueva categoría...") -->
+            @if (isCustomCategorySelected) {
+              <div class="form-field">
+                <label for="new-custom-category">Nombre de la nueva categoría</label>
+                <input
+                  id="new-custom-category"
+                  name="newCustomCategory"
+                  type="text"
+                  pInputText
+                  [(ngModel)]="newCustomCategory"
+                  required
+                  minlength="2"
+                  maxlength="50"
+                  #newCustomCategoryRef="ngModel"
+                  placeholder="Ej: Juguetes"
+                  class="w-full" />
+                @if (newCustomCategoryRef.invalid && newCustomCategoryRef.touched) {
+                  <small class="field-error" role="alert">
+                    @if (newCustomCategoryRef.errors?.['required']) { El nombre de la categoría es obligatorio. }
+                    @else if (newCustomCategoryRef.errors?.['minlength']) { Mínimo 2 caracteres. }
+                    @else if (newCustomCategoryRef.errors?.['maxlength']) { Máximo 50 caracteres. }
+                  </small>
+                }
+                <p class="field-hint">
+                  Aparecerá como una categoría más en el sidebar del niño, con un icono
+                  circular con la inicial de su nombre.
+                </p>
+              </div>
+            }
+
           </div>
-        }
 
-      </div>
+          <div class="flex justify-end gap-2 mt-4">
+            <p-button
+              label="Cancelar"
+              severity="secondary"
+              [text]="true"
+              (click)="visibleCreateBoard = false" />
+            <p-button
+              label="Crear y editar"
+              icon="pi pi-pencil"
+              [loading]="creatingBoard"
+              (click)="onCreateBoard()"
+              [disabled]="createBoardForm.invalid || creatingBoard" />
+          </div>
 
-      <ng-template #footer>
-        <p-button label="Cancelar" severity="secondary" [text]="true"
-                  (click)="visibleCreateBoard = false" />
-        <p-button label="Crear y editar" icon="pi pi-pencil"
-                  [loading]="creatingBoard"
-                  (click)="onCreateBoard()" />
-      </ng-template>
+        </form>
+      }
 
     </p-dialog>
 
