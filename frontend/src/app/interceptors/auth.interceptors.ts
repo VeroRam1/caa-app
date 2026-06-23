@@ -3,10 +3,10 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 
 /**
- * Interceptor que añade el token JWT a todas las peticiones al backend.
- * Angular lo ejecuta automáticamente antes de cada petición HTTP.
+ * Interceptor that adds the JWT token to all requests sent to the backend.
+ * Angular runs it automatically before every HTTP request.
  *
- * Si el usuario tiene token guardado en localStorage, lo añade en el header:
+ * If the user has a token stored in localStorage, it is added to the header:
  * Authorization: Bearer <token>
  */
 export const authInterceptor: HttpInterceptorFn = (
@@ -16,13 +16,11 @@ export const authInterceptor: HttpInterceptorFn = (
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // Si no hay token (usuario no logueado) dejamos la petición sin modificar
+  // No token (user not logged) not modified petition
   if (!token) {
     return next(req);
   }
 
-  // Clonamos la petición añadiendo el header Authorization
-  // Las peticiones HTTP son inmutables en Angular — hay que clonarlas para modificarlas
   const requestWithToken = req.clone({
     setHeaders: {
       Authorization: `Bearer ${token}`

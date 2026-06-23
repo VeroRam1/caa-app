@@ -26,10 +26,7 @@ public class ArasaacController {
 
     private final ArasaacService arasaacService;
 
-    /**
-     * Search pictograms by keyword
-     * GET /api/arasaac/search?keyword=casa
-     */
+    // Search pictograms by keyword. Ex. GET /api/arasaac/search?keyword=casa
     @GetMapping("/search")
     @Operation(summary = "Search pictograms",
             description = "Search pictograms in ARASAAC by keyword")
@@ -47,10 +44,6 @@ public class ArasaacController {
         return ResponseEntity.ok(pictograms);
     }
 
-    /**
-     * Get pictogram by ID
-     * GET /api/arasaac/pictograms/{id}
-     */
     @GetMapping("/pictograms/{id}")
     @Operation(summary = "Get pictogram by ID",
             description = "Retrieve detailed information about a specific pictogram")
@@ -68,10 +61,6 @@ public class ArasaacController {
         return ResponseEntity.ok(pictogram);
     }
 
-    /**
-     * Get popular/suggested pictograms
-     * GET /api/arasaac/popular
-     */
     @GetMapping("/popular")
     @Operation(summary = "Get popular pictograms",
             description = "Get a list of commonly used pictograms for quick access")
@@ -86,10 +75,6 @@ public class ArasaacController {
         return ResponseEntity.ok(pictograms);
     }
 
-    /**
-     * Get pictogram URL
-     * GET /api/arasaac/pictograms/{id}/url
-     */
     @GetMapping("/pictograms/{id}/url")
     @Operation(summary = "Get pictogram image URL",
             description = "Generate the URL for a pictogram image with specific options")

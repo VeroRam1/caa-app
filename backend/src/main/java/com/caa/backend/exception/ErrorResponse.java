@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Standardized error response format
- * Returned for all API errors
- */
+
+// Standardized error response format. Returned for all API errors
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,9 +22,6 @@ public class ErrorResponse {
     private String path;
     private List<ValidationError> validationErrors;
 
-    /**
-     * Constructor for simple errors without validation details
-     */
     public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
@@ -35,9 +30,6 @@ public class ErrorResponse {
         this.path = path;
     }
 
-    /**
-     * Nested class for validation error details
-     */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

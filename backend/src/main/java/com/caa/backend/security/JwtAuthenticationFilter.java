@@ -63,8 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             } catch (UsernameNotFoundException e) {
-                // Usuario del token ya no existe en la BD (p.ej. BD reiniciada)
-                // Ignorar el token y continuar sin autenticar
+                // Token user does not exist in te database. Ignore token
                 log.warn("Token contains unknown user: {}. Ignoring token.", email);
             }
         }

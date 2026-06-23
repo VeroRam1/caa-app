@@ -21,13 +21,8 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService{
     private final TutorRepository tutorRepository;
 
-    /**
-     * Loads a tutor by email for authentication.
-     *
-     * @param email the tutor's email (used as username in JWT)
-     * @return UserDetails with email, hashed password and role
-     * @throws UsernameNotFoundException if no tutor exists with that email
-     */
+
+    // Loads a tutor by email for authentication.
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Tutor tutor = tutorRepository.findByEmail(email)

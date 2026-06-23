@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for Pictogram responses
- * Represents a pictogram on a board
- */
+// DTO for Pictogram responses. Represents a pictogram on a board
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,12 +19,7 @@ public class PictogramResponseDTO {
     private Integer positionY;
     private String backgroundColor;
 
-    /**
-     * Gets the pictogram URL with custom options
-     * @param size size of the image
-     * @param withBackground include background
-     * @return formatted URL
-     */
+    // Gets the pictogram URL with custom options
     public String getPictogramUrlWithOptions(int size, boolean withBackground) {
         return String.format(
                 "https://api.arasaac.org/v1/pictograms/%d?download=false&plural=false&color=true&backgroundColor=%s&size=%d",
@@ -35,10 +27,7 @@ public class PictogramResponseDTO {
         );
     }
 
-    /**
-     * Checks if the pictogram has a custom background color
-     * @return true if background is not white
-     */
+    // Checks if the pictogram has a custom background color
     public boolean hasCustomBackground() {
         return backgroundColor != null && !backgroundColor.equalsIgnoreCase("#FFFFFF");
     }

@@ -10,6 +10,8 @@ import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
+import { Credits } from '../credits/credits';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-home-page',
@@ -23,18 +25,17 @@ import { MenuItem } from 'primeng/api';
     DialogModule,
     InputTextModule,
     MenuModule,
+    Credits
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage {
+  @ViewChild(Credits) creditsDialog!: Credits;
+  
   menuItems: MenuItem[] = [
-    { label: 'Sobre nosotros', icon: 'pi pi-info-circle', command: () => {} },
-    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} },
-    { label: 'Tutoriales', icon: 'pi pi-play-circle', command: () => {} },
-    { label: 'Contacto', icon: 'pi pi-envelope', command: () => {} },
-    { separator: true },
-    { label: 'Configuración', icon: 'pi pi-cog', command: () => {} }
+    { label: 'Créditos', icon: 'pi pi-info-circle', command: () => this.creditsDialog.show()},
+    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} }
   ];
 
   //Dialolgs visibility

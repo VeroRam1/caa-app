@@ -26,7 +26,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     // ** Level 1 ***********************************************
-
     private void createLevel1Boards() {
         createBoardIfNotExists("Tablero Básico - Nivel 1",
                 "Tablero predeterminado para comunicación básica.",
@@ -134,100 +133,77 @@ public class DataInitializer implements CommandLineRunner {
     private void createLevel2Boards() {
         createBoardIfNotExists("Tablero General - Nivel 2",
                 "Tablero predeterminado para comunicación intermedia con construcción de frases.",
-                4, 5, 2, "General",
+                4, 5, 3, "General",
                 List.of(
                         new long[]{6632,  0, 0},
-                        new long[]{2458,  1, 0},
-                        new long[]{31146, 2, 0},
-                        new long[]{5584,  3, 0},
+                        new long[]{36518, 1, 0},
+                        new long[]{2458,  2, 0},
+                        new long[]{31146, 3, 0},
                         new long[]{5584,  4, 0},
                         new long[]{12264, 0, 1},
-                        new long[]{6456,  1, 1},
-                        new long[]{6061,  2, 1},
-                        new long[]{5526,  3, 1},
+                        new long[]{7272,  1, 1},
+                        new long[]{6456,  2, 1},
+                        new long[]{6061,  3, 1},
                         new long[]{5526,  4, 1},
-                        new long[]{36518, 0, 2},
-                        new long[]{38351, 1, 2},
-                        new long[]{12281, 2, 2},
-                        new long[]{3220,  3, 2},
-                        new long[]{6503,  4, 2},
-                        new long[]{36518, 0, 3},
-                        new long[]{4892,  1, 3},
-                        new long[]{4907,  2, 3},
-                        new long[]{5956,  3, 3},
-                        new long[]{3220,  4, 3}
+                        new long[]{12281, 0, 2},
+                        new long[]{37160, 1, 2},
+                        new long[]{6964,  2, 2},
+                        new long[]{3082,  3, 2},
+                        new long[]{3220,  4, 2},
+                        new long[]{7186,  0, 3},
+                        new long[]{7171,  1, 3},
+                        new long[]{37827, 2, 3},
+                        new long[]{13630, 3, 3},
+                        new long[]{8129,  4, 3}
                 ),
                 List.of(
-                        "Yo", "Mamá", "Papá", "Sí", "sí",
-                        "Mío", "Comer", "Beber", "No", "no",
-                        "Quiero", "Familia", "Tú", "Más", "médico",
-                        "quiero", "mamá", "papá", "cansado", "más"
+                        "Yo", "Quiero", "Mamá", "Papá", "sí",
+                        "Mío", "tener hambre", "Comer", "Beber", "no",
+                        "Tú", "necesitar", "casa", "colegio", "Más",
+                        "nosotros", "necesito ayuda", "no entiendo", "estoy bien", "gracias"
                 )
         );
 
         createBoardIfNotExists("Alimentos - Nivel 2",
                 "Vocabulario ampliado de alimentos y bebidas.",
-                4, 5, 2, "Alimentos",
+                3, 4, 2, "Alimentos",
                 List.of(
                         new long[]{6456,  0, 0},
                         new long[]{2248,  1, 0},
                         new long[]{11461, 2, 0},
                         new long[]{2445,  3, 0},
-                        new long[]{4389,  4, 0},
                         new long[]{28339, 0, 1},
                         new long[]{2462,  1, 1},
                         new long[]{2530,  2, 1},
                         new long[]{6525,  3, 1},
-                        new long[]{4372,  4, 1},
                         new long[]{2573,  0, 2},
                         new long[]{2534,  1, 2},
                         new long[]{2316,  2, 2},
-                        new long[]{2494,  3, 2},
-                        new long[]{4387,  4, 2},
-                        new long[]{4384,  0, 3},
-                        new long[]{4334,  1, 3},
-                        new long[]{36518, 2, 3},
-                        new long[]{34027, 3, 3},
-                        new long[]{26061, 4, 3}
+                        new long[]{2494,  3, 2}
                 ),
                 List.of(
-                        "comer", "agua", "zumo", "leche", "zumo",
-                        "fruta", "manzana", "plátano", "galletas", "pasta",
-                        "sopa", "muslo", "carne", "pan", "queso",
-                        "tomate", "manzana", "quiero", "sí", "no"
+                        "comer", "agua", "zumo", "leche",
+                        "fruta", "manzana", "plátano", "galletas",
+                        "sopa", "muslo", "carne", "pan"
                 )
         );
 
         createBoardIfNotExists("Emociones - Nivel 2",
                 "Vocabulario ampliado de emociones y estados de ánimo.",
-                4, 5, 2, "Emociones",
+                2, 4, 2, "Emociones",
                 List.of(
                         new long[]{3245,  0, 0},
                         new long[]{2606,  1, 0},
                         new long[]{2367,  2, 0},
                         new long[]{2314,  3, 0},
-                        new long[]{8491,  4, 0},
                         new long[]{2374,  0, 1},
                         new long[]{2261,  1, 1},
                         new long[]{2574,  2, 1},
-                        new long[]{2245,  3, 1},
-                        new long[]{8498,  4, 1},
-                        new long[]{34027, 0, 2},
-                        new long[]{26061, 1, 2},
-                        new long[]{11367, 2, 2},
-                        new long[]{2454,  3, 2},
-                        new long[]{7841,  4, 2},
-                        new long[]{36518, 0, 3},
-                        new long[]{6632,  1, 3},
-                        new long[]{12281, 2, 3},
-                        new long[]{3220,  3, 3},
-                        new long[]{12264, 4, 3}
+                        new long[]{2245,  3, 1}
                 ),
                 List.of(
-                        "contento", "triste", "dolor", "cansado", "miedo",
-                        "enfadado", "asustado", "sorprendido", "aburrido", "tranquilo",
-                        "sí", "no", "ayuda", "agua", "comida",
-                        "quiero", "yo", "tú", "más", "mío"
+                        "contento", "triste", "dolor", "cansado",
+                        "enfadado", "asustado", "sorprendido", "aburrido"
                 )
         );
 
@@ -235,16 +211,32 @@ public class DataInitializer implements CommandLineRunner {
                 "Verbos y acciones cotidianas básicas.",
                 4, 5, 2, "Acciones",
                 List.of(
-                        new long[]{6456,  0, 0}, new long[]{4768,  1, 0}, new long[]{4884,  2, 0}, new long[]{4886,  3, 0}, new long[]{4888,  4, 0},
-                        new long[]{4889,  0, 1}, new long[]{4890,  1, 1}, new long[]{4893,  2, 1}, new long[]{4894,  3, 1}, new long[]{4895,  4, 1},
-                        new long[]{4898,  0, 2}, new long[]{4899,  1, 2}, new long[]{4900,  2, 2}, new long[]{5781,  3, 2}, new long[]{11367, 4, 2},
-                        new long[]{36518, 0, 3}, new long[]{6632,  1, 3}, new long[]{34027, 2, 3}, new long[]{26061, 3, 3}, new long[]{3220,  4, 3}
+                        new long[]{6632,  0, 0},
+                        new long[]{36518, 1, 0},
+                        new long[]{6456,  2, 0},
+                        new long[]{6061,  3, 0},
+                        new long[]{6479,  4, 0},
+                        new long[]{5584,  0, 1},
+                        new long[]{6537,  1, 1},
+                        new long[]{2315,  2, 1},
+                        new long[]{6052,  3, 1},
+                        new long[]{7141,  4, 1},
+                        new long[]{5526,  0, 2},
+                        new long[]{6495,  1, 2},
+                        new long[]{6517,  2, 2},
+                        new long[]{19524, 3, 2},
+                        new long[]{35741, 4, 2},
+                        new long[]{6611,  0, 3},
+                        new long[]{6606,  1, 3},
+                        new long[]{6044,  2, 3},
+                        new long[]{6465,  3, 3},
+                        new long[]{6607,  4, 3}
                 ),
                 List.of(
-                        "comer","beber","dormir","jugar","leer",
-                        "escribir","dibujar","bailar","correr","saltar",
-                        "ver","escuchar","hablar","baño","ayuda",
-                        "quiero","yo","sí","no","más"
+                        "yo", "quiero", "comer", "beber", "dormir",
+                        "sí", "jugar", "cantar", "bailar", "leer",
+                        "no", "estudiar", "hablar", "ayuda", "escuchar",
+                        "sentar", "salir", "caminar", "correr", "saltar"
                 )
         );
     }
@@ -253,117 +245,110 @@ public class DataInitializer implements CommandLineRunner {
     private void createLevel3Boards() {
         createBoardIfNotExists("Tablero General - Nivel 3",
                 "Tablero predeterminado para comunicación avanzada con vocabulario extenso.",
-                5, 6, 3, "General",
+                4, 5, 3, "General",
                 List.of(
                         new long[]{6632,  0, 0},
-                        new long[]{2458,  1, 0},
-                        new long[]{31146, 2, 0},
+                        new long[]{36518, 1, 0},
+                        new long[]{2458,  2, 0},
                         new long[]{31146, 3, 0},
                         new long[]{5584,  4, 0},
-                        new long[]{5526,  5, 0},
                         new long[]{12264, 0, 1},
-                        new long[]{6456,  1, 1},
-                        new long[]{6061,  2, 1},
-                        new long[]{5526,  3, 1},
-                        new long[]{8491,  4, 1},
-                        new long[]{5956,  5, 1},
-                        new long[]{36518, 0, 2},
-                        new long[]{38351, 1, 2},
-                        new long[]{12281, 2, 2},
-                        new long[]{3220,  3, 2},
-                        new long[]{6503,  4, 2},
-                        new long[]{7056,  5, 2},
-                        new long[]{4892,  0, 3}, new long[]{4907,  1, 3}, new long[]{5062,  2, 3}, new long[]{5001,  3, 3}, new long[]{5003,  4, 3}, new long[]{5108,  5, 3},
-                        new long[]{6456,  0, 4}, new long[]{4886,  1, 4}, new long[]{4884,  2, 4}, new long[]{4888,  3, 4}, new long[]{4898,  4, 4}, new long[]{4900,  5, 4}
+                        new long[]{7272,  1, 1},
+                        new long[]{6456,  2, 1},
+                        new long[]{6061,  3, 1},
+                        new long[]{5526,  4, 1},
+                        new long[]{12281, 0, 2},
+                        new long[]{37160, 1, 2},
+                        new long[]{6964,  2, 2},
+                        new long[]{3082,  3, 2},
+                        new long[]{3220,  4, 2},
+                        new long[]{7186,  0, 3},
+                        new long[]{7171,  1, 3},
+                        new long[]{37827, 2, 3},
+                        new long[]{13630, 3, 3},
+                        new long[]{8129,  4, 3}
                 ),
                 List.of(
-                        "Yo", "Mamá", "Papá", "papá", "sí", "no",
-                        "Mío", "Comer", "Beber", "No", "miedo", "cansado",
-                        "Quiero", "Familia", "Tú", "Más", "médico", "tienda",
-                        "mamá", "papá", "amigo", "abuelo", "abuela", "profesor",
-                        "comer", "jugar", "dormir", "leer", "ver", "hablar"
+                        "Yo", "Quiero", "Mamá", "Papá", "sí",
+                        "Mío", "tener hambre", "Comer", "Beber", "no",
+                        "Tú", "necesitar", "casa", "colegio", "Más",
+                        "nosotros", "necesito ayuda", "no entiendo", "estoy bien", "gracias"
                 )
         );
 
         createBoardIfNotExists("Acciones - Nivel 3",
                 "Vocabulario ampliado de verbos y acciones.",
-                5, 6, 3, "Acciones",
+                4, 5, 3, "Acciones",
                 List.of(
-                        new long[]{6456,  0, 0}, new long[]{4768,  1, 0}, new long[]{4884,  2, 0}, new long[]{4886,  3, 0}, new long[]{4888,  4, 0}, new long[]{4889,  5, 0},
-                        new long[]{4890,  0, 1}, new long[]{4891,  1, 1}, new long[]{4893,  2, 1}, new long[]{4894,  3, 1}, new long[]{4895,  4, 1}, new long[]{4896,  5, 1},
-                        new long[]{4898,  0, 2}, new long[]{4899,  1, 2}, new long[]{4900,  2, 2}, new long[]{5781,  3, 2}, new long[]{11367, 4, 2}, new long[]{2454,  5, 2},
-                        new long[]{36518, 0, 3}, new long[]{6632,  1, 3}, new long[]{12281, 2, 3}, new long[]{34027, 3, 3}, new long[]{26061, 4, 3}, new long[]{3220,  5, 3},
-                        new long[]{8484,  0, 4}, new long[]{33633, 1, 4}, new long[]{8490,  2, 4}, new long[]{5956,  3, 4}, new long[]{8491,  4, 4}, new long[]{12264, 5, 4}
+                        new long[]{6632,  0, 0},
+                        new long[]{36518, 1, 0},
+                        new long[]{6456,  2, 0},
+                        new long[]{6061,  3, 0},
+                        new long[]{6479,  4, 0},
+                        new long[]{5584,  0, 1},
+                        new long[]{6537,  1, 1},
+                        new long[]{2315,  2, 1},
+                        new long[]{6052,  3, 1},
+                        new long[]{7141,  4, 1},
+                        new long[]{5526,  0, 2},
+                        new long[]{6495,  1, 2},
+                        new long[]{6517,  2, 2},
+                        new long[]{19524, 3, 2},
+                        new long[]{35741, 4, 2},
+                        new long[]{6611,  0, 3},
+                        new long[]{6606,  1, 3},
+                        new long[]{6044,  2, 3},
+                        new long[]{6465,  3, 3},
+                        new long[]{6607,  4, 3}
                 ),
                 List.of(
-                        "comer","beber","dormir","jugar","leer","escribir",
-                        "dibujar","cantar","bailar","correr","saltar","nadar",
-                        "ver","escuchar","hablar","baño","ayuda","agua",
-                        "quiero","yo","tú","sí","no","más",
-                        "feliz","triste","enfadado","cansado","miedo","mío"
+                        "yo", "quiero", "comer", "beber", "dormir",
+                        "sí", "jugar", "cantar", "bailar", "leer",
+                        "no", "estudiar", "hablar", "ayuda", "escuchar",
+                        "sentar", "salir", "caminar", "correr", "saltar"
                 )
         );
 
         createBoardIfNotExists("Emociones - Nivel 3",
                 "Vocabulario completo de emociones y estados de ánimo.",
-                5, 6, 3, "Emociones",
+                2, 4, 3, "Emociones",
                 List.of(
                         new long[]{3245,  0, 0},
                         new long[]{2606,  1, 0},
                         new long[]{2367,  2, 0},
                         new long[]{2314,  3, 0},
-                        new long[]{8491,  4, 0},
-                        new long[]{5956,  5, 0},
                         new long[]{2374,  0, 1},
                         new long[]{2261,  1, 1},
                         new long[]{2574,  2, 1},
-                        new long[]{2245,  3, 1},
-                        new long[]{8493,  4, 1},
-                        new long[]{8494,  5, 1},
-                        new long[]{8495,  0, 2}, new long[]{8496,  1, 2}, new long[]{8497,  2, 2}, new long[]{34027, 3, 2}, new long[]{26061, 4, 2}, new long[]{11367, 5, 2},
-                        new long[]{36518, 0, 3}, new long[]{6632,  1, 3}, new long[]{12281, 2, 3}, new long[]{2454,  3, 3}, new long[]{7841,  4, 3}, new long[]{3220,  5, 3},
-                        new long[]{2,     0, 4}, new long[]{5938,  1, 4}, new long[]{6038,  2, 4}, new long[]{4892,  3, 4}, new long[]{4907,  4, 4}, new long[]{5062,  5, 4}
+                        new long[]{2245,  3, 1}
                 ),
                 List.of(
-                        "contento", "triste", "dolor", "cansado", "miedo", "cansado",
-                        "enfadado", "asustado", "sorprendido", "aburrido", "asustado", "avergonzado",
-                        "orgulloso", "celoso", "confundido", "sí", "no", "ayuda",
-                        "quiero", "yo", "tú", "agua", "comida", "más",
-                        "casa", "colegio", "parque", "mamá", "papá", "amigo"
+                        "contento", "triste", "dolor", "cansado",
+                        "enfadado", "asustado", "sorprendido", "aburrido"
                 )
         );
 
         createBoardIfNotExists("Alimentos - Nivel 3",
                 "Vocabulario completo de alimentos y bebidas.",
-                5, 6, 3, "Alimentos",
+                3, 4, 3, "Alimentos",
                 List.of(
                         new long[]{6456,  0, 0},
                         new long[]{2248,  1, 0},
                         new long[]{11461, 2, 0},
                         new long[]{2445,  3, 0},
-                        new long[]{4389,  4, 0},
-                        new long[]{5264,  5, 0},
                         new long[]{28339, 0, 1},
                         new long[]{2462,  1, 1},
                         new long[]{2530,  2, 1},
                         new long[]{6525,  3, 1},
-                        new long[]{4385,  4, 1},
-                        new long[]{4338,  5, 1},
                         new long[]{2573,  0, 2},
                         new long[]{2534,  1, 2},
                         new long[]{2316,  2, 2},
-                        new long[]{2494,  3, 2},
-                        new long[]{4387,  2, 2},
-                        new long[]{4384,  3, 2},
-                        new long[]{4903,  0, 3}, new long[]{4902,  1, 3}, new long[]{4901,  2, 3}, new long[]{4904,  3, 3}, new long[]{4905,  4, 3}, new long[]{4908,  5, 3},
-                        new long[]{36518, 0, 4}, new long[]{6632,  1, 4}, new long[]{34027, 2, 4}, new long[]{26061, 3, 4}, new long[]{3220,  4, 4}, new long[]{11367, 5, 4}
+                        new long[]{2494,  3, 2}
                 ),
                 List.of(
-                        "comer", "agua", "zumo", "leche", "zumo", "fruta",
-                        "fruta", "manzana", "plátano", "galletas", "yogur", "huevo",
-                        "sopa", "muslo", "carne", "pan", "manzana", "jamón",
-                        "zanahoria", "patata", "naranja", "plátano", "pera", "uva",
-                        "quiero", "yo", "sí", "no", "más", "ayuda"
+                        "comer", "agua", "zumo", "leche",
+                        "fruta", "manzana", "plátano", "galletas",
+                        "sopa", "muslo", "carne", "pan"
                 )
         );
     }
@@ -417,29 +402,33 @@ public class DataInitializer implements CommandLineRunner {
                         new long[]{3024, 2, 0},
                         new long[]{3025, 3, 0},
                         new long[]{3026, 4, 0},
-                        new long[]{3027, 0, 1},
-                        new long[]{3029, 1, 1},
-                        new long[]{3030, 2, 1},
-                        new long[]{3031, 3, 1},
-                        new long[]{3032, 4, 1},
-                        new long[]{3033, 0, 2},
-                        new long[]{3035, 1, 2},
-                        new long[]{3037, 2, 2},
-                        new long[]{3038, 3, 2},
-                        new long[]{3039, 4, 2},
-                        new long[]{3040, 0, 3},
-                        new long[]{3043, 1, 3},
-                        new long[]{3044, 2, 3},
-                        new long[]{3045, 3, 3},
-                        new long[]{3046, 4, 3},
-                        new long[]{3047, 0, 4},
-                        new long[]{3412, 1, 4}
+                        new long[]{3027, 5, 0},
+                        new long[]{3028, 6, 0},
+                        new long[]{ 3029, 0, 1 },
+                        new long[]{ 3030, 1, 1 },
+                        new long[]{ 3031, 2, 1 },
+                        new long[]{ 3032, 3, 1 },
+                        new long[]{ 3033, 4, 1 },
+                        new long[]{ 3035, 5, 1 },
+                        new long[]{ 3036, 6, 1 },
+                        new long[]{ 3412, 0, 2 },
+                        new long[]{ 3037, 1, 2 },
+                        new long[]{ 3038, 2, 2 },
+                        new long[]{ 3039, 3, 2 },
+                        new long[]{ 3040, 4, 2 },
+                        new long[]{ 3041, 5, 2 },
+                        new long[]{ 3042, 6, 2 },
+                        new long[]{ 3043, 0, 3 },
+                        new long[]{ 3044, 1, 3 },
+                        new long[]{ 3045, 2, 3 },
+                        new long[]{ 3046, 3, 3 },
+                        new long[]{ 3047, 4, 3 },
+                        new long[]{ 3048, 5, 3 }
                 ),
-                List.of("a","b","c","d","e",
-                        "f","h","i","j","k",
-                        "l","m","o","p","q",
-                        "r","u","v","w","x",
-                        "y","ñ")
+                List.of("a", "b", "c", "d", "e", "f", "g",
+                        "h", "i", "j", "k", "l", "m", "n",
+                        "ñ", "o", "p", "q", "r", "s", "t",
+                        "u", "v", "w", "x", "y", "z")
         );
 
         createBoardIfNotExists("Abecedario - Nivel 3",
@@ -451,29 +440,33 @@ public class DataInitializer implements CommandLineRunner {
                         new long[]{3024, 2, 0},
                         new long[]{3025, 3, 0},
                         new long[]{3026, 4, 0},
-                        new long[]{3027, 0, 1},
-                        new long[]{3029, 1, 1},
-                        new long[]{3030, 2, 1},
-                        new long[]{3031, 3, 1},
-                        new long[]{3032, 4, 1},
-                        new long[]{3033, 0, 2},
-                        new long[]{3035, 1, 2},
-                        new long[]{3037, 2, 2},
-                        new long[]{3038, 3, 2},
-                        new long[]{3039, 4, 2},
-                        new long[]{3040, 0, 3},
-                        new long[]{3043, 1, 3},
-                        new long[]{3044, 2, 3},
-                        new long[]{3045, 3, 3},
-                        new long[]{3046, 4, 3},
-                        new long[]{3047, 0, 4},
-                        new long[]{3412, 1, 4}
+                        new long[]{3027, 5, 0},
+                        new long[]{3028, 6, 0},
+                        new long[]{ 3029, 0, 1 },
+                        new long[]{ 3030, 1, 1 },
+                        new long[]{ 3031, 2, 1 },
+                        new long[]{ 3032, 3, 1 },
+                        new long[]{ 3033, 4, 1 },
+                        new long[]{ 3035, 5, 1 },
+                        new long[]{ 3036, 6, 1 },
+                        new long[]{ 3412, 0, 2 },
+                        new long[]{ 3037, 1, 2 },
+                        new long[]{ 3038, 2, 2 },
+                        new long[]{ 3039, 3, 2 },
+                        new long[]{ 3040, 4, 2 },
+                        new long[]{ 3041, 5, 2 },
+                        new long[]{ 3042, 6, 2 },
+                        new long[]{ 3043, 0, 3 },
+                        new long[]{ 3044, 1, 3 },
+                        new long[]{ 3045, 2, 3 },
+                        new long[]{ 3046, 3, 3 },
+                        new long[]{ 3047, 4, 3 },
+                        new long[]{ 3048, 5, 3 }
                 ),
-                List.of("a","b","c","d","e",
-                        "f","h","i","j","k",
-                        "l","m","o","p","q",
-                        "r","u","v","w","x",
-                        "y","ñ")
+                List.of("a", "b", "c", "d", "e", "f", "g",
+                        "h", "i", "j", "k", "l", "m", "n",
+                        "ñ", "o", "p", "q", "r", "s", "t",
+                        "u", "v", "w", "x", "y", "z")
         );
     }
 

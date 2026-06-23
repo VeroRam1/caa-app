@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Generic API response wrapper
- * Used for success/error messages
- */
+// Generic API response wrapper. Used for success/error messages
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,9 +18,7 @@ public class APIResponseDTO<T> {
     private T data;
     private LocalDateTime timestamp;
 
-    /**
-     * Creates a successful response with data
-     */
+    //Creates a successful response with data
     public static <T> APIResponseDTO<T> success(String message, T data) {
         return APIResponseDTO.<T>builder()
                 .success(true)
@@ -33,16 +28,12 @@ public class APIResponseDTO<T> {
                 .build();
     }
 
-    /**
-     * Creates a successful response without data
-     */
+    // Creates a successful response without data
     public static <T> APIResponseDTO<T> success(String message) {
         return success(message, null);
     }
 
-    /**
-     * Creates an error response
-     */
+    // Error response
     public static <T> APIResponseDTO<T> error(String message) {
         return APIResponseDTO.<T>builder()
                 .success(false)
@@ -53,9 +44,7 @@ public class APIResponseDTO<T> {
     }
 
 
-    /**
-     * Creates an error response with data
-     */
+    // Error response with data
     public static <T> APIResponseDTO<T> error(String message, T data) {
         return APIResponseDTO.<T>builder()
                 .success(false)

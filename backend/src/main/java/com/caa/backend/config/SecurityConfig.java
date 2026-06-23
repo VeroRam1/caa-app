@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/boards/predefined").permitAll()
                         .requestMatchers("/api/boards/level/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()
                         .anyRequest().authenticated()  // siempre el último, solo uno
                 )

@@ -16,6 +16,8 @@ import { AuthService } from '../services/auth-service';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { Credits } from '../credits/credits';
+import { ViewChild } from '@angular/core';
 
 interface BoardCategory {
   label: string;
@@ -37,12 +39,14 @@ interface BoardCategory {
     ToastModule,
     SelectModule,
     FormsModule,
-    InputTextModule
+    InputTextModule,
+    Credits
   ],
   templateUrl: './my-boards.html',
   styleUrl: './my-boards.scss'
 })
 export class MyBoardsComponent implements OnInit {
+  @ViewChild(Credits) creditsDialog!: Credits;
 
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
@@ -121,12 +125,8 @@ export class MyBoardsComponent implements OnInit {
 
   initMenu(): void {
     this.menuItems = [
-      { label: 'Sobre nosotros', icon: 'pi pi-info-circle', command: () => {} },
-      { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} },
-      { label: 'Tutoriales', icon: 'pi pi-play-circle', command: () => {} },
-      { label: 'Contacto', icon: 'pi pi-envelope', command: () => {} },
-      { separator: true },
-      { label: 'Configuración', icon: 'pi pi-cog', command: () => {} }
+      { label: 'Créditos', icon: 'pi pi-info-circle', command: () => this.creditsDialog.show()},
+      { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} }
     ];
   }
 

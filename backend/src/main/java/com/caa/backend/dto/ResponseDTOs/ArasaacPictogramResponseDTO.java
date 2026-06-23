@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO for ARASAAC API pictogram response
- * Maps the structure returned by ARASAAC API
- * Designed for children's AAC application
- */
+// DTO for ARASAAC API pictogram response. Maps the structure returned by ARASAAC API
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,68 +18,20 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArasaacPictogramResponseDTO {
 
-    /**
-     * Pictogram ID in ARASAAC
-     */
     @JsonProperty("_id")
     private Integer id;
 
-    /**
-     * Keywords - this is a nested object in ARASAAC
-     * We'll extract it manually in the service
-     */
     @JsonProperty("keywords")
-    private Object keywords;  // Temporarily as Object to avoid parsing errors
-
-    /**
-     * Categories
-     */
+    private Object keywords;
     private List<String> categories;
-
-    /**
-     * Tags
-     */
     private List<String> tags;
-
-    /**
-     * Author information
-     */
     private String author;
-
-    /**
-     * Type of pictogram
-     */
     private Integer type;
-
-    /**
-     * Whether it has animation
-     */
     private Boolean hasAnimation;
-
-    /**
-     * Whether schematic representation exists
-     */
     private Boolean schematic;
-
-    /**
-     * Whether it has color version
-     */
     private Boolean color;
-
-    /**
-     * Whether it has no-background version
-     */
     private Boolean noBackground;
-
-    /**
-     * Cached keywords in Spanish (extracted from the keywords object)
-     */
     private transient List<String> keywordsEs;
-
-    /**
-     * Helper method to get the primary keyword in Spanish
-     * @return first Spanish keyword or "sin nombre"
-     */
     public String getPrimaryKeyword() {
         List<String> kw = getKeywordsEs();
         if (kw != null && !kw.isEmpty()) {
@@ -92,10 +40,7 @@ public class ArasaacPictogramResponseDTO {
         return "sin nombre";
     }
 
-    /**
-     * Helper method to get all keywords in Spanish as comma-separated string
-     * @return keywords joined
-     */
+    // Helper method to get all keywords in Spanish as comma-separated string
     public String getAllKeywords() {
         List<String> kw = getKeywordsEs();
         if (kw != null && !kw.isEmpty()) {
@@ -104,10 +49,6 @@ public class ArasaacPictogramResponseDTO {
         return "";
     }
 
-    /**
-     * Extract Spanish keywords from the keywords object
-     * @return list of Spanish keywords
-     */
     @SuppressWarnings("unchecked")
     public List<String> getKeywordsEs() {
         if (keywordsEs != null) {
@@ -142,12 +83,7 @@ public class ArasaacPictogramResponseDTO {
         return keywordsEs;
     }
 
-    /**
-     * Generate the URL for the pictogram image
-     * @param size image size (300, 500, 2500)
-     * @param withBackground include background
-     * @return full URL
-     */
+    // Generate the URL for the pictogram image
     public String getPictogramUrl(int size, boolean withBackground) {
         return String.format(
                 "https://api.arasaac.org/v1/pictograms/%d?download=false&plural=false&color=true&backgroundColor=%s&size=%d",
@@ -155,10 +91,6 @@ public class ArasaacPictogramResponseDTO {
         );
     }
 
-    /**
-     * Get default pictogram URL (300px, with background)
-     * @return default URL
-     */
     public String getDefaultPictogramUrl() {
         return getPictogramUrl(300, true);
     }

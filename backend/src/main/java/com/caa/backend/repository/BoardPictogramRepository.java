@@ -32,20 +32,9 @@ public interface BoardPictogramRepository extends JpaRepository<BoardPictogram, 
             "ORDER BY total DESC")
     List<Object[]> findMostUsedPictogram();
 
-    /**
-     * Get all pictograms from a board with board information loaded
-     * @param boardId board ID
-     * @return list of pictograms with board loaded
-     */
     @Query("SELECT p FROM BoardPictogram p JOIN FETCH p.board WHERE p.board.id = :boardId")
     List<BoardPictogram> findByBoardIdWithBoard(@Param("boardId") Long boardId);
 
-    /**
-     * Find empty positions on a board
-     * Useful for suggesting where to place a new pictogram
-     * @param boardId board ID
-     * @return list of empty [x, y] positions
-     */
     @Query(value = "SELECT x.pos_x, y.pos_y " +
             "FROM (SELECT DISTINCT position_x as pos_x FROM board_pictograms WHERE board_id = :boardId) x " +
             "CROSS JOIN (SELECT DISTINCT position_y as pos_y FROM board_pictograms WHERE board_id = :boardId) y " +

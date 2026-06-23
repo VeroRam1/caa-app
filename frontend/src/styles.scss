@@ -1,4 +1,3 @@
-// ── Angular Material ──────────────────────────────────────────────────────────
 @use '@angular/material' as mat;
 
 html {
@@ -19,7 +18,6 @@ html {
 
 @import "primeicons/primeicons.css";
 
-// Estilos globales
 html, body {
   height: 100%;
   margin: 0;
@@ -29,9 +27,8 @@ html, body {
   color: var(--mat-sys-on-surface);
 }
 
-// CSS variables personalizadas
 :root {
-  // Text colors over colored backgrounds — cumplen ratio 4.5:1 (WCAG 1.4.3)
+  // Text colors over colored backgrounds — ratio 4.5:1 (WCAG 1.4.3)
   --color-blue-bg: #d6f0ff;
   --color-blue-text: #1a4971;
   --color-pink-bg: #ffd6e7;
@@ -48,7 +45,7 @@ html, body {
   --toolbar-text: #0c2340;
 }
 
-// ── Overrides globales PrimeNG ──────────────────────────────────────────────────
+// Overrides globales PrimeNG 
 .p-toolbar {
   background-color: #6eb3f3 !important;
   border: none !important;
@@ -58,8 +55,6 @@ html, body {
 }
 
 // Minimum button size — criteria 2.5.8
-// Also ensures primary buttons use the blue palette in case the PrimeNG
-// preset CSS variables are not yet resolved (e.g. during SSR hydration).
 .p-button {
   min-height: 44px !important;
   min-width: 44px !important;
@@ -79,14 +74,12 @@ html, body {
   }
 }
 
-// Elementos de menú con tamaño accesible
 .p-menu .p-menuitem-link {
   min-height: 44px !important;
   display: flex;
   align-items: center;
 }
 
-// ── Confirm popups ────────────────────────────────────────────────────────────
 .p-confirmpopup {
   background: #e8f4fd !important;
   border: 2px solid #b3ddff !important;
@@ -120,7 +113,6 @@ html, body {
   justify-content: flex-end;
 }
 
-// ── Toast — fondos sólidos para cumplir WCAG 1.4.3 (contraste 4.5:1) ────────────
 .p-toast {
   .p-toast-message {
     border-radius: 0.75rem !important;
@@ -132,7 +124,6 @@ html, body {
       font-weight: 600;
     }
 
-    // Criteria 2.5.8: minimum touch target 44×44px
     .p-toast-close-button {
       min-width: 44px !important;
       min-height: 44px !important;
@@ -180,7 +171,7 @@ html, body {
   }
 }
 
-// ── Form field error messages ─────────────────────────────────────────────────
+// Form field error messages 
 .field-error {
   color: var(--color-red-text);
   font-size: 0.78rem;

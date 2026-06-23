@@ -242,12 +242,11 @@ export class BoardEditor implements OnInit {
   }
 
   getPictogramLabel(result: any): string {
-    // ArasaacPictogramResponseDTO tiene getKeywordsEs() pero en JSON
-    // llega como keywordsEs (lista de strings) o keywords (objeto crudo)
+    // ArasaacPictogramResponseDTO has getKeywordsEs() but in JSON comes as keywordsEs (string list) o keyword
     if (result.keywordsEs && result.keywordsEs.length > 0) {
       return result.keywordsEs[0];
     }
-    // Fallback: parsear keywords manualmente
+    // Fallback: parse keywords manually
     if (result.keywords && Array.isArray(result.keywords)) {
       const first = result.keywords[0];
       if (typeof first === 'string') return first;
@@ -314,10 +313,10 @@ export class BoardEditor implements OnInit {
         backgroundColor: c.pictogram!.backgroundColor
       }));
 
-    // 1º: actualizar pictogramas (ya dentro de los nuevos límites)
+    // 1º: update pictograms 
     this.boardService.updateBoardPictograms(boardId, { pictograms }).subscribe({
       next: () => {
-        // 2º: ahora sí, redimensionar/actualizar nombre y dimensiones
+        // 2º: redimension or change name/description
         const updateData = {
           name: this.boardName,
           description: this.board!.description || '',

@@ -1,0 +1,30 @@
+.credits-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.credits-section {
+  h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a4971;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  a {
+    color: #4a85b5;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover { color: #1a4971; }
+    &:focus-visible { outline: 2px solid #4a85b5; outline-offset: 2px; }
+  }
+}

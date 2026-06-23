@@ -14,12 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AuthResponseDTO {
-    /**
-     * JWT token to be sent in subsequent requests
-     * as "Authorization: Bearer <token>"
-     */
+    // JWT token to be sent in subsequent requests as "Authorization: Bearer <token>"
     private String token;
-
     private Long tutorId;
     private String name;
     private String email;

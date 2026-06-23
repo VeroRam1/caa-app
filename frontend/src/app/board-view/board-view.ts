@@ -155,56 +155,68 @@ export class BoardView implements OnInit {
   get categories(): Category[] {
     const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 : this.profileLevel === 'LEVEL_2' ? 2 : 1;
 
-    // Assigned boards, not predefined
     const customAssigned = this.assignedBoards.filter(b => !b.isPredefined);
 
-    // Edited predefined categories
     const overriddenLabels = new Set<string>();
     for (const board of customAssigned) {
-      const label = board.category;
-      if (label) {
+      if (board.category) {
         const match = this.allCategories.find(c =>
-          c.label.toLowerCase() === label.toLowerCase()
-        );
-        if (match) overriddenLabels.add(match.label);
-      } else {
-        // Fallback por nombre
-        const match = this.allCategories.find(c =>
-          board.name.toLowerCase().includes(c.label.toLowerCase())
+          c.label.toLowerCase() === board.category!.toLowerCase()
         );
         if (match) overriddenLabels.add(match.label);
       }
+      const matchByName = this.allCategories.find(c =>
+        board.name.toLowerCase().includes(c.label.toLowerCase())
+      );
+      if (matchByName) overriddenLabels.add(matchByName.label);
     }
 
-    const predefined = this.allCategories
-      .filter(cat => !overriddenLabels.has(cat.label))
-      .map(cat => ({
-        ...cat,
-        subLevels: cat.subLevels.filter(sl => sl.level <= maxLevel)
-      }))
-      .filter(cat => cat.subLevels.length > 0);
-
-    // New categories for not predefined boards (custom)
     const predefinedLabels = this.allCategories.map(c => c.label.toLowerCase());
     const customLabels = new Set<string>();
 
     for (const board of customAssigned) {
       const label = board.category || board.name;
       const matchesPredefined = predefinedLabels.some(pl =>
-        label.toLowerCase().includes(pl)
+        label.toLowerCase().includes(pl) ||
+        pl.includes(label.toLowerCase())
       );
       if (!matchesPredefined) {
         customLabels.add(label);
       }
     }
 
-    const custom: Category[] = Array.from(customLabels).map(label => ({
-      label,
-      isCustom: true,
-      subLevels: []
-    }));
+    // Build ordered categories respecting allCategories order
+    const orderedCategories: Category[] = [];
 
-    return [...predefined, ...custom];
+    for (const cat of this.allCategories) {
+      if (overriddenLabels.has(cat.label)) {
+        // Overridden by a custom board — only show if that board exists for this exact level
+        const hasExactLevel = cat.subLevels.some(sl => sl.level === maxLevel);
+        if (hasExactLevel) {
+          orderedCategories.push({ ...cat, subLevels: [] });
+        }
+      } else {
+        // Normal predefined — only show if it has a board for this exact level
+        const filtered = {
+          ...cat,
+          subLevels: cat.subLevels.filter(sl => sl.level === maxLevel)  // ← exactamente el nivel
+        };
+        if (filtered.subLevels.length > 0) {
+          orderedCategories.push(filtered);
+        }
+      }
+    }
+
+    // New custom categories at the end
+    for (const label of customLabels) {
+      orderedCategories.push({
+        label,
+        isCustom: true,
+        subLevels: []
+      });
+    }
+
+    return orderedCategories;
   }
 
   get hasPhraseBar(): boolean {
@@ -363,9 +375,11 @@ export class BoardView implements OnInit {
   }
 
   findCategoryBoard(category: Category): AssignedBoardRef | null {
+    // 1. Exact match by category field (new boards with category set)
     const byCategory = this.assignedBoards.find(b => b.category === category.label);
     if (byCategory) return byCategory;
 
+    // 2. Custom categories — resolve by name only
     if (category.isCustom) {
       return this.assignedBoards.find(b =>
         (b.category == null && b.name === category.label) ||
@@ -373,16 +387,21 @@ export class BoardView implements OnInit {
       ) || null;
     }
 
+    // 3. Fallback by board name (for boards copied before category field existed)
     const byName = this.assignedBoards.find(b =>
       b.name.toLowerCase().includes(category.label.toLowerCase())
     );
     if (byName) return byName;
 
+    // 4. Fall back to the predefined board — exact level match only
+    // (prevents level 1 categories like Lugares/Personas from appearing in level 2/3)
     const maxLevel = this.profileLevel === 'LEVEL_3' ? 3 :
                       this.profileLevel === 'LEVEL_2' ? 2 : 1;
+
     const subLevel = [...category.subLevels]
       .reverse()
-      .find(sl => sl.level <= maxLevel);
+      .find(sl => sl.level === maxLevel);  
+
     if (!subLevel) return null;
 
     const predefined = this.allBoards.find(b => b.name === subLevel.boardName);
