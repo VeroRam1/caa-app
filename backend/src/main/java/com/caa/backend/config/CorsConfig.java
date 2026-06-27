@@ -21,9 +21,9 @@ public class CorsConfig {
 
         // Allow requests from these origins
         config.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:4200",     // Angular default dev server
-                "http://localhost:*",         // Any local port
-                "http://127.0.0.1:*"          // Localhost alternative
+                "http://localhost:4200",
+                "https://caa-app-nine.vercel.app/",
+                "https://*.vercel.app"          // preview deployments
         ));
 
         // Allow these HTTP methods
