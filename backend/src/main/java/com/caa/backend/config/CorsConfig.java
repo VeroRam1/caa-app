@@ -22,7 +22,7 @@ public class CorsConfig {
         // Allow requests from these origins
         config.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:4200",
-                "https://caa-app-nine.vercel.app/",
+                "https://caa-app-nine.vercel.app",
                 "https://*.vercel.app"          // preview deployments
         ));
 
