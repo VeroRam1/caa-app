@@ -1,0 +1,265 @@
+<!-- board-editor.component.html -->
+<div class="editor-container">
+
+  <p-toast />
+  <p-confirmpopup #cp>
+    <ng-template #headless let-message>
+      <div class="confirm-popup-content">
+        <span class="confirm-message">{{ message.message }}</span>
+        <div class="confirm-actions">
+          <p-button
+            (click)="cp.onAccept()"
+            label="Salir sin guardar"
+            size="small"
+            severity="danger"
+            [autofocus]="true" />
+          <p-button
+            (click)="cp.onReject()"
+            label="Cancelar"
+            [text]="true"
+            size="small"
+            severity="secondary" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmpopup>
+
+  <!-- Toolbar del editor -->
+  <header class="editor-toolbar" role="banner">
+
+    <!-- Nombre del tablero editable inline -->
+    <div class="board-name-wrapper">
+      <input
+        pInputText
+        [(ngModel)]="boardName"
+        name="boardName"
+        class="board-name-input"
+        placeholder="Nombre del tablero"
+        aria-label="Nombre del tablero"
+        (input)="hasUnsavedChanges = true"
+        required
+        minlength="3"
+        maxlength="100"
+        #boardNameRef="ngModel" />
+      @if (boardNameRef.invalid && boardNameRef.touched) {
+        <small class="field-error" role="alert">
+          @if (boardNameRef.errors?.['required']) { El nombre del tablero es obligatorio. }
+          @else if (boardNameRef.errors?.['minlength']) { Mínimo 3 caracteres. }
+          @else if (boardNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+        </small>
+      }
+    </div>
+
+    <div class="toolbar-actions">
+      <!-- Indicador de cambios sin guardar -->
+      @if (hasUnsavedChanges) {
+        <span class="unsaved-badge" role="status" aria-live="polite">
+          ● Sin guardar
+        </span>
+      }
+
+      <p-button
+        label="Guardar"
+        icon="pi pi-save"
+        [loading]="saving"
+        (click)="onSave()"
+        aria-label="Guardar cambios del tablero" />
+
+      <p-button
+        label="Salir"
+        icon="pi pi-times"
+        severity="secondary"
+        (click)="onCancel($event)"
+        aria-label="Cancelar edición y volver a mis tableros" />
+    </div>
+  </header>
+
+  @if (loading) {
+    <div class="loading-state" role="status" aria-live="polite">
+      <span aria-hidden="true">⏳</span>
+      <p>Cargando tablero...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-state" role="alert">
+      <span aria-hidden="true">⚠️</span>
+      <p>{{ error }}</p>
+    </div>
+  } @else {
+
+    <div class="editor-layout">
+
+      <!-- ── Panel lateral de búsqueda ── -->
+      <aside
+        class="search-sidebar"
+        [class.search-sidebar--hidden]="!sidebarOpen"
+        aria-label="Buscador de pictogramas ARASAAC">
+
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">Pictogramas</h2>
+          <button
+            class="sidebar-toggle"
+            (click)="toggleSidebar()"
+            type="button"
+            [attr.aria-expanded]="sidebarOpen"
+            aria-label="Ocultar panel de búsqueda">
+            ◀
+          </button>
+        </div>
+
+        <div class="search-box">
+          <input
+            pInputText
+            [(ngModel)]="searchKeyword"
+            (input)="onSearchInput()"
+            placeholder="Buscar pictograma..."
+            class="search-input"
+            aria-label="Buscar pictogramas en ARASAAC" />
+        </div>
+
+        @if (searching) {
+          <div class="search-loading" role="status" aria-live="polite">
+            Buscando...
+          </div>
+        } @else if (searchResults.length === 0 && searchKeyword) {
+          <div class="search-empty">
+            No se encontraron resultados para "{{ searchKeyword }}"
+          </div>
+        } @else {
+          <div
+            class="search-results"
+            role="list"
+            aria-label="Resultados de búsqueda — arrastra un pictograma al tablero">
+            @for (result of searchResults; track result._id) {
+              <div
+                class="search-result-item"
+                draggable="true"
+                (dragstart)="onSearchResultDragStart(result)"
+                (dragend)="onSearchResultDragEnd()"
+                [attr.aria-label]="'Pictograma: ' + getPictogramLabel(result)">
+                <img
+                  [src]="getPictogramUrl(result)"
+                  [alt]="getPictogramLabel(result)"
+                  class="search-result-img"
+                  loading="lazy" />
+                <span class="search-result-label">
+                  {{ getPictogramLabel(result) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </aside>
+
+      <!-- Botón para mostrar sidebar si está oculto -->
+      @if (!sidebarOpen) {
+        <button
+          class="sidebar-show-btn"
+          (click)="toggleSidebar()"
+          type="button"
+          aria-label="Mostrar panel de búsqueda">
+          ▶ Pictogramas
+        </button>
+      }
+
+      <!-- ── Área principal del editor ── -->
+      <main class="editor-main" role="main">
+
+        <!-- Controles de tamaño -->
+        <div class="grid-controls" role="group" aria-label="Tamaño de la cuadrícula">
+          <div class="grid-control">
+            <label for="rows-input" class="control-label">Filas</label>
+            <div class="control-spinner">
+              <button type="button" class="spinner-btn"
+                      (click)="boardRows = Math.max(1, boardRows - 1); onResizeGrid()"
+                      [disabled]="boardRows <= 1"
+                      aria-label="Reducir filas">−</button>
+              <input id="rows-input" type="number" [(ngModel)]="boardRows"
+                    (change)="onResizeGrid()" min="1" max="8"
+                    class="spinner-input" aria-label="Número de filas" />
+              <button type="button" class="spinner-btn"
+                      (click)="boardRows = Math.min(8, boardRows + 1); onResizeGrid()"
+                      [disabled]="boardRows >= 8"
+                      aria-label="Aumentar filas">+</button>
+            </div>
+          </div>
+
+          <span class="grid-separator" aria-hidden="true">×</span>
+
+          <div class="grid-control">
+            <label for="cols-input" class="control-label">Columnas</label>
+            <div class="control-spinner">
+              <button type="button" class="spinner-btn"
+                      (click)="boardColumns = Math.max(1, boardColumns - 1); onResizeGrid()"
+                      [disabled]="boardColumns <= 1"
+                      aria-label="Reducir columnas">−</button>
+              <input id="cols-input" type="number" [(ngModel)]="boardColumns"
+                    (change)="onResizeGrid()" min="1" max="8"
+                    class="spinner-input" aria-label="Número de columnas" />
+              <button type="button" class="spinner-btn"
+                      (click)="boardColumns = Math.min(8, boardColumns + 1); onResizeGrid()"
+                      [disabled]="boardColumns >= 8"
+                      aria-label="Aumentar columnas">+</button>
+            </div>
+          </div>
+
+          <span class="grid-info" aria-live="polite">
+            {{ boardRows * boardColumns }} celdas en total
+          </span>
+        </div>
+
+        <!-- Cuadrícula del tablero -->
+        <div
+            class="board-grid"
+            [style.grid-template-columns]="gridStyle"
+            cdkDropList
+            cdkDropListOrientation="mixed"
+            [cdkDropListData]="cells"
+            (cdkDropListDropped)="onDropInGrid($event)"
+            role="grid"
+            [attr.aria-label]="'Cuadrícula del tablero'">
+
+            @for (cell of cells; track trackByCell($index, cell)) {
+                <div
+                class="grid-cell"
+                [class.grid-cell--occupied]="cell.pictogram !== null"
+                [class.grid-cell--empty]="cell.pictogram === null"
+                cdkDrag
+                [cdkDragData]="cell"
+                (dragover)="onDragOver($event)"
+                (drop)="onDropFromSearch($event, cell)"
+                role="gridcell"
+                [attr.aria-label]="cell.pictogram
+                    ? 'Pictograma: ' + cell.pictogram.text
+                    : 'Celda vacía'">
+
+                @if (cell.pictogram) {
+                    <div class="pictogram-card">
+                    <img
+                        [src]="cell.pictogram.pictogramUrl"
+                        [alt]="cell.pictogram.text"
+                        class="pictogram-img"
+                        draggable="false" />
+                    <span class="pictogram-label">{{ cell.pictogram.text }}</span>
+                    <button
+                        class="remove-btn"
+                        type="button"
+                        (click)="removePictogram(cell)"
+                        [attr.aria-label]="'Eliminar pictograma ' + cell.pictogram.text">
+                        ✕
+                    </button>
+                    <div class="drag-handle" cdkDragHandle aria-hidden="true">⠿</div>
+                    </div>
+                } @else {
+                    <div class="empty-cell-hint" aria-hidden="true">+</div>
+                }
+
+                </div>
+            }
+
+            </div>
+
+      </main>
+    </div>
+  }
+
+</div>

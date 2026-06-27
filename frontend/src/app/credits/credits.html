@@ -1,0 +1,39 @@
+<p-dialog
+  header="Créditos"
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '32rem' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="credits-content">
+
+    <section class="credits-section">
+      <h3>Sobre PictoCom</h3>
+      <p>
+        PictoCom es un Trabajo de Fin de Grado de Ingeniería Informática,
+        desarrollado con fines exclusivamente académicos y sin ánimo de lucro.
+      </p>
+    </section>
+
+    <section class="credits-section">
+      <h3>Pictogramas</h3>
+      <p>
+        Los pictogramas utilizados en esta aplicación son propiedad del
+        Gobierno de Aragón, han sido creados por Sergio Palao para ARASAAC
+        (<a href="https://arasaac.org" target="_blank" rel="noopener">arasaac.org</a>)
+        y se distribuyen bajo licencia
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener">
+          Creative Commons BY-NC-SA</a>
+        (Reconocimiento - No Comercial - Compartir Igual).
+      </p>
+    </section>
+
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cerrar" severity="secondary" (click)="hide()" />
+  </ng-template>
+
+</p-dialog>

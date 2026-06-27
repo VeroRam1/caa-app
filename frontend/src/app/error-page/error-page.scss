@@ -1,0 +1,39 @@
+.not-found-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #d2e6f4;
+  padding: 1.5rem;
+}
+
+.not-found-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  background: white;
+  border-radius: 1rem;
+  padding: 3rem 2.5rem;
+  max-width: 420px;
+  box-shadow: 0 8px 30px rgba(74, 133, 181, 0.2);
+}
+
+.not-found-icon {
+  font-size: 4rem;
+}
+
+.not-found-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a4971;
+  margin: 0;
+}
+
+.not-found-text {
+  font-size: 1rem;
+  color: #555;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+}

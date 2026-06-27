@@ -1,0 +1,308 @@
+<div class="page-container">
+
+  <p-toolbar>
+    <ng-template #start>
+      <p-menu #menu [model]="menuItems" [popup]="true" />
+      <p-button
+        icon="pi pi-bars"
+        severity="secondary"
+        [rounded]="true"
+        (click)="menu.toggle($event)"
+        ariaLabel="Abrir menú de navegación" />
+    </ng-template>
+    <ng-template #center>
+      <h1 class="app-title">PictoCom</h1>
+    </ng-template>
+    <ng-template #end>
+      <p-button label="Ayuda" icon="pi pi-question-circle" severity="secondary" [rounded]="true" />
+    </ng-template>
+  </p-toolbar>
+
+  <main class="main-content">
+
+    <div class="central-panels">
+      <button
+        class="panel-button panel-login"
+        type="button"
+        (click)="showLoginDialog()"
+        aria-label="Iniciar sesión con tu cuenta">
+        <span class="panel-icon" aria-hidden="true">🔐</span>
+        <span class="panel-label">Iniciar sesión</span>
+      </button>
+      <button
+        class="panel-button panel-register"
+        type="button"
+        (click)="showRegisterDialog()"
+        aria-label="Crear una cuenta nueva">
+        <span class="panel-icon" aria-hidden="true">📝</span>
+        <span class="panel-label">Registrarse</span>
+      </button>
+      <button
+        class="panel-button panel-guest"
+        type="button"
+        (click)="onGuest()"
+        aria-label="Entrar como invitado sin registrarse">
+        <span class="panel-icon" aria-hidden="true">👤</span>
+        <span class="panel-label">Entrar sin registrarse</span>
+      </button>
+    </div>
+<!--
+    <div class="tutorial-buttons">
+      <p-button label="Tutorial 1" severity="secondary" [rounded]="true" />
+      <p-button label="Tutorial 2" severity="secondary" [rounded]="true" />
+      <p-button label="Tutorial 3" severity="secondary" [rounded]="true" />
+      <p-button label="Guía de uso" severity="secondary" [rounded]="true" />
+    </div>
+-->
+  </main>
+</div>
+
+<!-- Dialog login -->
+<p-dialog
+  header="Iniciar sesión"
+  [(visible)]="visibleLogin"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '28rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onCancelLogin()">
+
+  @if (loginError) {
+    <div
+      class="error-message"
+      role="alert"
+      aria-live="assertive">
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <span>{{ loginError }}</span>
+    </div>
+  }
+
+  <!-- Recreate the form on each open to reset touched state -->
+  @if (visibleLogin) {
+    <form #loginForm="ngForm" (ngSubmit)="onLogin()" novalidate>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="login-email" class="font-semibold w-24 flex-shrink-0">Email</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="login-email"
+              name="loginEmail"
+              type="email"
+              class="w-full"
+              [(ngModel)]="loginEmail"
+              required
+              email
+              #loginEmailRef="ngModel"
+              autocomplete="email"
+              aria-label="Correo electrónico" />
+            @if (loginEmailRef.invalid && loginEmailRef.touched) {
+              <small class="field-error" role="alert">
+                @if (loginEmailRef.errors?.['required']) { El email es obligatorio. }
+                @else if (loginEmailRef.errors?.['email']) { Introduce un email válido. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="login-password" class="font-semibold w-24 flex-shrink-0">Contraseña</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="login-password"
+              name="loginPassword"
+              type="password"
+              class="w-full"
+              [(ngModel)]="loginPassword"
+              required
+              minlength="8"
+              #loginPasswordRef="ngModel"
+              autocomplete="current-password"
+              aria-label="Contraseña" />
+            @if (loginPasswordRef.invalid && loginPasswordRef.touched) {
+              <small class="field-error" role="alert">
+                @if (loginPasswordRef.errors?.['required']) { La contraseña es obligatoria. }
+                @else if (loginPasswordRef.errors?.['minlength']) { Mínimo 8 caracteres. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          (click)="onCancelLogin()"
+          [disabled]="loading" />
+        <p-button
+          label="Entrar"
+          type="submit"
+          [loading]="loading"
+          [disabled]="loginForm.invalid || loading" />
+      </div>
+
+    </form>
+  }
+
+</p-dialog>
+
+<!-- Dialog register -->
+<p-dialog
+  header="Crear cuenta"
+  [(visible)]="visibleRegister"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '28rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onCancelRegister()">
+
+  @if (registerError) {
+    <div
+      class="error-message"
+      role="alert"
+      aria-live="assertive">
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <span>{{ registerError }}</span>
+    </div>
+  }
+
+  <!-- Recreate the form on each open to reset touched state -->
+  @if (visibleRegister) {
+    <form #registerForm="ngForm" (ngSubmit)="onRegister()" novalidate>
+
+      <!-- Name -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="reg-name" class="font-semibold w-24 flex-shrink-0">Nombre</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="reg-name"
+              name="regName"
+              class="w-full"
+              [(ngModel)]="registerName"
+              required
+              minlength="2"
+              maxlength="100"
+              #regNameRef="ngModel"
+              autocomplete="name"
+              aria-label="Nombre completo" />
+            @if (regNameRef.invalid && regNameRef.touched) {
+              <small class="field-error" role="alert">
+                @if (regNameRef.errors?.['required']) { El nombre es obligatorio. }
+                @else if (regNameRef.errors?.['minlength']) { Mínimo 2 caracteres. }
+                @else if (regNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="reg-email" class="font-semibold w-24 flex-shrink-0">Email</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="reg-email"
+              name="regEmail"
+              type="email"
+              class="w-full"
+              [(ngModel)]="registerEmail"
+              required
+              email
+              #regEmailRef="ngModel"
+              autocomplete="email"
+              aria-label="Correo electrónico" />
+            @if (regEmailRef.invalid && regEmailRef.touched) {
+              <small class="field-error" role="alert">
+                @if (regEmailRef.errors?.['required']) { El email es obligatorio. }
+                @else if (regEmailRef.errors?.['email']) { Introduce un email válido. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="reg-password" class="font-semibold w-24 flex-shrink-0">Contraseña</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="reg-password"
+              name="regPassword"
+              type="password"
+              class="w-full"
+              [(ngModel)]="registerPassword"
+              required
+              minlength="8"
+              maxlength="100"
+              #regPasswordRef="ngModel"
+              autocomplete="new-password"
+              aria-label="Contraseña" />
+            @if (regPasswordRef.invalid && regPasswordRef.touched) {
+              <small class="field-error" role="alert">
+                @if (regPasswordRef.errors?.['required']) { La contraseña es obligatoria. }
+                @else if (regPasswordRef.errors?.['minlength']) { Mínimo 8 caracteres. }
+              </small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm password -->
+      <div class="mb-4">
+        <div class="flex items-center gap-4">
+          <label for="reg-confirm" class="font-semibold w-24 flex-shrink-0">Confirmar</label>
+          <div class="flex-auto">
+            <input
+              pInputText
+              id="reg-confirm"
+              name="regConfirm"
+              type="password"
+              class="w-full"
+              [(ngModel)]="registerConfirmPassword"
+              required
+              #regConfirmRef="ngModel"
+              autocomplete="new-password"
+              aria-label="Confirmar contraseña" />
+            @if (regConfirmRef.invalid && regConfirmRef.touched) {
+              <small class="field-error" role="alert">Confirma tu contraseña.</small>
+            }
+            @if (passwordMismatch) {
+              <small class="field-error" role="alert">Las contraseñas no coinciden.</small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          (click)="onCancelRegister()"
+          [disabled]="loading" />
+        <p-button
+          label="Registrarse"
+          type="submit"
+          [loading]="loading"
+          [disabled]="loading" />
+      </div>
+
+    </form>
+  }
+
+</p-dialog>
+<app-credits></app-credits>

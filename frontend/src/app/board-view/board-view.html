@@ -1,0 +1,218 @@
+<!-- board-view.component.html -->
+<div class="page-container">
+
+  <p-toast />
+  <p-confirmpopup #cp>
+    <ng-template #headless let-message>
+      <div class="confirm-popup-content">
+        <span class="confirm-message">{{ message.message }}</span>
+        <div class="confirm-actions">
+          <p-button
+            (click)="cp.onAccept()"
+            label="Salir"
+            size="small"
+            severity="danger"
+            [autofocus]="true"
+            aria-label="Confirmar salida del tablero" />
+          <p-button
+            (click)="cp.onReject()"
+            label="Cancelar"
+            [text]="true"
+            size="small"
+            severity="secondary"
+            aria-label="Cancelar y continuar en el tablero" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmpopup>
+
+  <header class="child-toolbar" role="banner">
+    @if (!isTutorMode){
+      <button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        type="button"
+        [attr.aria-expanded]="sidebarOpen"
+        aria-controls="categories-panel"
+        aria-label="{{ sidebarOpen ? 'Ocultar categorías' : 'Mostrar categorías' }}">
+        {{ sidebarOpen ? '◀' : '▶' }}
+      </button>
+    }
+    <h1 class="child-toolbar__title">
+      {{ board?.name || 'PictoCom' }}
+    </h1>
+
+    <!--Tutor -> return button -->
+    @if (isTutorMode) {
+      <button
+        class="back-button"
+        type="button"
+        (click)="onBackToMyBoards()"
+        aria-label="Volver a mis tableros">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+      </button>
+    }@else if (isGuestMode) {
+      <button
+        class="back-button"
+        type="button"
+        (click)="onBackToGuest()"
+        aria-label="Volver a la selección de nivel">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+      </button>
+    } @else {
+      <!-- Kid -> lock -->
+      <button
+        class="lock-button"
+        [class.lock-button--shaking]="lockShaking"
+        (click)="onLockTap($event)"
+        type="button"
+        aria-label="Botón de salida. Pulsa 3 veces para salir del tablero">
+        🔒
+      </button>
+    }
+  </header>
+
+  <!-- Phrase bar -->
+  @if (hasPhraseBar) {
+    <div class="phrase-bar" role="region" aria-label="Barra de construcción de frases">
+
+      <div class="phrase-items" aria-live="polite" aria-label="Frase actual">
+        @if (phraseItems.length === 0) {
+          <span class="phrase-placeholder">
+            Pulsa pictogramas para construir una frase...
+          </span>
+        }
+        @for (item of phraseItems; track trackByPhrase($index); let i = $index) {
+          <button
+            class="phrase-item"
+            type="button"
+            (click)="removePhraseItem(i)"
+            [attr.aria-label]="'Quitar ' + item.text + ' de la frase'">
+            <img [src]="item.pictogramUrl" [alt]="item.text" class="phrase-item-img" loading="lazy" />
+            <span class="phrase-item-text">{{ item.text }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="phrase-controls">
+        <button class="phrase-btn phrase-btn--speak" type="button"
+                (click)="speakPhrase()" [disabled]="phraseItems.length === 0"
+                aria-label="Leer la frase en voz alta">▶</button>
+        <button class="phrase-btn phrase-btn--delete" type="button"
+                (click)="removePhraseItem(phraseItems.length - 1)"
+                [disabled]="phraseItems.length === 0"
+                aria-label="Borrar último pictograma">⌫</button>
+        <button class="phrase-btn phrase-btn--clear" type="button"
+                (click)="clearPhrase()" [disabled]="phraseItems.length === 0"
+                aria-label="Borrar toda la frase">✕</button>
+      </div>
+
+    </div>
+  }
+
+  <!-- Main layout: sidebar + board -->
+  <div class="board-layout">
+
+    <!-- Lateral panel for categories -->
+    @if(!isTutorMode){
+      <nav
+        id="categories-panel"
+        class="categories-sidebar"
+        [class.categories-sidebar--hidden]="!sidebarOpen"
+        aria-label="Categorías de pictogramas">
+
+        <h2 class="categories-title">Categorías</h2>
+
+        <ul class="categories-list" role="list">
+          @for (cat of categories; track cat.label) {
+            <li>
+              <button
+                class="category-btn"
+                [class.category-btn--active]="activeCategory === cat.label"
+                (click)="onCategoryClick($event, cat, null)"
+                type="button"
+                [attr.aria-current]="activeCategory === cat.label ? 'true' : null"
+                [attr.aria-label]="cat.label">
+
+                @if (cat.isCustom) {
+                  <div class="category-img category-img--custom" aria-hidden="true">
+                    {{ cat.label.charAt(0).toUpperCase() }}
+                  </div>
+                } @else {
+                  <img
+                    [src]="getArasaacIconUrl(cat.iconPictogramId!)"
+                    [alt]="cat.label"
+                    class="category-img"
+                    loading="lazy" />
+                }
+
+                <span class="category-label">{{ cat.label }}</span>
+
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+    }
+
+    <!-- Board area -->
+    <main class="board-area" role="main">
+
+      @if (loading) {
+        <div class="status-container" role="status" aria-live="polite">
+          <span aria-hidden="true">⏳</span>
+          <p>Cargando tablero...</p>
+        </div>
+      }
+
+      @if (error && !loading) {
+        <div class="error-container" role="alert" aria-live="assertive">
+          <span aria-hidden="true">⚠️</span>
+          <p class="error-text">{{ error }}</p>
+        </div>
+      }
+
+      @if (board && !loading && !error) {
+        <section
+          class="board-section"
+          [attr.aria-label]="'Tablero de comunicación: ' + board.name">
+
+          <div
+            class="pictogram-grid"
+            [style.grid-template-columns]="'repeat(' + board.columns + ', 1fr)'"
+            [style.grid-template-rows]="'repeat(' + board.rows + ', 1fr)'">
+
+            @for (row of grid; track trackByRow($index); let rowIndex = $index) {
+              @for (cell of row; track trackByCol($index, cell); let colIndex = $index) {
+
+                @if (cell) {
+                  <button
+                    class="pictogram-cell"
+                    (click)="onPictogramClick(cell)"
+                    [attr.aria-label]="'Pictograma ' + cell.text +
+                      (hasPhraseBar ? '. Pulsa para añadir a la frase y escuchar' : '. Pulsa para escuchar')"
+                    type="button">
+                    <div class="pictogram-image-wrapper">
+                      <img
+                        [src]="cell.pictogramUrl"
+                        [alt]="cell.text"
+                        class="pictogram-image"
+                        [attr.loading]="rowIndex === 0 && colIndex === 0 ? 'eager' : 'lazy'" />
+                    </div>
+                    <span class="pictogram-label">{{ cell.text }}</span>
+                  </button>
+                } @else {
+                  <div class="pictogram-cell pictogram-cell--empty" aria-hidden="true"></div>
+                }
+
+              }
+            }
+
+          </div>
+        </section>
+      }
+
+    </main>
+  </div>
+
+</div>

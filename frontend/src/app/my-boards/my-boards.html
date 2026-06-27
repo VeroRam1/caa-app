@@ -1,0 +1,308 @@
+<!-- my-boards.component.html -->
+<div class="page-container">
+
+  <p-toast />
+
+  <p-confirmpopup #cp>
+    <ng-template #headless let-message>
+      <div class="confirm-popup-content">
+        <span class="confirm-message">{{ message.message }}</span>
+        <div class="confirm-actions">
+          <p-button
+            (click)="cp.onAccept()"
+            label="Eliminar"
+            size="small"
+            severity="danger"
+            [autofocus]="true" />
+          <p-button
+            (click)="cp.onReject()"
+            label="Cancelar"
+            [text]="true"
+            size="small"
+            severity="secondary" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmpopup>
+
+  <!-- Toolbar -->
+  <p-toolbar>
+    <ng-template #start>
+      <p-menu #menu [model]="menuItems" [popup]="true" />
+      <p-button
+        icon="pi pi-bars"
+        severity="secondary"
+        [rounded]="true"
+        (click)="menu.toggle($event)"
+        ariaLabel="Abrir menú de navegación" />
+    </ng-template>
+
+    <ng-template #center>
+      <h1 class="app-title">PictoCom</h1>
+    </ng-template>
+
+    <ng-template #end>
+      <p-button
+        label="Volver al panel"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        (click)="onBack()"
+        ariaLabel="Volver al panel de perfiles" />
+    </ng-template>
+  </p-toolbar>
+
+  <main class="main-content" role="main">
+
+    <!-- ── predetermined boards ── -->
+    <section class="boards-section" aria-labelledby="predefined-title">
+      <h2 id="predefined-title" class="section-title">
+        Tableros predeterminados
+      </h2>
+      <p class="section-subtitle">
+        Estos tableros no se pueden editar directamente.
+        Copia uno para crear tu propia versión personalizable.
+      </p>
+
+      @if (loadingPredefined) {
+        <div class="loading-state" role="status" aria-live="polite">
+          Cargando tableros...
+        </div>
+      } @else if (predefinedBoards.length === 0) {
+        <div class="empty-state">No hay tableros predeterminados disponibles.</div>
+      } @else {
+        @for (category of groupedPredefinedBoards; track category.label) {
+          <div class="category-group">
+
+            <h3 class="category-group-title">{{ category.label }}</h3>
+
+            <div class="boards-grid">
+              @for (board of category.boards; track board.id) {
+                <article
+                  class="board-card board-card--predefined"
+                  [attr.aria-label]="board.name">
+
+                  <div class="card-info">
+                    <div class="card-header">
+                      <p class="card-name">{{ board.name }}</p>
+                      <span class="card-level">{{ getLevelLabel(board.level) }}</span>
+                    </div>
+
+                    <div class="card-meta">
+                      <span class="card-size">{{ board.rows }} × {{ board.columns }}</span>
+                      <span class="card-count">{{ board.pictogramCount }} pictogramas</span>
+                    </div>
+                  </div>
+
+                  <footer class="card-actions">
+                    <p-button
+                      label="Ver"
+                      icon="pi pi-eye"
+                      severity="secondary"
+                      size="small"
+                      (click)="onViewBoard(board)"
+                      [attr.aria-label]="'Ver tablero ' + board.name" />
+                    <p-button
+                      label="Copiar y editar"
+                      icon="pi pi-copy"
+                      size="small"
+                      [loading]="copying"
+                      (click)="onCopyAndEdit(board)"
+                      [attr.aria-label]="'Crear copia editable de ' + board.name" />
+                  </footer>
+
+                </article>
+              }
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- ── Mis tableros ── -->
+    <section class="boards-section" aria-labelledby="my-boards-title">
+      <h2 id="my-boards-title" class="section-title">
+        <span aria-hidden="true">✏️</span> Mis tableros
+      </h2>
+      <p-button
+        label="Crear tablero nuevo"
+        icon="pi pi-plus"
+        size="small"
+        (click)="showCreateBoardDialog()"
+        aria-label="Crear un tablero nuevo desde cero" />
+      <p class="section-subtitle">
+        Tableros que has creado o copiado. Puedes editarlos y asignarlos a perfiles de niños.
+      </p>
+
+      @if (loadingMine) {
+        <div class="loading-state" role="status" aria-live="polite">
+          Cargando tus tableros...
+        </div>
+      } @else if (myBoards.length === 0) {
+        <div class="empty-state">
+          <span aria-hidden="true">📭</span>
+          <p>Aún no tienes tableros propios.</p>
+          <p>Copia un tablero predeterminado para empezar a personalizarlo.</p>
+        </div>
+      } @else {
+        <div class="boards-grid">
+          @for (board of myBoards; track board.id) {
+            <article
+              class="board-card board-card--mine"
+              [attr.aria-label]="board.name + ' — ' + getLevelLabel(board.level)">
+
+              <div class="card-info">
+                <div class="card-header">
+                  <p class="card-name">{{ board.name }}</p>
+                  <span class="card-level">{{ getLevelLabel(board.level) }}</span>
+                </div>
+
+                <div class="card-meta">
+                  <span class="card-size">{{ board.rows }} × {{ board.columns }}</span>
+                  <span class="card-count">{{ board.pictogramCount }} pictogramas</span>
+                </div>
+              </div>
+
+              <footer class="card-actions">
+                <p-button
+                  label="Editar"
+                  icon="pi pi-pencil"
+                  size="small"
+                  (click)="onEditBoard(board)"
+                  [attr.aria-label]="'Editar tablero ' + board.name" />
+                <p-button
+                  label="Eliminar"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  (click)="confirmDeleteBoard($event, board)"
+                  [attr.aria-label]="'Eliminar tablero ' + board.name" />
+              </footer>
+
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <p-dialog
+      header="Crear tablero nuevo"
+      [(visible)]="visibleCreateBoard"
+      [modal]="true"
+      [style]="{ width: '90vw', maxWidth: '420px', minHeight: '420px' }"
+      [draggable]="false">
+
+      @if (visibleCreateBoard) {
+        <form #createBoardForm="ngForm" novalidate>
+
+          <div class="create-board-form">
+
+            <!-- Name -->
+            <div class="form-field">
+              <label for="new-board-name">Nombre del tablero</label>
+              <input
+                id="new-board-name"
+                name="newBoardName"
+                type="text"
+                pInputText
+                [(ngModel)]="newBoardName"
+                required
+                minlength="3"
+                maxlength="100"
+                #newBoardNameRef="ngModel"
+                placeholder="Ej: Animales - Nivel 1"
+                class="w-full" />
+              @if (newBoardNameRef.invalid && newBoardNameRef.touched) {
+                <small class="field-error" role="alert">
+                  @if (newBoardNameRef.errors?.['required']) { El nombre es obligatorio. }
+                  @else if (newBoardNameRef.errors?.['minlength']) { Mínimo 3 caracteres. }
+                  @else if (newBoardNameRef.errors?.['maxlength']) { Máximo 100 caracteres. }
+                </small>
+              }
+            </div>
+
+            <!-- Level -->
+            <div class="form-field">
+              <label for="new-board-level">Nivel</label>
+              <p-select
+                id="new-board-level"
+                name="newBoardLevel"
+                [(ngModel)]="newBoardLevel"
+                [options]="levelOptionsForCreate"
+                optionLabel="label"
+                optionValue="value"
+                required
+                #newBoardLevelRef="ngModel"
+                class="w-full" />
+            </div>
+
+            <!-- Category -->
+            <div class="form-field">
+              <label for="new-board-category">Categoría</label>
+              <p-select
+                id="new-board-category"
+                name="newBoardCategory"
+                [(ngModel)]="newBoardCategory"
+                [options]="categoryOptions"
+                optionLabel="label"
+                optionValue="value"
+                [appendTo]="'body'"
+                required
+                #newBoardCategoryRef="ngModel"
+                class="w-full" />
+            </div>
+
+            <!-- New category -->
+            @if (isCustomCategorySelected) {
+              <div class="form-field">
+                <label for="new-custom-category">Nombre de la nueva categoría</label>
+                <input
+                  id="new-custom-category"
+                  name="newCustomCategory"
+                  type="text"
+                  pInputText
+                  [(ngModel)]="newCustomCategory"
+                  required
+                  minlength="2"
+                  maxlength="50"
+                  #newCustomCategoryRef="ngModel"
+                  placeholder="Ej: Juguetes"
+                  class="w-full" />
+                @if (newCustomCategoryRef.invalid && newCustomCategoryRef.touched) {
+                  <small class="field-error" role="alert">
+                    @if (newCustomCategoryRef.errors?.['required']) { El nombre de la categoría es obligatorio. }
+                    @else if (newCustomCategoryRef.errors?.['minlength']) { Mínimo 2 caracteres. }
+                    @else if (newCustomCategoryRef.errors?.['maxlength']) { Máximo 50 caracteres. }
+                  </small>
+                }
+                <p class="field-hint">
+                  Aparecerá como una categoría más en el sidebar del niño, con un icono
+                  circular con la inicial de su nombre.
+                </p>
+              </div>
+            }
+
+          </div>
+
+          <div class="flex justify-end gap-2 mt-4">
+            <p-button
+              label="Cancelar"
+              severity="secondary"
+              [text]="true"
+              (click)="visibleCreateBoard = false" />
+            <p-button
+              label="Crear y editar"
+              icon="pi pi-pencil"
+              [loading]="creatingBoard"
+              (click)="onCreateBoard()"
+              [disabled]="createBoardForm.invalid || creatingBoard" />
+          </div>
+
+        </form>
+      }
+
+    </p-dialog>
+
+  </main>
+
+</div>
+<app-credits></app-credits>
