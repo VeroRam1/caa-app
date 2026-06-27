@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from '../../environments/environment';
 
 export interface BoardPictogram {
     id: number;
@@ -53,7 +54,7 @@ export interface CreateBoardRequest {
     providedIn: "root",
 })
 export class BoardService {
-  private apiUrl = "http://localhost:8080/api/boards";
+  private apiUrl = `${environment.apiUrl}/boards`;
 
   constructor(private http: HttpClient) { }
   
