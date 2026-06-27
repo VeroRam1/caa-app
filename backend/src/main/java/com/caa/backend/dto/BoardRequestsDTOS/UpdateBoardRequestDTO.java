@@ -5,11 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for updating an existing board
- * Used in PUT /api/boards/{id}
- * All fields are optional (null values won't be updated)
- */
+// DTO for updating an existing board. Used in PUT /api/boards/{id}
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,10 +28,7 @@ public class UpdateBoardRequestDTO {
     @Max(value = 3, message = "Level must be 1, 2, or 3")
     private Integer level;
 
-    /**
-     * Helper method to check if any field is present
-     * @return true if at least one field is not null
-     */
+    // Helper method to check if any field is present
     public boolean hasAnyField() {
         return name != null || description != null || rows != null || columns != null || level != null;
     }

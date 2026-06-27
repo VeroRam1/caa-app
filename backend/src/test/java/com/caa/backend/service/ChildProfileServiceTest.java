@@ -82,22 +82,18 @@ class ChildProfileServiceTest {
     }
 
     /******* shared stubs **************************************************/
-
     private void givenTutorExists() {
         when(tutorRepository.findByEmail(TUTOR_EMAIL)).thenReturn(Optional.of(tutor));
     }
 
-    // loadProfileForTutor → findByIdAndTutorId
     private void givenProfileBelongsToTutor() {
         when(childProfileRepository.findByIdAndTutorId(PROFILE_ID, TUTOR_ID))
                 .thenReturn(Optional.of(profile));
     }
 
     /******* getAllProfiles **************************************************/
-
     @Test
     void shouldReturnProfileList_whenGetAllProfilesForTutor() {
-        // Given
         List<ChildProfile> profiles = List.of(profile);
         List<ChildProfileResponseDTO> responseDTOs = List.of(profileResponseDTO);
 
@@ -105,10 +101,8 @@ class ChildProfileServiceTest {
         when(childProfileRepository.findByTutorId(TUTOR_ID)).thenReturn(profiles);
         when(childProfileMapper.toResponseList(profiles)).thenReturn(responseDTOs);
 
-        // When
         List<ChildProfileResponseDTO> result = childProfileService.getAllProfiles(TUTOR_EMAIL);
 
-        // Then
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("Lucas");
         verify(childProfileRepository).findByTutorId(TUTOR_ID);
@@ -116,19 +110,15 @@ class ChildProfileServiceTest {
     }
 
     /******* getProfileById **************************************************/
-
     @Test
     void shouldReturnProfileWithBoards_whenIdBelongsToTutor() {
-        // Given
         givenTutorExists();
         when(childProfileRepository.findByIdAndTutorIdWithBoards(PROFILE_ID, TUTOR_ID))
                 .thenReturn(Optional.of(profile));
         when(childProfileMapper.toResponseWithBoards(profile)).thenReturn(profileResponseDTO);
 
-        // When
         ChildProfileResponseDTO result = childProfileService.getProfileById(PROFILE_ID, TUTOR_EMAIL);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(PROFILE_ID);
         verify(childProfileRepository).findByIdAndTutorIdWithBoards(PROFILE_ID, TUTOR_ID);
@@ -137,26 +127,21 @@ class ChildProfileServiceTest {
 
     @Test
     void shouldThrowResourceNotFoundException_whenIdDoesNotBelongToTutor() {
-        // Given — profile exists in DB but belongs to a different tutor
         Long unknownProfileId = 99L;
         givenTutorExists();
         when(childProfileRepository.findByIdAndTutorIdWithBoards(unknownProfileId, TUTOR_ID))
                 .thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(ResourceNotFoundException.class,
                 () -> childProfileService.getProfileById(unknownProfileId, TUTOR_EMAIL));
         verify(childProfileMapper, never()).toResponseWithBoards(any());
     }
 
     /******* createProfile **************************************************/
-
     @Test
     void shouldSaveProfileAndAutoAssignGeneralBoard_whenCreateProfile() {
-        // Given
         ChildProfileRequestDTO dto = new ChildProfileRequestDTO("Lucas", null, null, Level.LEVEL_1);
 
-        // Fresh ChildProfile returned by the mapper — must be a real object for assignBoard() to work
         ChildProfile newProfile = new ChildProfile();
         newProfile.setName("Lucas");
         newProfile.setLevel(Level.LEVEL_1);
@@ -174,13 +159,11 @@ class ChildProfileServiceTest {
         when(childProfileRepository.save(newProfile)).thenReturn(savedProfile);
         when(childProfileMapper.toResponse(savedProfile)).thenReturn(savedResponseDTO);
 
-        // When
         ChildProfileResponseDTO result = childProfileService.createProfile(dto, TUTOR_EMAIL);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(2L);
-        // The general board must have been auto-assigned
+
         assertThat(newProfile.getAssignedBoards()).containsExactly(board);
         verify(childProfileRepository).save(newProfile);
         verify(childProfileMapper).toResponse(savedProfile);
@@ -188,7 +171,6 @@ class ChildProfileServiceTest {
 
     @Test
     void shouldSaveProfileWithoutAutoAssignment_whenNoGeneralBoardExists() {
-        // Given — predefined boards list is empty (no match for "general")
         ChildProfileRequestDTO dto = new ChildProfileRequestDTO("Lucas", null, null, Level.LEVEL_1);
 
         ChildProfile newProfile = new ChildProfile();
@@ -201,19 +183,15 @@ class ChildProfileServiceTest {
         when(childProfileRepository.save(newProfile)).thenReturn(newProfile);
         when(childProfileMapper.toResponse(newProfile)).thenReturn(profileResponseDTO);
 
-        // When
         childProfileService.createProfile(dto, TUTOR_EMAIL);
 
-        // Then — save was still called, but no board was assigned
         assertThat(newProfile.getAssignedBoards()).isEmpty();
         verify(childProfileRepository).save(newProfile);
     }
 
     /******* updateProfile **************************************************/
-
     @Test
     void shouldUpdateAndReturnProfile_whenUpdateProfile() {
-        // Given
         ChildProfileRequestDTO updateRequest = new ChildProfileRequestDTO("Lucas Updated", null, null, Level.LEVEL_2);
 
         ChildProfile updatedEntity = new ChildProfile();
@@ -229,79 +207,65 @@ class ChildProfileServiceTest {
         when(childProfileRepository.save(profile)).thenReturn(updatedEntity);
         when(childProfileMapper.toResponse(updatedEntity)).thenReturn(updatedResponseDTO);
 
-        // When
         ChildProfileResponseDTO result = childProfileService.updateProfile(PROFILE_ID, updateRequest, TUTOR_EMAIL);
 
-        // Then
         assertThat(result.getName()).isEqualTo("Lucas Updated");
         assertThat(result.getLevel()).isEqualTo(Level.LEVEL_2);
-        // Mapper must have been called to merge fields into the existing profile
+
         verify(childProfileMapper).updateEntityFromRequest(any(ChildProfileRequestDTO.class), eq(profile));
         verify(childProfileRepository).save(profile);
     }
 
     /******* deleteProfile **************************************************/
-
     @Test
     void shouldDeleteProfileAndClearBidirectionalRelation_whenDeleteProfile() {
-        // Given — profile is already linked to tutor from @BeforeEach
         givenTutorExists();
         givenProfileBelongsToTutor();
 
-        // When
         childProfileService.deleteProfile(PROFILE_ID, TUTOR_EMAIL);
 
-        // Then — repository delete was called
         verify(childProfileRepository).delete(profile);
-        // removeChildProfile() must have cleared the bidirectional link
+
         assertThat(tutor.getChildProfiles()).doesNotContain(profile);
         assertThat(profile.getTutor()).isNull();
     }
 
     /******* assignBoard **************************************************/
-
     @Test
     void shouldAssignBoardWithoutDuplicates_whenAssignBoard() {
-        // Given
         ChildProfileResponseDTO responseWithBoard = ChildProfileResponseDTO.builder()
                 .id(PROFILE_ID).name("Lucas").tutorId(TUTOR_ID).boardCount(1).build();
 
         givenTutorExists();
-        // loadProfileForTutor returns the same real profile object on each call
+
         when(childProfileRepository.findByIdAndTutorId(PROFILE_ID, TUTOR_ID))
                 .thenReturn(Optional.of(profile));
         when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(board));
         when(childProfileRepository.save(profile)).thenReturn(profile);
         when(childProfileMapper.toResponseWithBoards(profile)).thenReturn(responseWithBoard);
 
-        // When — assign the same board twice
         childProfileService.assignBoard(PROFILE_ID, BOARD_ID, TUTOR_EMAIL);
         childProfileService.assignBoard(PROFILE_ID, BOARD_ID, TUTOR_EMAIL);
 
-        // Then — board appears only once in the list (no duplicates)
         assertThat(profile.getAssignedBoards()).hasSize(1).containsExactly(board);
         verify(childProfileRepository, times(2)).save(profile);
     }
 
     @Test
     void shouldThrowResourceNotFoundException_whenAssignNonExistentBoard() {
-        // Given
         givenTutorExists();
         when(childProfileRepository.findByIdAndTutorId(PROFILE_ID, TUTOR_ID))
                 .thenReturn(Optional.of(profile));
         when(boardRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(ResourceNotFoundException.class,
                 () -> childProfileService.assignBoard(PROFILE_ID, 99L, TUTOR_EMAIL));
         verify(childProfileRepository, never()).save(any());
     }
 
     /******* removeBoard **************************************************/
-
     @Test
     void shouldRemoveBoardAssignment_whenRemoveBoard() {
-        // Given — board is already assigned before the operation
         profile.assignBoard(board);
         assertThat(profile.getAssignedBoards()).hasSize(1); // pre-condition
 
@@ -312,23 +276,19 @@ class ChildProfileServiceTest {
         when(childProfileRepository.save(profile)).thenReturn(profile);
         when(childProfileMapper.toResponseWithBoards(profile)).thenReturn(profileResponseDTO);
 
-        // When
         childProfileService.removeBoard(PROFILE_ID, BOARD_ID, TUTOR_EMAIL);
 
-        // Then
         assertThat(profile.getAssignedBoards()).doesNotContain(board);
         verify(childProfileRepository).save(profile);
     }
 
     @Test
     void shouldThrowResourceNotFoundException_whenRemoveNonExistentBoard() {
-        // Given
         givenTutorExists();
         when(childProfileRepository.findByIdAndTutorId(PROFILE_ID, TUTOR_ID))
                 .thenReturn(Optional.of(profile));
         when(boardRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(ResourceNotFoundException.class,
                 () -> childProfileService.removeBoard(PROFILE_ID, 99L, TUTOR_EMAIL));
         verify(childProfileRepository, never()).save(any());

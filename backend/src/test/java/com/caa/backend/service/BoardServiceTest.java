@@ -52,7 +52,6 @@ class BoardServiceTest {
         tutor.setEmail(TUTOR_EMAIL);
         tutor.setRole(Role.TUTOR);
 
-        // Board owned by tutor, 3 rows x 4 columns, no pictograms
         board = new Board();
         board.setId(BOARD_ID);
         board.setName("Mi tablero");
@@ -82,10 +81,8 @@ class BoardServiceTest {
         when(boardRepository.findByIdWithPictograms(BOARD_ID)).thenReturn(Optional.of(board));
         when(boardMapper.toResponseWithPictograms(board)).thenReturn(boardResponseDTO);
 
-        // When
         BoardResponseDTO result = boardService.getBoardById(BOARD_ID);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(BOARD_ID);
         verify(boardRepository).findByIdWithPictograms(BOARD_ID);
@@ -94,10 +91,8 @@ class BoardServiceTest {
 
     @Test
     void shouldThrowResourceNotFoundException_whenBoardDoesNotExist() {
-        // Given
         when(boardRepository.findByIdWithPictograms(99L)).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(ResourceNotFoundException.class, () -> boardService.getBoardById(99L));
         verify(boardMapper, never()).toResponseWithPictograms(any());
     }
@@ -125,10 +120,8 @@ class BoardServiceTest {
         when(boardRepository.save(newBoard)).thenReturn(savedBoard);
         when(boardMapper.toResponseWithPictograms(savedBoard)).thenReturn(boardResponseDTO);
 
-        // When
         BoardResponseDTO result = boardService.createBoard(request, TUTOR_EMAIL);
 
-        // Then — service must have set owner and isPredefined on the entity
         assertThat(result).isNotNull();
         assertThat(newBoard.getOwner()).isSameAs(tutor);
         assertThat(newBoard.getIsPredefined()).isFalse();
@@ -156,10 +149,8 @@ class BoardServiceTest {
         when(boardRepository.save(captor.capture())).thenReturn(savedCopy);
         when(boardMapper.toResponseWithPictograms(savedCopy)).thenReturn(copyResponse);
 
-        // When
         BoardResponseDTO result = boardService.copyBoard(BOARD_ID, TUTOR_EMAIL);
 
-        // Then
         Board capturedCopy = captor.getValue();
         assertThat(capturedCopy.getName()).isEqualTo("Tablero original (copia)");
         assertThat(capturedCopy.getOwner()).isSameAs(tutor);
@@ -190,10 +181,8 @@ class BoardServiceTest {
         when(boardRepository.save(captor.capture())).thenReturn(savedCopy);
         when(boardMapper.toResponseWithPictograms(savedCopy)).thenReturn(boardResponseDTO);
 
-        // When
         boardService.copyBoard(BOARD_ID, TUTOR_EMAIL);
 
-        // Then — copied pictogram carries all field values from the original
         Board capturedCopy = captor.getValue();
         assertThat(capturedCopy.getPictograms()).hasSize(1);
         BoardPictogram copied = capturedCopy.getPictograms().get(0);
@@ -209,10 +198,9 @@ class BoardServiceTest {
     /******* resizeBoard / loadBoardForOwner ********************************/
     @Test
     void shouldResizeSuccessfully_whenAllPictogramsInsideNewDimensions() {
-        // Given — pictogram at column 1, row 1; new size 3 rows x 4 columns → all inside
         BoardPictogram pictogram = new BoardPictogram();
-        pictogram.setPositionX(1); // 1 < 4 columns ✓
-        pictogram.setPositionY(1); // 1 < 3 rows ✓
+        pictogram.setPositionX(1);
+        pictogram.setPositionY(1);
         board.addPictogram(pictogram);
 
         ResizeBoardRequestDTO request = new ResizeBoardRequestDTO(3, 4);
@@ -225,10 +213,8 @@ class BoardServiceTest {
         when(boardRepository.save(board)).thenReturn(resized);
         when(boardMapper.toResponse(resized)).thenReturn(boardResponseDTO);
 
-        // When
         BoardResponseDTO result = boardService.resizeBoard(BOARD_ID, request, TUTOR_EMAIL);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(board.getRows()).isEqualTo(3);
         assertThat(board.getColumns()).isEqualTo(4);
@@ -237,7 +223,6 @@ class BoardServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenPictogramOutsideNewDimensions() {
-        // Given — pictogram at column 3, but new width is only 2 columns → 3 >= 2 → out of bounds
         BoardPictogram pictogram = new BoardPictogram();
         pictogram.setPositionX(3); // 3 >= 2 new columns → invalid
         pictogram.setPositionY(0);
@@ -248,7 +233,6 @@ class BoardServiceTest {
 
         when(boardRepository.findByIdWithPictograms(BOARD_ID)).thenReturn(Optional.of(board));
 
-        // When / Then
         assertThrows(IllegalArgumentException.class,
                 () -> boardService.resizeBoard(BOARD_ID, request, TUTOR_EMAIL));
         verify(boardRepository, never()).save(any());
@@ -256,14 +240,12 @@ class BoardServiceTest {
 
     @Test
     void shouldReturnBoard_whenLoadBoardForOwnerWithCorrectOwner() {
-        // Given — board.owner.email matches tutorEmail
         ResizeBoardRequestDTO request = new ResizeBoardRequestDTO(3, 4);
 
         when(boardRepository.findByIdWithPictograms(BOARD_ID)).thenReturn(Optional.of(board));
         when(boardRepository.save(board)).thenReturn(board);
         when(boardMapper.toResponse(board)).thenReturn(boardResponseDTO);
 
-        // When — no AccessDeniedException means loadBoardForOwner returned successfully
         BoardResponseDTO result = boardService.resizeBoard(BOARD_ID, request, TUTOR_EMAIL);
 
         assertThat(result).isNotNull();
@@ -271,7 +253,6 @@ class BoardServiceTest {
 
     @Test
     void shouldThrowAccessDeniedException_whenLoadBoardForOwnerWithWrongOwner() {
-        // Given — board belongs to a different tutor
         Tutor otherTutor = new Tutor();
         otherTutor.setId(2L);
         otherTutor.setEmail("otro@example.com");
@@ -281,7 +262,6 @@ class BoardServiceTest {
 
         when(boardRepository.findByIdWithPictograms(BOARD_ID)).thenReturn(Optional.of(board));
 
-        // When / Then
         assertThrows(AccessDeniedException.class,
                 () -> boardService.resizeBoard(BOARD_ID, request, TUTOR_EMAIL));
         verify(boardRepository, never()).save(any());
@@ -289,7 +269,6 @@ class BoardServiceTest {
 
     @Test
     void shouldThrowAccessDeniedException_whenBoardHasNoOwner() {
-        // Given — predefined board with no owner (owner == null)
         board.setOwner(null);
         board.setIsPredefined(true);
 
@@ -297,32 +276,24 @@ class BoardServiceTest {
 
         when(boardRepository.findByIdWithPictograms(BOARD_ID)).thenReturn(Optional.of(board));
 
-        // When / Then
         assertThrows(AccessDeniedException.class,
                 () -> boardService.resizeBoard(BOARD_ID, request, TUTOR_EMAIL));
     }
 
     /****************** deleteBoard *********************************************/
-
     @Test
     void shouldCallDeleteById_whenDeletingExistingBoard() {
-        // Given
         when(boardRepository.existsById(BOARD_ID)).thenReturn(true);
 
-        // When
         boardService.deleteBoard(BOARD_ID);
-
-        // Then
         verify(boardRepository).existsById(BOARD_ID);
         verify(boardRepository).deleteById(BOARD_ID);
     }
 
     @Test
     void shouldThrowResourceNotFoundException_whenDeletingNonExistentBoard() {
-        // Given
         when(boardRepository.existsById(99L)).thenReturn(false);
 
-        // When / Then
         assertThrows(ResourceNotFoundException.class, () -> boardService.deleteBoard(99L));
         verify(boardRepository, never()).deleteById(any());
     }

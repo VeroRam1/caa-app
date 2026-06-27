@@ -1,4 +1,3 @@
-// board-editor.component.scss
 .editor-container {
   display: flex;
   flex-direction: column;
@@ -7,7 +6,6 @@
   background: #f0f9ff;
 }
 
-// ── Toolbar ──────────────────────────────────────────────────────────────────
 .editor-toolbar {
   display: flex;
   align-items: center;
@@ -52,7 +50,6 @@
   white-space: nowrap;
 }
 
-// ── Estados ───────────────────────────────────────────────────────────────────
 .loading-state,
 .error-state {
   flex: 1;
@@ -65,14 +62,12 @@
   color: #888;
 }
 
-// ── Layout principal ──────────────────────────────────────────────────────────
 .editor-layout {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
 
-// ── Sidebar de búsqueda ───────────────────────────────────────────────────────
 .search-sidebar {
   width: 220px;
   flex-shrink: 0;
@@ -200,7 +195,6 @@
   word-break: break-word;
 }
 
-// ── Editor principal ──────────────────────────────────────────────────────────
 .editor-main {
   flex: 1;
   display: flex;
@@ -210,7 +204,6 @@
   overflow: auto;
 }
 
-// ── Controles de tamaño ───────────────────────────────────────────────────────
 .grid-controls {
   display: flex;
   align-items: center;
@@ -255,7 +248,7 @@
   align-items: center;
   justify-content: center;
   transition: background 0.12s ease;
-  min-height: 32px;  // criterio 2.5.8
+  min-height: 32px; 
 
   &:hover:not(:disabled) { background: #b3ddff; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -286,7 +279,6 @@
   margin-left: auto;
 }
 
-// ── Cuadrícula ────────────────────────────────────────────────────────────────
 .board-grid {
   display: grid;
   gap: 0.5rem;
@@ -326,7 +318,6 @@
   pointer-events: none;
 }
 
-// ── Pictograma en la cuadrícula ───────────────────────────────────────────────
 .pictogram-card {
   width: 100%;
   height: 100%;

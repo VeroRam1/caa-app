@@ -11,13 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Utility class for JWT token creation, parsing and validation.
- *
- * Configuration (application.properties / application.yml):
- *   jwt.secret=your_secret_key_minimum_256_bits
- *   jwt.expiration=86400000   # 24 hours in milliseconds
- */
 @Component
 public class JwtUtil {
     @Value("${jwt.secret}")
@@ -26,27 +19,13 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expirationMs;
 
-    // ─── Token generation ──────────────────────────────────────────────────────
-
-    /**
-     * Generates a JWT token for the given UserDetails.
-     * The subject is set to the user's email (username).
-     *
-     * @param userDetails Spring Security user details (loaded from DB)
-     * @return signed JWT string
-     */
+    // Generates a JWT token for the given UserDetails. The subject is set to the user's email (username).
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return buildToken(claims, userDetails.getUsername());
     }
 
-    /**
-     * Generates a token with extra custom claims (e.g. role, tutorId).
-     *
-     * @param extraClaims additional payload fields
-     * @param userDetails Spring Security user details
-     * @return signed JWT string
-     */
+    // Generates a token with extra custom claims
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails.getUsername());
     }
@@ -61,15 +40,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ─── Token validation ──────────────────────────────────────────────────────
-
-    /**
-     * Validates that the token belongs to the given user and has not expired.
-     *
-     * @param token       JWT string from the Authorization header
-     * @param userDetails loaded from DB via UserDetailsService
-     * @return true if token is valid
-     */
+    // Validates that the token belongs to the given user and has not expired.
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
         return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
@@ -79,11 +50,7 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // ─── Claims extraction ─────────────────────────────────────────────────────
-
-    /**
-     * Extracts the email (subject) from a JWT token.
-     */
+    // Extracts the email (subject) from a JWT token.
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }

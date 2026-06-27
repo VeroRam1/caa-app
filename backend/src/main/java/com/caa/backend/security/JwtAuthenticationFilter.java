@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             email = jwtUtil.extractEmail(token);
         } catch (Exception e) {
-            // Token malformado o expirado — ignorar y continuar sin autenticar
+            // Token badly formed or expired — ignore and continue without authentication
             filterChain.doFilter(request, response);
             return;
         }
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             } catch (UsernameNotFoundException e) {
-                // Token user does not exist in te database. Ignore token
+                // Token user does not exist in the database. Ignore token
                 log.warn("Token contains unknown user: {}. Ignoring token.", email);
             }
         }

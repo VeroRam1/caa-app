@@ -9,10 +9,7 @@ import org.mapstruct.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * MapStruct mapper for Board entity and DTOs
- * Automatically generates implementation at compile time
- */
+// MapStruct mapper for Board entity and DTOs. Automatically generates implementation at compile time
 @Mapper(
         componentModel = "spring",  // Generate as Spring bean
         uses = {PictogramMapper.class},  // Use PictogramMapper for nested conversions
@@ -58,9 +55,7 @@ public interface BoardMapper {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * After mapping hook to ensure data consistency
-     */
+    // After mapping hook to ensure data consistency
     @AfterMapping
     default void afterMapping(@MappingTarget BoardResponseDTO response, Board board) {
         // Ensure pictogramCount is set correctly

@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for creating a new board
- * Used in POST /api/boards
- */
+// DTO for creating a new board
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

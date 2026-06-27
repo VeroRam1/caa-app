@@ -10,13 +10,11 @@ import { AuthService } from '../services/auth-service';
  * Authorization: Bearer <token>
  */
 export const authInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
+    req: HttpRequest<unknown>, next: HttpHandlerFn
+  ) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // No token (user not logged) not modified petition
   if (!token) {
     return next(req);
   }

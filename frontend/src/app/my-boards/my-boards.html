@@ -34,7 +34,7 @@
         severity="secondary"
         [rounded]="true"
         (click)="menu.toggle($event)"
-        aria-label="Abrir menú de navegación" />
+        ariaLabel="Abrir menú de navegación" />
     </ng-template>
 
     <ng-template #center>
@@ -47,7 +47,7 @@
         icon="pi pi-arrow-left"
         severity="secondary"
         (click)="onBack()"
-        aria-label="Volver al panel de perfiles" />
+        ariaLabel="Volver al panel de perfiles" />
     </ng-template>
   </p-toolbar>
 
@@ -83,7 +83,7 @@
 
                   <div class="card-info">
                     <div class="card-header">
-                      <h4 class="card-name">{{ board.name }}</h4>
+                      <p class="card-name">{{ board.name }}</p>
                       <span class="card-level">{{ getLevelLabel(board.level) }}</span>
                     </div>
 
@@ -152,7 +152,7 @@
 
               <div class="card-info">
                 <div class="card-header">
-                  <h4 class="card-name">{{ board.name }}</h4>
+                  <p class="card-name">{{ board.name }}</p>
                   <span class="card-level">{{ getLevelLabel(board.level) }}</span>
                 </div>
 
@@ -196,7 +196,7 @@
 
           <div class="create-board-form">
 
-            <!-- Nombre -->
+            <!-- Name -->
             <div class="form-field">
               <label for="new-board-name">Nombre del tablero</label>
               <input
@@ -220,7 +220,7 @@
               }
             </div>
 
-            <!-- Nivel -->
+            <!-- Level -->
             <div class="form-field">
               <label for="new-board-level">Nivel</label>
               <p-select
@@ -235,7 +235,7 @@
                 class="w-full" />
             </div>
 
-            <!-- Categoría -->
+            <!-- Category -->
             <div class="form-field">
               <label for="new-board-category">Categoría</label>
               <p-select
@@ -245,12 +245,13 @@
                 [options]="categoryOptions"
                 optionLabel="label"
                 optionValue="value"
+                [appendTo]="'body'"
                 required
                 #newBoardCategoryRef="ngModel"
                 class="w-full" />
             </div>
 
-            <!-- Nueva categoría (solo cuando se elige "+ Nueva categoría...") -->
+            <!-- New category -->
             @if (isCustomCategorySelected) {
               <div class="form-field">
                 <label for="new-custom-category">Nombre de la nueva categoría</label>

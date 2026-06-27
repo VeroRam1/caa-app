@@ -126,7 +126,6 @@ public class BoardService {
         Board board = loadBoardForOwner(boardId, tutorEmail);
         // Remove all existing pictograms — orphanRemoval handles DB deletion
         board.getPictograms().clear();
-
         boardRepository.saveAndFlush(board);
 
         // Add the new arrangement

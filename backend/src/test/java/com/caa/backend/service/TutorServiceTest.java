@@ -76,10 +76,8 @@ class TutorServiceTest {
     }
 
     /******* register **************************************************/
-
     @Test
     void shouldReturnAuthResponseWithToken_whenRegisterWithValidData() {
-        // Given
         when(tutorRepository.existsByEmail(EMAIL)).thenReturn(false);
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
         when(tutorRepository.save(any(Tutor.class))).thenReturn(tutor);
@@ -87,10 +85,8 @@ class TutorServiceTest {
         when(jwtUtil.generateToken(userDetails)).thenReturn(JWT_TOKEN);
         when(tutorMapper.toAuthResponse(tutor)).thenReturn(authResponse);
 
-        // When
         AuthResponseDTO result = tutorService.register(registerRequest);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getToken()).isEqualTo(JWT_TOKEN);
         assertThat(result.getEmail()).isEqualTo(EMAIL);
@@ -102,10 +98,8 @@ class TutorServiceTest {
 
     @Test
     void shouldThrowIllegalArgumentException_whenRegisterWithDuplicateEmail() {
-        // Given
         when(tutorRepository.existsByEmail(EMAIL)).thenReturn(true);
 
-        // When / Then
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> tutorService.register(registerRequest)
@@ -114,11 +108,9 @@ class TutorServiceTest {
         verify(tutorRepository, never()).save(any(Tutor.class));
     }
 
-    /******* login **************************************************/
-
+    /******* login *************************************************/
     @Test
     void shouldReturnAuthResponseWithToken_whenLoginWithValidCredentials() {
-        // Given — authenticationManager returns without throwing → credentials are valid
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(new UsernamePasswordAuthenticationToken(EMAIL, PASSWORD));
         when(tutorRepository.findByEmail(EMAIL)).thenReturn(Optional.of(tutor));
@@ -126,10 +118,8 @@ class TutorServiceTest {
         when(jwtUtil.generateToken(userDetails)).thenReturn(JWT_TOKEN);
         when(tutorMapper.toAuthResponse(tutor)).thenReturn(authResponse);
 
-        // When
         AuthResponseDTO result = tutorService.login(loginRequest);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getToken()).isEqualTo(JWT_TOKEN);
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
@@ -139,27 +129,22 @@ class TutorServiceTest {
 
     @Test
     void shouldThrowBadCredentialsException_whenLoginWithWrongPassword() {
-        // Given — Spring Security throws BadCredentialsException on failed authentication
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        // When / Then
         assertThrows(
                 BadCredentialsException.class,
                 () -> tutorService.login(loginRequest)
         );
-        // Repository must never be queried if authentication failed
         verify(tutorRepository, never()).findByEmail(anyString());
     }
 
     @Test
     void shouldThrowResourceNotFoundException_whenTutorNotFoundAfterAuthentication() {
-        // Given — auth succeeds but the tutor row is somehow absent (e.g. deleted mid-request)
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(new UsernamePasswordAuthenticationToken(EMAIL, PASSWORD));
         when(tutorRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        // When / Then
         assertThrows(
                 ResourceNotFoundException.class,
                 () -> tutorService.login(loginRequest)

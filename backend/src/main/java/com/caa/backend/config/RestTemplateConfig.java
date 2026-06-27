@@ -9,10 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
-/**
- * Configuration for RestTemplate
- * Used to make HTTP requests to external APIs (ARASAAC)
- */
+// Configuration for RestTemplate. Used to make HTTP requests to external APIs (ARASAAC)
 @Configuration
 public class RestTemplateConfig {
 

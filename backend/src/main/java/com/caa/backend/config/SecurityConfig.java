@@ -21,16 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Spring Security configuration.
- *
- * Security model:
- * - Stateless JWT authentication (no server-side sessions)
- * - Public endpoints: /api/auth/** (register, login)
- *                     /v3/api-docs/**, /swagger-ui/** (Swagger — your existing config)
- *                     /api/arasaac/** (your existing ARASAAC endpoint — adjust if needed)
- * - All other endpoints require a valid JWT
- */
 @EnableCaching
 @Configuration
 @EnableWebSecurity
@@ -76,10 +66,10 @@ public class SecurityConfig {
                         // X-Content-Type-Options: prevents the browser from guessing the MIME type (MIME sniffing)
                         .contentTypeOptions(contentType -> {})
 
-                        // X-XSS-Protection: enables the browser's built-in XSS filter (legacy, but still recommended)
+                        // X-XSS-Protection: enables the browser's built-in XSS filter
                         .xssProtection(xss -> {})
 
-                        // Referrer-Policy: does not send the origin URL in cross-origin requests
+                        // Referrer-Policy: does not send the origin URL in cross-origin req uests
                         .referrerPolicy(referrer ->
                                 referrer.policy(org.springframework.security.web.header.writers
                                         .ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)

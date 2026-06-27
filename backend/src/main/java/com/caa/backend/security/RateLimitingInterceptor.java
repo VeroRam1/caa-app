@@ -13,14 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/**
- * MVC interceptor that enforces rate limiting.
- *
- * - Auth endpoints (/api/auth/**): limited by IP — 10 req/min
- * - Authenticated endpoints: limited by user email — 100 req/min
- *
- * Returns HTTP 429 Too Many Requests when the limit is exceeded.
- */
+// MVC interceptor that enforces rate limiting. Returns HTTP 429 Too Many Requests when the limit is exceeded.
 @Component
 @RequiredArgsConstructor
 @Slf4j

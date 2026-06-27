@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Service that manages rate limiting buckets per user or IP.
- *
  * Two strategies:
  * - Authenticated endpoints: limit by user email (extracted from JWT)
  * - Auth endpoints (login/register): limit by IP (no JWT available yet)

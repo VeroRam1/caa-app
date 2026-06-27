@@ -14,10 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Service for integrating with ARASAAC API
- * Provides methods to search and retrieve pictograms
- */
+// Service for integrating with ARASAAC API. Provides methods to search and retrieve pictograms
 @Service
 @RequiredArgsConstructor
 @Slf4j

@@ -73,6 +73,12 @@ export class MyBoardsComponent implements OnInit {
     { label: 'Lugares', value: 'Lugares' },
     { label: 'Personas', value: 'Personas' },
     { label: 'Acciones', value: 'Acciones' },
+    { label: 'Descripciones', keywords: 'descripciones' },
+    { label: 'Tiempo', keywords: 'tiempo' },
+    { label: 'Preguntas', keywords: 'preguntas' },
+    { label: 'Transporte', keywords: 'transporte' },
+    { label: 'Números', keywords: 'números' },
+    { label: 'Abecedario', keywords: 'abecedario' },
     { label: '+ Nueva categoría...', value: '__custom__' }
   ];
 
@@ -89,7 +95,13 @@ export class MyBoardsComponent implements OnInit {
       { label: 'Emociones', keywords: ['emociones'] },
       { label: 'Lugares', keywords: ['lugares'] },
       { label: 'Personas', keywords: ['personas'] },
-      { label: 'Acciones', keywords: ['acciones'] }
+      { label: 'Acciones', keywords: ['acciones'] },
+      { label: 'Descripciones', keywords: ['descripciones'] },
+      { label: 'Tiempo', keywords: ['tiempo'] },
+      { label: 'Preguntas', keywords: ['preguntas'] },
+      { label: 'Transporte', keywords: ['transporte'] },
+      { label: 'Números', keywords: ['números'] },
+      { label: 'Abecedario', keywords: ['abecedario'] },
     ];
 
     return CategoryNames

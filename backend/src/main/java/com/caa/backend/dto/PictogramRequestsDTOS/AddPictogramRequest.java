@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for adding a pictogram to a board
- * Used in POST /api/boards/{boardId}/pictograms
- */
+// DTO for adding a pictogram to a board
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,9 +32,7 @@ public class AddPictogramRequest {
     @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "Background color must be in hexadecimal format (#RRGGBB)")
     private String backgroundColor;
 
-    /**
-     * Constructor without background color (defaults to white)
-     */
+    // Constructor without background color (defaults to white)
     public AddPictogramRequest(Integer pictogramId, String pictogramUrl, String text,
                                Integer positionX, Integer positionY) {
         this.pictogramId = pictogramId;

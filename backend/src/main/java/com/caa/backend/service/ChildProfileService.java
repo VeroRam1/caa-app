@@ -33,8 +33,6 @@ public class ChildProfileService {
     // Uploading images
     private final FileStorageService fileStorageService;
 
-    // ============= QUERIES =============
-
     // Get all child profiles belonging to the authenticated tutor
     @Transactional(readOnly = true)
     public List<ChildProfileResponseDTO> getAllProfiles(String tutorEmail) {
@@ -153,8 +151,6 @@ public class ChildProfileService {
         return childProfileMapper.toResponse(updatedProfile);
     }
 
-    // ============= BOARD ASSIGNMENT =============
-
      // Assign an existing board to a child profile
      // Avoids duplicates — assigning the same board twice has no effect
     public ChildProfileResponseDTO assignBoard(Long profileId, Long boardId, String tutorEmail) {
@@ -189,8 +185,6 @@ public class ChildProfileService {
 
         return childProfileMapper.toResponseWithBoards(updatedProfile);
     }
-
-    // ============= HELPER METHODS =============
 
     // Loads a tutor by email extracted from the JWT
     private Tutor loadTutorByEmail(String email) {

@@ -58,10 +58,6 @@ public class PictogramController {
         return ResponseEntity.ok(pictogram);
     }
 
-    /**
-     * Add a pictogram to a board
-     * POST /api/boards/{boardId}/pictograms
-     */
     @PostMapping
     @Operation(summary = "Add pictogram to board",
             description = "Add a new pictogram to a specific position on the board")
@@ -86,10 +82,6 @@ public class PictogramController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Update a pictogram (move position or change color)
-     * PUT /api/boards/{boardId}/pictograms/{pictogramId}
-     */
     @PutMapping("/{pictogramId}")
     @Operation(summary = "Update pictogram",
             description = "Update pictogram position, color, or text")
@@ -114,10 +106,6 @@ public class PictogramController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Delete a pictogram from a board
-     * DELETE /api/boards/{boardId}/pictograms/{pictogramId}
-     */
     @DeleteMapping("/{pictogramId}")
     @Operation(summary = "Delete pictogram", description = "Remove a pictogram from the board")
     @ApiResponses(value = {
@@ -136,10 +124,6 @@ public class PictogramController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Delete all pictograms from a board
-     * DELETE /api/boards/{boardId}/pictograms
-     */
     @DeleteMapping
     @Operation(summary = "Delete all pictograms",
             description = "Remove all pictograms from the board")
@@ -158,10 +142,6 @@ public class PictogramController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get pictogram at a specific position
-     * GET /api/boards/{boardId}/pictograms/position?x=0&y=0
-     */
     @GetMapping("/position")
     @Operation(summary = "Get pictogram at position",
             description = "Retrieve the pictogram at a specific grid position")
@@ -192,10 +172,6 @@ public class PictogramController {
         }
     }
 
-    /**
-     * Check if a position is occupied
-     * GET /api/boards/{boardId}/pictograms/position/occupied?x=0&y=0
-     */
     @GetMapping("/position/occupied")
     @Operation(summary = "Check if position is occupied",
             description = "Verify if a position on the board has a pictogram")
@@ -218,10 +194,6 @@ public class PictogramController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Count pictograms on a board
-     * GET /api/boards/{boardId}/pictograms/count
-     */
     @GetMapping("/count")
     @Operation(summary = "Count pictograms",
             description = "Get the total number of pictograms on the board")
@@ -242,10 +214,6 @@ public class PictogramController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Search pictograms by text across all boards
-     * GET /api/pictograms/search?text=casa
-     */
     @GetMapping("/search")
     @Operation(summary = "Search pictograms by text",
             description = "Search pictograms containing specific text across all boards")

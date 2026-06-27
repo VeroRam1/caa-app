@@ -92,7 +92,6 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // TODO - eliminar, no se usa
     // Update an existing board
     @PutMapping("/{id}")
     @Operation(summary = "Update a board", description = "Update an existing board's information")
@@ -227,10 +226,7 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
 
-    /**
-     * Get boards by level
-     * GET /api/boards/level/{level}
-     */
+    // Get boards by level
     @GetMapping("/level/{level}")
     @Operation(summary = "Get boards by level",
             description = "Get all boards for a specific difficulty level (1=Basic, 2=Intermediate, 3=Advanced)")

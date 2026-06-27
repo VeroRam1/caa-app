@@ -133,7 +133,7 @@ public class DataInitializer implements CommandLineRunner {
     private void createLevel2Boards() {
         createBoardIfNotExists("Tablero General - Nivel 2",
                 "Tablero predeterminado para comunicación intermedia con construcción de frases.",
-                4, 5, 3, "General",
+                4, 5, 2, "General",
                 List.of(
                         new long[]{6632,  0, 0},
                         new long[]{36518, 1, 0},
@@ -239,40 +239,137 @@ public class DataInitializer implements CommandLineRunner {
                         "sentar", "salir", "caminar", "correr", "saltar"
                 )
         );
+        createBoardIfNotExists("Personas - Nivel 2",
+                "Vocabulario ampliado de personas y pronombres.",
+                4, 4, 2, "Personas",
+                List.of(
+                        new long[]{6632,  0, 0},
+                        new long[]{6625,  1, 0},
+                        new long[]{2458,  2, 0},
+                        new long[]{31146, 3, 0},
+                        new long[]{6481,  0, 1},
+                        new long[]{7029,  1, 1},
+                        new long[]{23718, 2, 1},
+                        new long[]{23710, 3, 1},
+                        new long[]{7186,  0, 2},
+                        new long[]{7307,  1, 2},
+                        new long[]{2457,  2, 2},
+                        new long[]{2456,  3, 2},
+                        new long[]{7033,  0, 3},
+                        new long[]{38351, 1, 3},
+                        new long[]{25790, 2, 3},
+                        new long[]{2423,  3, 3}
+                ),
+                List.of(
+                        "yo", "tú", "mamá", "papá",
+                        "él", "ella", "abuelo", "abuela",
+                        "nosotros", "vosotros", "maestro", "maestra",
+                        "ellos", "familia", "amigo", "hermano"
+                )
+        );
+
+        createBoardIfNotExists("Lugares - Nivel 2",
+                "Vocabulario ampliado de lugares de interés.",
+                3, 4, 2, "Lugares",
+                List.of(
+                        new long[]{6964,  0, 0},
+                        new long[]{33068, 1, 0},
+                        new long[]{15905, 2, 0},
+                        new long[]{33074, 3, 0},
+                        new long[]{2859,  0, 1},
+                        new long[]{3082,  1, 1},
+                        new long[]{15515, 2, 1},
+                        new long[]{15551, 3, 1},
+                        new long[]{3116,  0, 2},
+                        new long[]{38870, 1, 2},
+                        new long[]{3142,  2, 2},
+                        new long[]{2826,  3, 2}
+                ),
+                List.of(
+                        "casa", "dormitorio", "baño", "salón",
+                        "parque", "colegio", "instituto", "centro comercial",
+                        "hospital", "consulta", "piscina", "playa"
+                )
+        );
+
+        createBoardIfNotExists("Descripciones - Nivel 2",
+                "Tablero de adjetivos y descripciones para nivel intermedio.",
+                4, 5, 2, "Descripciones",
+                List.of(
+                        new long[]{36480, 0, 0},
+                        new long[]{4658, 1, 0},
+                        new long[]{4693, 2, 0},
+                        new long[]{4716, 3, 0},
+                        new long[]{32392, 4, 0},
+                        new long[]{36392, 0, 1},
+                        new long[]{32440, 1, 1},
+                        new long[]{32524, 2, 1},
+                        new long[]{26002, 3, 1},
+                        new long[]{26162, 4, 1},
+                        new long[]{5397, 0, 2},
+                        new long[]{25253, 1, 2},
+                        new long[]{26172, 2, 2},
+                        new long[]{26459, 3, 2},
+                        new long[]{5306, 4, 2},
+                        new long[]{5504, 0, 3},
+                        new long[]{4767, 1, 3},
+                        new long[]{4688, 2, 3},
+                        new long[]{32388, 3, 3},
+                        new long[]{4676, 4, 3}
+                ),
+                List.of(
+                        "ser", "grande", "mediano", "pequeño", "igual",
+                        "estar", "dulce", "salado", "corto", "largo",
+                        "bien", "mojado", "limpio", "sucio", "rápido",
+                        "mal", "vacío", "lleno", "roto", "lento"
+                )
+        );
+
     }
 
     // ** Level 3 ***********************************************
     private void createLevel3Boards() {
         createBoardIfNotExists("Tablero General - Nivel 3",
                 "Tablero predeterminado para comunicación avanzada con vocabulario extenso.",
-                4, 5, 3, "General",
+                5, 6, 3, "General",
                 List.of(
                         new long[]{6632,  0, 0},
                         new long[]{36518, 1, 0},
                         new long[]{2458,  2, 0},
                         new long[]{31146, 3, 0},
                         new long[]{5584,  4, 0},
+                        new long[]{6522,  5, 0},
                         new long[]{12264, 0, 1},
                         new long[]{7272,  1, 1},
                         new long[]{6456,  2, 1},
                         new long[]{6061,  3, 1},
                         new long[]{5526,  4, 1},
+                        new long[]{6028,  5, 1},
                         new long[]{12281, 0, 2},
                         new long[]{37160, 1, 2},
                         new long[]{6964,  2, 2},
                         new long[]{3082,  3, 2},
                         new long[]{3220,  4, 2},
+                        new long[]{7061,  5, 2},
                         new long[]{7186,  0, 3},
                         new long[]{7171,  1, 3},
                         new long[]{37827, 2, 3},
                         new long[]{13630, 3, 3},
-                        new long[]{8129,  4, 3}
+                        new long[]{8129,  4, 3},
+                        new long[]{10273, 5, 3},
+                        new long[]{5397,  0, 4},
+                        new long[]{5504,  1, 4},
+                        new long[]{22620, 2, 4},
+                        new long[]{22621, 3, 4},
+                        new long[]{36719, 4, 4},
+                        new long[]{38907, 5, 4}
                 ),
                 List.of(
-                        "Yo", "Quiero", "Mamá", "Papá", "sí",
-                        "Mío", "tener hambre", "Comer", "Beber", "no",
-                        "Tú", "necesitar", "casa", "colegio", "Más",
-                        "nosotros", "necesito ayuda", "no entiendo", "estoy bien", "gracias"
+                        "Yo", "Quiero", "Mamá", "Papá", "sí", "hola",
+                        "Mío", "tener hambre", "Comer", "Beber", "no", "adiós",
+                        "Tú", "necesitar", "casa", "colegio", "Más", "¿como te llamas?",
+                        "nosotros", "necesito ayuda", "no entiendo", "estoy bien", "gracias", "¿cómo estás?",
+                        "bien", "mal", "qué", "cuándo", "por qué", "por favor"
                 )
         );
 
@@ -351,11 +448,164 @@ public class DataInitializer implements CommandLineRunner {
                         "sopa", "muslo", "carne", "pan"
                 )
         );
+
+        createBoardIfNotExists("Personas - Nivel 3",
+                "Vocabulario ampliado de personas y pronombres.",
+                4, 4, 3, "Personas",
+                List.of(
+                        new long[]{6632,  0, 0},
+                        new long[]{6625,  1, 0},
+                        new long[]{2458,  2, 0},
+                        new long[]{31146, 3, 0},
+                        new long[]{6481,  0, 1},
+                        new long[]{7029,  1, 1},
+                        new long[]{23718, 2, 1},
+                        new long[]{23710, 3, 1},
+                        new long[]{7186,  0, 2},
+                        new long[]{7307,  1, 2},
+                        new long[]{2457,  2, 2},
+                        new long[]{2456,  3, 2},
+                        new long[]{7033,  0, 3},
+                        new long[]{38351, 1, 3},
+                        new long[]{25790, 2, 3},
+                        new long[]{2423,  3, 3}
+                ),
+                List.of(
+                        "yo", "tú", "mamá", "papá",
+                        "él", "ella", "abuelo", "abuela",
+                        "nosotros", "vosotros", "maestro", "maestra",
+                        "ellos", "familia", "amigo", "hermano"
+                )
+        );
+
+        createBoardIfNotExists("Lugares - Nivel 3",
+                "Vocabulario ampliado de lugares de interés.",
+                3, 4, 3, "Lugares",
+                List.of(
+                        new long[]{6964,  0, 0},
+                        new long[]{33068, 1, 0},
+                        new long[]{15905, 2, 0},
+                        new long[]{33074, 3, 0},
+                        new long[]{2859,  0, 1},
+                        new long[]{3082,  1, 1},
+                        new long[]{15515, 2, 1},
+                        new long[]{15551, 3, 1},
+                        new long[]{3116,  0, 2},
+                        new long[]{38870, 1, 2},
+                        new long[]{3142,  2, 2},
+                        new long[]{2826,  3, 2}
+                ),
+                List.of(
+                        "casa", "dormitorio", "baño", "salón",
+                        "parque", "colegio", "instituto", "centro comercial",
+                        "hospital", "consulta", "piscina", "playa"
+                )
+        );
+
+
+        createBoardIfNotExists("Descripciones - Nivel 3",
+                "Tablero de adjetivos y descripciones para nivel intermedio.",
+                4, 5, 3, "Descripciones",
+                List.of(
+                        new long[]{36480, 0, 0},
+                        new long[]{4658, 1, 0},
+                        new long[]{4693, 2, 0},
+                        new long[]{4716, 3, 0},
+                        new long[]{32392, 4, 0},
+                        new long[]{36392, 0, 1},
+                        new long[]{32440, 1, 1},
+                        new long[]{32524, 2, 1},
+                        new long[]{26002, 3, 1},
+                        new long[]{26162, 4, 1},
+                        new long[]{5397, 0, 2},
+                        new long[]{25253, 1, 2},
+                        new long[]{26172, 2, 2},
+                        new long[]{26459, 3, 2},
+                        new long[]{5306, 4, 2},
+                        new long[]{5504, 0, 3},
+                        new long[]{4767, 1, 3},
+                        new long[]{4688, 2, 3},
+                        new long[]{32388, 3, 3},
+                        new long[]{4676, 4, 3}
+                ),
+                List.of(
+                        "ser", "grande", "mediano", "pequeño", "igual",
+                        "estar", "dulce", "salado", "corto", "largo",
+                        "bien", "mojado", "limpio", "sucio", "rápido",
+                        "mal", "vacío", "lleno", "roto", "lento"
+                )
+        );
+
+        createBoardIfNotExists("Tiempo - Nivel 3",
+                "Vocabulario avanzado sobre conceptos temporales.",
+                3, 5, 3, "Tiempo",
+                List.of(
+                        new long[]{38272, 0, 0},
+                        new long[]{38279, 1, 0},
+                        new long[]{38276, 2, 0},
+                        new long[]{38278, 3, 0},
+                        new long[]{38277, 4, 0},
+                        new long[]{13028, 0, 1},
+                        new long[]{13026, 1, 1},
+                        new long[]{13080, 2, 1},
+                        new long[]{7230,  3, 1},
+                        new long[]{32396, 4, 1},
+                        new long[]{26799, 0, 2},
+                        new long[]{7268,  1, 2},
+                        new long[]{26997, 2, 2}
+                ),
+                List.of(
+                        "antes de ayer", "ayer", "hoy", "mañana", "pasado mañana",
+                        "antes", "ahora", "después", "reloj", "fin de semana",
+                        "día", "tarde", "noche"
+                )
+        );
+
+        createBoardIfNotExists("Preguntas - Nivel 3",
+                "Vocabulario avanzado de preguntas y partículas interrogativas.",
+                2, 5, 3, "Preguntas",
+                List.of(
+                        new long[]{10276, 0, 0},
+                        new long[]{32771, 1, 0},
+                        new long[]{22620, 2, 0},
+                        new long[]{22619, 3, 0},
+                        new long[]{22621, 4, 0},
+                        new long[]{10273, 0, 1},
+                        new long[]{7061,  1, 1},
+                        new long[]{32743, 2, 1},
+                        new long[]{7764,  3, 1},
+                        new long[]{36719, 4, 1}
+                ),
+                List.of(
+                        "quién", "qué es?", "qué", "cómo", "cuándo",
+                        "¿cómo estás?", "¿cómo te llamas?", "¿de quién es?", "dónde", "por qué"
+                )
+        );
+
+        createBoardIfNotExists("Transporte - Nivel 3",
+                "Vocabulario avanzado de medios de transporte.",
+                3, 3, 3, "Transporte",
+                List.of(
+                        new long[]{2339,  0, 0},
+                        new long[]{38090, 1, 0},
+                        new long[]{35600, 2, 0},
+                        new long[]{2277,  0, 1},
+                        new long[]{7166,  1, 1},
+                        new long[]{6932,  2, 1},
+                        new long[]{2264,  0, 2},
+                        new long[]{7126,  1, 2},
+                        new long[]{2603,  2, 2}
+                ),
+                List.of(
+                        "coche", "autobús", "furgoneta",
+                        "bicicleta", "motocicleta", "barco",
+                        "avión", "helicóptero", "tren"
+                )
+        );
     }
 
 
     // ** Extra boards ********************************************************
-
     private void createExtraBoards() {
         createBoardIfNotExists("Números - Nivel 2",
                 "Tablero de números del 0 al 9 para nivel intermedio.",
@@ -468,6 +718,7 @@ public class DataInitializer implements CommandLineRunner {
                         "ñ", "o", "p", "q", "r", "s", "t",
                         "u", "v", "w", "x", "y", "z")
         );
+
     }
 
     // ** Helper ************************************************

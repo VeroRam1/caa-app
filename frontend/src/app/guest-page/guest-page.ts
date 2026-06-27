@@ -15,7 +15,7 @@ interface LevelCard {
   level: number;
   title: string;
   description: string;
-  grid: string;         // e.g. "3 × 4"
+  grid: string;        
   ageRange: string;
   features: string[];
   board: Board | null;  // the default board preview for this level
@@ -46,7 +46,7 @@ export class GuestPage implements OnInit {
       description: 'Tablero básico para primeros pasos en la comunicación. ' +
         'Pictogramas grandes con vocabulario esencial del día a día.',
       grid: '3 × 4',
-      ageRange: '2 - 4 años',
+      ageRange: '3 - 5 años',
       features: [
         '12 pictogramas grandes',
         'Vocabulario esencial',
@@ -62,7 +62,7 @@ export class GuestPage implements OnInit {
       description: 'Tablero intermedio con más vocabulario y la posibilidad ' +
         'de construir frases sencillas combinando pictogramas.',
       grid: '4 × 5',
-      ageRange: '4 - 7 años',
+      ageRange: '5 - 7 años',
       features: [
         '20 pictogramas por tablero',
         'Construcción de frases',
@@ -81,8 +81,8 @@ export class GuestPage implements OnInit {
       ageRange: '7+ años',
       features: [
         '30 picogramas por tablero',
-        'Frases complejas',
-        'Todas las categorías',
+        'Construcción de frases',
+        'Más categorías',
         'Síntesis de voz'
       ],
       board: null,
@@ -142,7 +142,7 @@ export class GuestPage implements OnInit {
         console.log('Tableros predeterminados:', boards.map(b => ({
         id: b.id,
         name: b.name,
-        level: b.level,        // ← ver si llega
+        level: b.level,        
         isPredefined: b.isPredefined
       })));
         this.levelCards.forEach((card, index )=> {
@@ -154,6 +154,7 @@ export class GuestPage implements OnInit {
             b.name.toLowerCase().includes('basico'))
           );
           console.log(`Nivel ${level} → encontrado:`, board?.name, 'level:', board?.level);
+          console.log('Todos los tableros:', boards.map(b => ({ id: b.id, name: b.name, level: b.level })));
           if (board) {
             this.boardService.getBoardById(board.id).subscribe({
               next: (fullBoard) => {

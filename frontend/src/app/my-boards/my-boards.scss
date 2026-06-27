@@ -10,7 +10,7 @@
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
-  color: white;
+  color: #0c2340;;
 }
 
 // ── Contenido ──
@@ -157,7 +157,6 @@
 .card-level {
   font-size: 0.72rem;
   font-weight: 700;
-  // #4a85b5 on #e8f4fd = 3.52:1 (fails WCAG 1.4.3 at 11.5px). #1a4971 = 7.1:1 ✓
   color: #1a4971;
   background: #e8f4fd;
   border-radius: 999px;
@@ -184,12 +183,10 @@
   i { font-size: 0.7rem; color: #aaa; }
 }
 
-// ── Acciones ──
 .card-actions {
   display: flex;
   gap: 0.4rem;
 
-  // Criteria 2.5.8: minimum touch target 44×44px
   :host ::ng-deep .p-button {
     min-height: 44px;
     flex: 1;

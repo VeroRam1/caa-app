@@ -10,10 +10,9 @@
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
-  color: white;
+  color: var(--toolbar-text);
 }
 
-// ── Cabecera de la página ─────────────────────────────────────────────────────
 .main-content {
   flex: 1;
   padding: 2rem 1.5rem;
@@ -31,13 +30,13 @@
 .page-title {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #1a4971;  // ratio 7.2:1 sobre #f0f9ff ✓
+  color: #1a4971;  
   margin: 0 0 0.5rem 0;
 }
 
 .page-subtitle {
   font-size: 1rem;
-  color: #4a6741;  // ratio 5.1:1 ✓
+  color: #4a6741;  
   line-height: 1.5;
   margin: 0;
 }
@@ -51,7 +50,6 @@
   font-size: 1.1rem;
 }
 
-// ── Tarjetas de nivel ─────────────────────────────────────────────────────────
 .level-cards {
   display: flex;
   gap: 1.5rem;
@@ -89,7 +87,6 @@
   }
 }
 
-// ── Cabecera de la tarjeta ────────────────────────────────────────────────────
 .card-header {
   display: flex;
   flex-direction: column;
@@ -113,7 +110,7 @@
 .card-age {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #4a85b5;
+  color: #1a4971;
   background: #e8f4fd;
   border-radius: 999px;
   padding: 0.2rem 0.6rem;
@@ -121,12 +118,11 @@
 
 .card-description {
   font-size: 0.9rem;
-  color: #444;   // ratio 9.7:1 sobre blanco ✓
+  color: #444;   
   line-height: 1.5;
   margin: 0;
 }
 
-// ── Preview del tablero ───────────────────────────────────────────────────────
 .board-preview {
   background: #f0f9ff;
   border: 2px solid #b3ddff;
@@ -173,7 +169,6 @@
   object-fit: contain;
 }
 
-// ── Características ───────────────────────────────────────────────────────────
 .card-features {
   list-style: none;
   padding: 0;
@@ -185,21 +180,19 @@
 
 .card-feature {
   font-size: 0.85rem;
-  color: #1a4971;  // ratio 7.2:1 ✓
+  color: #1a4971;  
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
-// ── Botón de acción ───────────────────────────────────────────────────────────
 :host ::ng-deep .card-action-btn {
   width: 100% !important;
   justify-content: center;
-  min-height: 44px !important;  // criterio 2.5.8
+  min-height: 44px !important;  
 }
 
-// ── Tablet landscape ──────────────────────────────────────────────────────────
 @media (orientation: landscape) and (max-height: 600px) {
   .level-cards { flex-direction: row; flex-wrap: nowrap; }
   .level-card { min-width: 220px; padding: 1rem; }

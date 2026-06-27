@@ -1,4 +1,3 @@
-/* ── Layout general ── */
 .page-container {
   display: flex;
   flex-direction: column;
@@ -10,10 +9,9 @@
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
-  color: white;
+  color: var(--toolbar-text);
 }
 
-/* ── Contenido central ── */
 .main-content {
   flex: 1;
   display: flex;
@@ -24,7 +22,6 @@
   padding: 2rem;
 }
 
-/* ── Tres paneles grandes ── */
 .central-panels {
   display: flex;
   gap: 1.5rem;
@@ -45,7 +42,7 @@
   gap: 1rem;
   border-radius: 1.5rem;
   cursor: pointer;
-  /* Tailwind Preflight resets <button> borders/bg — restore them here */
+
   border: 3px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-align: center;
@@ -89,7 +86,7 @@
   /* Enter without registering - green */
   &.panel-guest {
     background: linear-gradient(145deg, #d1fae5, #a7f3d0);
-    color: var(--color-green-text) !important; // antes #065f46 — este sí cumplía
+    color: var(--color-green-text) !important; 
     border-color: #a7f3d0;
     box-shadow: 0 4px 16px rgba(167, 243, 208, 0.45);
 
@@ -110,7 +107,6 @@
   line-height: 1.3;
 }
 
-/* ── Botones tutoriales ── */
 .tutorial-buttons {
   display: flex;
   gap: 1rem;
@@ -122,9 +118,9 @@
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  background: #fff5f5;           // fondo muy suave
-  color: #7f1d1d;                // texto oscuro — ratio 7.3:1 ✓ WCAG
-  border: 1.5px solid #fca5a5;  // borde fino y sutil
+  background: #fff5f5;           
+  color: #7f1d1d;                
+  border: 1.5px solid #fca5a5;  
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;

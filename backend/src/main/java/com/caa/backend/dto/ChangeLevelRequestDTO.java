@@ -7,12 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for changing a child's communication level independently
- * Used in PATCH /api/child-profiles/{id}/level
- * Separated from ChildProfileRequestDTO so the tutor can update
- * the level without resending the full profile payload
- */
+// DTO for changing a child's communication level independently
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

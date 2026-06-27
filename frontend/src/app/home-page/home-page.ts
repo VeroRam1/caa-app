@@ -125,25 +125,25 @@ export class HomePage {
   }
 
   onCancelLogin(): void {
-  this.visibleLogin = false;
-  this.loginEmail = '';
-  this.loginPassword = '';
-  this.loginError = '';
-  this.cdr.markForCheck();
-}
+    this.visibleLogin = false;
+    this.loginEmail = '';
+    this.loginPassword = '';
+    this.loginError = '';
+    this.cdr.markForCheck();
+  }
 
-onCancelRegister(): void {
-  this.visibleRegister = false;
-  this.registerName = '';
-  this.registerEmail = '';
-  this.registerPassword = '';
-  this.registerConfirmPassword = '';
-  this.registerError = '';
-  this.passwordMismatch = false;
-  this.cdr.markForCheck();
-}
+  onCancelRegister(): void {
+    this.visibleRegister = false;
+    this.registerName = '';
+    this.registerEmail = '';
+    this.registerPassword = '';
+    this.registerConfirmPassword = '';
+    this.registerError = '';
+    this.passwordMismatch = false;
+    this.cdr.markForCheck();
+  }
 
   onGuest() {
-    this.router.navigate(['/guest']);
+    this.router.navigate(['/guest-page']);
   }
 }

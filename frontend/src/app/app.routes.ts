@@ -14,7 +14,7 @@ export const routes: Routes = [
     { path: '', component: HomePage },
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
     { path: 'board/:id', component: BoardView, canActivate: [boardAccessGuard] },
-    { path: 'guest', component: GuestPage }, 
+    { path: 'guest-page', component: GuestPage }, 
     {path: 'my-boards', component: MyBoardsComponent, canActivate: [authGuard]},
     { path: 'board-editor/:id', component: BoardEditor, canActivate: [authGuard]},
     { path: '**', component: ErrorPage } // Any unknown path redirects to error page

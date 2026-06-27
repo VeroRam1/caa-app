@@ -116,14 +116,18 @@ export class BoardView implements OnInit {
       label: 'Lugares',
       iconPictogramId: 32598,   
       subLevels: [
-        { label: 'Nivel 1', level: 1, boardName: 'Lugares - Nivel 1' }
+        { label: 'Nivel 1', level: 1, boardName: 'Lugares - Nivel 1' },
+        { label: 'Nivel 2', level: 2, boardName: 'Lugares - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Lugares - Nivel 3' }
       ]
     },
     {
       label: 'Personas',
       iconPictogramId: 7116,   
       subLevels: [
-        { label: 'Nivel 1', level: 1, boardName: 'Personas - Nivel 1' }
+        { label: 'Nivel 1', level: 1, boardName: 'Personas - Nivel 1' },
+        { label: 'Nivel 2', level: 2, boardName: 'Personas - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Personas - Nivel 3' }
       ]
     },
     {
@@ -132,6 +136,35 @@ export class BoardView implements OnInit {
       subLevels: [
         { label: 'Nivel 2', level: 2, boardName: 'Acciones - Nivel 2' },
         { label: 'Nivel 3', level: 3, boardName: 'Acciones - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Descripciones',
+      iconPictogramId: 4658,  
+      subLevels: [
+        { label: 'Nivel 2', level: 2, boardName: 'Descripciones - Nivel 2' },
+        { label: 'Nivel 3', level: 3, boardName: 'Descripciones - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Tiempo',
+      iconPictogramId: 7230,  
+      subLevels: [
+        { label: 'Nivel 3', level: 3, boardName: 'Tiempo - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Preguntas',
+      iconPictogramId: 22620,  
+      subLevels: [
+        { label: 'Nivel 3', level: 3, boardName: 'Preguntas - Nivel 3' }
+      ]
+    },
+    {
+      label: 'Transporte',
+      iconPictogramId: 2339,  
+      subLevels: [
+        { label: 'Nivel 3', level: 3, boardName: 'Transporte - Nivel 3' }
       ]
     },
     {
@@ -149,7 +182,9 @@ export class BoardView implements OnInit {
         { label: 'Nivel 2', level: 2, boardName: 'Abecedario - Nivel 2' },
         { label: 'Nivel 3', level: 3, boardName: 'Abecedario - Nivel 3' }
       ]
-    }
+    },
+
+
   ];
 
   get categories(): Category[] {
@@ -452,13 +487,15 @@ export class BoardView implements OnInit {
   speakText(text: string): void {
     if (!this.synth) return;
     this.synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-ES';
-    utterance.rate = 0.85;
-    utterance.pitch = 1.1;
-    utterance.volume = 1;
-    this.synth.speak(utterance);
-  }
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 1;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        this.synth.speak(utterance);
+    }, 0);
+}
 
   /** Phrase bar */
 

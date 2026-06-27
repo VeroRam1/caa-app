@@ -28,19 +28,25 @@ html, body {
 }
 
 :root {
-  // Text colors over colored backgrounds — ratio 4.5:1 (WCAG 1.4.3)
-  --color-blue-bg: #d6f0ff;
-  --color-blue-text: #1a4971;
-  --color-pink-bg: #ffd6e7;
-  --color-pink-text: #7c1d3a;
+  // ── Button overrides ──
+  --p-button-primary-background: #1a5a8a !important;
+  --p-button-primary-border-color: #1a5a8a !important;
+  --p-button-primary-hover-background: #0c2340 !important;
+  --p-button-primary-color: #ffffff !important;
+  --p-button-danger-background: #991b1b !important;
+  --p-button-danger-border-color: #991b1b !important;
+  --p-button-danger-color: #ffffff !important;
+  --p-button-secondary-color: #0c2340 !important;
+
+  // ── Color palette for toasts and UI elements ──
   --color-green-bg: #d1fae5;
   --color-green-text: #064e3b;
-  --color-yellow-bg: #fef3c7;
-  --color-yellow-text: #713f12;
-  --color-purple-bg: #ede9fe;
-  --color-purple-text: #3b0764;
   --color-red-bg: #fee2e2;
   --color-red-text: #7f1d1d;
+  --color-yellow-bg: #fef3c7;
+  --color-yellow-text: #713f12;
+  --color-blue-bg: #d6f0ff;
+  --color-blue-text: #1a4971;
 
   --toolbar-text: #0c2340;
 }
@@ -54,24 +60,22 @@ html, body {
   min-height: 3rem;
 }
 
-// Minimum button size — criteria 2.5.8
+.p-toolbar .p-button-secondary span {
+  color: #0c2340 !important;
+}
+
+.p-button.p-button-sm {
+  min-height: 44px !important;
+}
+
 .p-button {
   min-height: 44px !important;
   min-width: 44px !important;
+}
 
-  &:not(.p-button-outlined):not(.p-button-text):not(.p-button-link) {
-    &.p-button-primary,
-    &:not([class*="p-button-"]) {
-      background-color: var(--p-primary-500, #4a85b5);
-      border-color: var(--p-primary-500, #4a85b5);
-      color: #ffffff;
-
-      &:hover:not(:disabled)  {
-        background-color: var(--p-primary-600, #1a4971);
-        border-color: var(--p-primary-600, #1a4971);
-      }
-    }
-  }
+.p-button.p-button-sm {
+  min-height: 44px !important;
+  min-width: 44px !important;
 }
 
 .p-menu .p-menuitem-link {
