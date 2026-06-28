@@ -83,7 +83,7 @@ public class SecurityConfig {
                                         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                                         "font-src 'self' https://fonts.gstatic.com; " +
                                         "img-src 'self' data: https://static.arasaac.org https://api.arasaac.org; " +
-                                        "connect-src 'self' http://localhost:8080 https://api.arasaac.org; " +
+                                        "connect-src 'self' http://localhost:8080 https://caa-app-production.up.railway.app https://api.arasaac.org; " +
                                         "frame-ancestors 'none';"  // reinforces X-Frame-Options
                         ))
 
