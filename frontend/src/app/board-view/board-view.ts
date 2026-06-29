@@ -462,9 +462,22 @@ export class BoardView implements OnInit {
 
     this.activeCategory = category.label;
     this.loadBoardWithPictograms(target.id);
-    this.router.navigate(['/board', target.id], { replaceUrl: true });
+
+    // Build query params based on current mode to ensure guard receives them correctly
+    const queryParams: any = {};
+    if (this.isGuestMode) {
+      queryParams['mode'] = 'guest';
+      queryParams['level'] = this.profileLevel;
+    } else if (this.isTutorMode) {
+      queryParams['mode'] = 'tutor';
+    }
+
+    this.router.navigate(['/board', target.id], {
+      replaceUrl: true,
+      queryParams
+    });
+
     this.cdr.markForCheck();
-    
   }
 
   toggleSidebar(): void {

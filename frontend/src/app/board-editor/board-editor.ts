@@ -14,7 +14,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Board } from '../services/boardService';
 import { AuthService } from '../services/auth-service';
 import { BoardService } from '../services/boardService';
-import { Toast } from "primeng/toast";
+import { environment } from '../../environments/environment';
 
 
 interface ArasaacResult {
@@ -55,7 +55,7 @@ export class BoardEditor implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   protected readonly Math = Math;
-  private readonly BACKEND_SEARCH = 'http://localhost:8080/api/arasaac/search';
+  private readonly BACKEND_SEARCH = `${environment.apiUrl}/arasaac/search`;
 
   board: Board | null = null;
   loading: boolean = true;
@@ -257,7 +257,7 @@ export class BoardEditor implements OnInit {
 
   getPictogramUrl(result: any): string {
     const id = result.id || result._id;
-    return `https://api.arasaac.org/v1/pictograms/${id}?download=false&plural=false&color=true`;
+    return `https://static.arasaac.org/pictograms/${id}/${id}_300.png`;
   }
 
   toggleSidebar(): void {
