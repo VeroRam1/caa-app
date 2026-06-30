@@ -1,0 +1,177 @@
+<p-dialog
+  header="Manual de usuario"
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '95vw', maxWidth: '680px', maxHeight: '80vh' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="manual-content">
+
+    <section class="manual-section">
+      <h3>¿Qué es PictoCom?</h3>
+      <p>
+        PictoCom es una aplicación web de Comunicación Aumentativa y Alternativa (CAA)
+        que permite a tutores, docentes y familiares crear tableros de pictogramas
+        personalizados para apoyar la comunicación de niños con dificultades expresivas.
+      </p>
+    </section>
+
+    <section class="manual-section">
+      <h3>Modos de acceso</h3>
+      <img
+        src="manual/home.png"
+        alt="Pantalla de inicio de PictoCom con las tres opciones de acceso"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li><strong>Registrarse</strong> — crea una cuenta de tutor para gestionar perfiles y tableros personalizados.</li>
+        <li><strong>Iniciar sesión</strong> — accede a tu cuenta existente.</li>
+        <li><strong>Modo invitado</strong> — explora los tableros predeterminados sin necesidad de cuenta. No permite personalización.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Registro e inicio de sesión</h3>
+      <img
+        src="manual/registro.png"
+        alt="Formulario de registro con los campos Nombre, Email, Contraseña y Confirmar contraseña"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Rellena el formulario con tu nombre, email y contraseña (mínimo 8 caracteres).</li>
+        <li>Si ya tienes cuenta, pulsa <strong>"Iniciar sesión"</strong> e introduce tu email y contraseña.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Niveles de comunicación</h3>
+      <ul class="manual-list">
+        <li><strong>Nivel 1</strong> — vocabulario básico, pictogramas grandes. Para primeros pasos en la comunicación.</li>
+        <li><strong>Nivel 2</strong> — vocabulario ampliado y barra de construcción de frases.</li>
+        <li><strong>Nivel 3</strong> — vocabulario extenso, más categorías y frases más complejas.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Modo invitado</h3>
+      <img
+        src="manual/invitado-niveles.png"
+        alt="Pantalla de selección de nivel en modo invitado"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Selecciona un nivel para acceder directamente a su tablero predeterminado.</li>
+        <li>Puedes navegar entre categorías desde el panel lateral.</li>
+        <li>Los tableros no se pueden personalizar en este modo.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Panel de perfiles</h3>
+      <img
+        src="manual/dashboard.png"
+        alt="Panel principal con las tarjetas de perfiles infantiles"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Pulsa <strong>"Añadir perfil"</strong> para crear un nuevo perfil infantil con nombre, nivel y foto opcional.</li>
+        <li>Pulsa directamente sobre un perfil para acceder a su tablero.</li>
+        <li>Activa el <strong>modo edición</strong> (icono lápiz) para editar, eliminar o gestionar los tableros de un perfil.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Crear y editar perfiles</h3>
+      <img
+        src="manual/crear-perfil.png"
+        alt="Formulario de creación de perfil infantil"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Introduce el nombre del niño, su fecha de nacimiento (opcional) y selecciona su nivel de comunicación.</li>
+        <li>Puedes añadir una foto de perfil pulsando sobre el área de imagen.</li>
+        <li>Al crear el perfil se le asigna automáticamente el tablero general de su nivel.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Uso del tablero</h3>
+      <img
+        src="manual/tablero-nivel2.png"
+        alt="Tablero de comunicación de nivel 2 con sidebar de categorías y barra de frases"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Pulsa un <strong>pictograma</strong> para escucharlo en voz alta.</li>
+        <li>En <strong>Nivel 2 y 3</strong>, los pictogramas se añaden a la barra de frases.</li>
+        <li>Usa <strong>▶</strong> para leer la frase completa, <strong>⌫</strong> para borrar el último pictograma y <strong>✕</strong> para limpiar todo.</li>
+        <li>Usa el <strong>panel lateral</strong> para cambiar de categoría.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Salir del tablero</h3>
+      <img
+        src="manual/candado.png"
+        alt="Confirmación de salida tras pulsar el candado tres veces"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Pulsa el <strong>candado 🔒 tres veces</strong> para salir del tablero.</li>
+        <li>Se mostrará una confirmación antes de salir — esto evita salidas accidentales.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Mis tableros</h3>
+      <img
+        src="manual/mis-tableros.png"
+        alt="Pantalla de Mis tableros con tableros predeterminados y propios"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Accede desde el menú lateral del panel de perfiles.</li>
+        <li>Los <strong>tableros predeterminados</strong> están agrupados por categoría — no se pueden editar directamente.</li>
+        <li>Pulsa <strong>"Copiar y editar"</strong> para crear una versión personalizable de cualquier tablero predeterminado.</li>
+        <li>Pulsa <strong>"Crear tablero nuevo"</strong> para crear uno desde cero eligiendo nombre, nivel y categoría.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Editor de tableros</h3>
+      <img
+        src="manual/editor-tablero.png"
+        alt="Editor de tableros con buscador de pictogramas y cuadrícula"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>Busca pictogramas de ARASAAC en el panel lateral y arrástralos a las celdas.</li>
+        <li>Reorganiza los pictogramas arrastrándolos entre celdas.</li>
+        <li>Ajusta el número de filas y columnas con los controles superiores (máximo 8×8).</li>
+        <li>Pulsa <strong>"Guardar"</strong> para conservar los cambios.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Gestionar tableros de un perfil</h3>
+      <img
+        src="manual/gestionar-tableros.png"
+        alt="Diálogo de gestión de tableros asignados a un perfil"
+        class="manual-img" />
+      <ul class="manual-list">
+        <li>En modo edición, pulsa sobre un perfil y selecciona <strong>"Gestionar tableros"</strong>.</li>
+        <li>Verás los tableros asignados actualmente y los disponibles para asignar.</li>
+        <li>Un tablero personalizado que coincida con una categoría predeterminada la <strong>sustituye</strong> automáticamente en el tablero del niño.</li>
+        <li>Una categoría nueva aparece como categoría adicional en el sidebar del niño.</li>
+      </ul>
+    </section>
+
+    <section class="manual-section">
+      <h3>Pictogramas</h3>
+      <p>
+        Los pictogramas utilizados son propiedad del Gobierno de Aragón, creados por
+        Sergio Palao para <a href="https://arasaac.org" target="_blank" rel="noopener">ARASAAC</a>,
+        bajo licencia Creative Commons BY-NC-SA.
+      </p>
+    </section>
+
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cerrar" severity="secondary" (click)="hide()" />
+  </ng-template>
+
+</p-dialog>

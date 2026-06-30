@@ -12,6 +12,7 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { Credits } from '../credits/credits';
 import { ViewChild } from '@angular/core';
+import { UserManual } from '../user-manual/user-manual';
 
 @Component({
   selector: 'app-home-page',
@@ -25,17 +26,19 @@ import { ViewChild } from '@angular/core';
     DialogModule,
     InputTextModule,
     MenuModule,
-    Credits
+    Credits,
+    UserManual
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage {
   @ViewChild(Credits) creditsDialog!: Credits;
+  @ViewChild(UserManual) manualDialog!: UserManual;
   
   menuItems: MenuItem[] = [
     { label: 'Créditos', icon: 'pi pi-info-circle', command: () => this.creditsDialog.show()},
-    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} }
+    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => this.manualDialog.show() }
   ];
 
   //Dialolgs visibility
