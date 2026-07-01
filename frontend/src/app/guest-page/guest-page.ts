@@ -9,7 +9,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Button, ButtonModule } from 'primeng/button';
 import { Credits } from '../credits/credits';
 import { ViewChild } from '@angular/core';
-
+import { UserManual } from '../user-manual/user-manual';
 
 interface LevelCard {
   level: number;
@@ -28,13 +28,15 @@ interface LevelCard {
     MenuModule,
     ToolbarModule,
     ButtonModule,
-    Credits
+    Credits,
+    UserManual
   ],
   templateUrl: './guest-page.html',
   styleUrl: './guest-page.scss',
 })
 export class GuestPage implements OnInit {
   @ViewChild(Credits) creditsDialog!: Credits;
+  @ViewChild(UserManual) manualDialog!: UserManual;
 
   menuItems: MenuItem[] = [];
   loading: boolean = true;
@@ -104,7 +106,7 @@ export class GuestPage implements OnInit {
   initMenu(): void {
     this.menuItems = [
       { label: 'Créditos', icon: 'pi pi-info-circle', command: () => this.creditsDialog.show()},
-      { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} }
+    { label: 'Manual de usuario', icon: 'pi pi-book', command: () => this.manualDialog.show() }
     ];
   }
 

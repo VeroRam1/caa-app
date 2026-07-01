@@ -18,6 +18,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Board, BoardService } from '../services/boardService';
 import { Credits } from '../credits/credits';
 import { ViewChild } from '@angular/core';
+import { UserManual } from '../user-manual/user-manual';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,7 +37,8 @@ import { ViewChild } from '@angular/core';
     ConfirmPopupModule,
     ToastModule,
     DividerModule,
-    Credits
+    Credits,
+    UserManual
   ],
   // ConfirmationService y MessageService needed for the confirmation pop up and the toast messages, respectively
   providers: [ConfirmationService, MessageService],
@@ -45,6 +47,7 @@ import { ViewChild } from '@angular/core';
 })
 export class Dashboard implements OnInit {
   @ViewChild(Credits) creditsDialog!: Credits;
+  @ViewChild(UserManual) manualDialog!: UserManual;
 
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
@@ -124,7 +127,7 @@ export class Dashboard implements OnInit {
   initMenu(): void {
     this.menuItems = [
       { label: 'Créditos', icon: 'pi pi-info-circle', command: () => this.creditsDialog.show()},
-      { label: 'Manual de usuario', icon: 'pi pi-book', command: () => {} }
+      { label: 'Manual de usuario', icon: 'pi pi-book', command: () => this.manualDialog.show() }
     ];
   }
 
